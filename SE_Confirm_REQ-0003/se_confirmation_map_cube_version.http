@@ -1,0 +1,458 @@
+### UU3 SPDM - CUBE version va confirmation
+#
+# Coverage:
+# - MAP-01/02/03/04/05/06: tao, sua/doi version va xoa Map
+# - HS-04: history handling_type = map_save
+# - NT-04: map save goi completion theo backend
+# - Regression: df_editeds la danh sach ma tran; df_edited_z la dong Z
+#
+# Chay tung request tu tren xuong duoi.
+# File CO GHI DU LIEU nhung dung ten map duy nhat va xoa sach o buoc cleanup.
+# Can mot SE parameter co unit=Map va value rong/N/A trong project duoc chon.
+
+@healthBase = {{devBaseUrl}}
+@apiBase = {{devApiBase}}
+@scopeName = System_Control
+
+### 1. Kiem tra server
+### @name healthCubeConfirmation
+# @no-log
+GET {{healthBase}}/healthz
+Accept: application/json
+
+> {%
+  client.test("Server san sang", function () {
+    client.assert(response.status === 200, "Health check khong tra HTTP 200");
+  });
+%}
+
+### 2. Dang nhap va tao ten CUBE duy nhat
+### @name loginCubeConfirmation
+# @no-log
+POST {{apiBase}}/user/login/
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username": "{{username}}",
+  "password": "{{password}}"
+}
+
+> {%
+  client.test("Dang nhap thanh cong", function () {
+    client.assert(response.status === 200, "Login khong tra HTTP 200");
+    client.assert(Boolean(response.body?.access), "Khong co access token");
+  });
+  const stamp = new Date().toISOString().replace(/\D/g, "").slice(0, 14);
+  const base = `HTTP_CONFIRM_CUBE_${stamp}`;
+  client.global.set("access_token", response.body.access);
+  client.global.set("cubeMap001", `${base}_001`);
+  client.global.set("cubeMap002", `${base}_002`);
+%}
+
+### 3. Lay tat ca project dang unlock
+### @name selectProjectCubeConfirmation
+# @no-log
+GET {{apiBase}}/project/all-projects/
+Authorization: Bearer {{access_token}}
+Accept: application/json
+
+> {%
+  const projects = (response.body?.data ?? []).filter((item) => item.is_lock !== true);
+  const requestBody = projects.map((project) => [
+    {
+      projects_key: [String(project.project_id)],
+      project: project.project_name,
+      destination: project.destination,
+      drivetrain: project.drivetrain,
+      body_type: project.grade,
+      lot: project.lot,
+      phase: project.phase_name
+    }
+  ]);
+  client.test("Tim thay project dang unlock", function () {
+    client.assert(requestBody.length > 0, "Khong co project dang unlock");
+  });
+  client.global.set("cubeProjectGroupsJson", JSON.stringify(requestBody));
+  client.log(`Se quet ${requestBody.length} project/phase dang unlock`);
+%}
+
+### 4. Quet tat ca project va chon parameter Map dang rong/N/A
+### @name selectEmptyMapParameterForCube
+# @no-log
+POST {{apiBase}}/se-list/v2/list-se-list-parameters-new/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+{{cubeProjectGroupsJson}}
+
+> {%
+  const projectResults = response.body?.projects ?? [];
+  let target = null;
+  let selectedProject = null;
+  for (const projectResult of projectResults) {
+    for (const group of projectResult.data ?? []) {
+      for (const row of group.children ?? []) {
+        if (String(row.unit ?? "").toLowerCase() !== "map") continue;
+        for (const [variationName, value] of Object.entries(row)) {
+          if (!value || typeof value !== "object" || !("variation_id" in value)) continue;
+          const current = value.z_request_median;
+          const empty = current === null
+            || current === undefined
+            || String(current).trim() === ""
+            || String(current).trim().toUpperCase() === "N/A"
+            || String(current).trim() === "Map";
+          if (empty) {
+            target = {
+              projectId: row.project_id,
+              parameterId: row.se_parameter_id,
+              phaseId: row.phase_id,
+              variationId: value.variation_id,
+              title: row.title_row,
+              variationName
+            };
+            selectedProject = projectResult.parameter;
+            break;
+          }
+        }
+        if (target) break;
+      }
+      if (target) break;
+    }
+    if (target) break;
+  }
+  client.test("Tim thay parameter Map rong", function () {
+    client.assert(Boolean(target), "Khong co parameter unit=Map rong/N/A trong tat ca project dang unlock.");
+  });
+  if (target && selectedProject) {
+    client.global.set("projectId", String(target.projectId));
+    client.global.set("projectName", selectedProject.project);
+    client.global.set("destination", selectedProject.destination);
+    client.global.set("drivetrain", selectedProject.drivetrain);
+    client.global.set("bodyType", selectedProject.body_type);
+    client.global.set("lot", selectedProject.lot);
+    client.global.set("phaseName", selectedProject.phase);
+    client.global.set("targetProjectId", String(target.projectId));
+    client.global.set("targetParameterId", String(target.parameterId));
+    client.global.set("targetPhaseId", String(target.phaseId));
+    client.global.set("targetVariationId", String(target.variationId));
+    client.log(`Target Map: ${selectedProject.project}/${selectedProject.phase}/${target.title}/${target.variationName}`);
+  }
+%}
+
+### 5. Chon bien X, Y, Z va CUBE
+### @name selectCubeVariablesForConfirmation
+# @no-log
+POST {{apiBase}}/se-list/se-map/get-infomation/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+{}
+
+> {%
+  const info = response.body?.data?.CUBE;
+  const x = info?.["X軸名"]?.[0];
+  const y = info?.["Y軸名"]?.[0];
+  const z = info?.["Z軸名"]?.[0];
+  const cube = info?.["MAP変数名"]?.[0];
+  client.test("Tim thay bien CUBE", function () {
+    client.assert(Boolean(x), "Khong co bien X");
+    client.assert(Boolean(y), "Khong co bien Y");
+    client.assert(Boolean(z), "Khong co bien Z");
+    client.assert(Boolean(cube), "Khong co bien CUBE");
+  });
+  if (x && y && z && cube) {
+    client.global.set("xVariableName", x);
+    client.global.set("yVariableName", y);
+    client.global.set("zVariableName", z);
+    client.global.set("cubeVariableName", cube);
+  }
+%}
+
+### 6. Tao CUBE version 001
+### @name createCube001
+# @no-log
+POST {{apiBase}}/se-list/se-map/map-create/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "chosen_id": 1,
+  "mode": "CUBE",
+  "df_edited": null,
+  "df_edited_z": [{"0": "Z→", "1": 300, "2": 600}],
+  "df_editeds": [
+    [
+      {"0": "↓Y \\ X→", "1": 1000, "2": 2000},
+      {"0": 10, "1": 311, "2": 312},
+      {"0": 20, "1": 321, "2": 322}
+    ],
+    [
+      {"0": "↓Y \\ X→", "1": 1000, "2": 2000},
+      {"0": 10, "1": 611, "2": 612},
+      {"0": 20, "1": 621, "2": 622}
+    ]
+  ],
+  "map_name": "N/A",
+  "new_map_name": "{{cubeMap001}}",
+  "xname": "{{xVariableName}}",
+  "yname": "{{yVariableName}}",
+  "zname": "{{zVariableName}}",
+  "cube_variable_name": "{{cubeVariableName}}",
+  "map_variable_name": null,
+  "tablenames": null,
+  "project_id": "{{targetProjectId}}",
+  "parameter_id": "{{targetParameterId}}",
+  "phase_id": "{{targetPhaseId}}",
+  "variation_id": "{{targetVariationId}}",
+  "study_id": null,
+  "scope_name": "{{scopeName}}",
+  "add_new": {},
+  "username": "{{username}}",
+  "create_new_map_flg": true
+}
+
+> {%
+  client.test("Tao CUBE 001 thanh cong", function () {
+    client.assert(response.status === 200, "Create 001 khong tra HTTP 200");
+    client.assert(response.body?.status === "success", response.body?.message ?? "Create 001 that bai");
+  });
+%}
+
+### 7. Tao CUBE version 002 cung series
+### @name createCube002
+# @no-log
+POST {{apiBase}}/se-list/se-map/map-create/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "chosen_id": 1,
+  "mode": "CUBE",
+  "df_edited": null,
+  "df_edited_z": [{"0": "Z→", "1": 300, "2": 600}],
+  "df_editeds": [
+    [
+      {"0": "↓Y \\ X→", "1": 1000, "2": 2000},
+      {"0": 10, "1": 1311, "2": 1312},
+      {"0": 20, "1": 1321, "2": 1322}
+    ],
+    [
+      {"0": "↓Y \\ X→", "1": 1000, "2": 2000},
+      {"0": 10, "1": 1611, "2": 1612},
+      {"0": 20, "1": 1621, "2": 1622}
+    ]
+  ],
+  "map_name": "{{cubeMap001}}",
+  "new_map_name": "{{cubeMap002}}",
+  "xname": "{{xVariableName}}",
+  "yname": "{{yVariableName}}",
+  "zname": "{{zVariableName}}",
+  "cube_variable_name": "{{cubeVariableName}}",
+  "map_variable_name": null,
+  "tablenames": null,
+  "project_id": "{{targetProjectId}}",
+  "parameter_id": "{{targetParameterId}}",
+  "phase_id": "{{targetPhaseId}}",
+  "variation_id": "{{targetVariationId}}",
+  "study_id": null,
+  "scope_name": "{{scopeName}}",
+  "add_new": {},
+  "username": "{{username}}",
+  "create_new_map_flg": true
+}
+
+> {%
+  client.test("Tao CUBE 002 thanh cong", function () {
+    client.assert(response.status === 200, "Create 002 khong tra HTTP 200");
+    client.assert(response.body?.status === "success", response.body?.message ?? "Create 002 that bai");
+  });
+%}
+
+### 8. Dua confirmation ve unconfirmed truoc khi test change version
+### @name prepareCubeUnconfirmed
+# @no-log
+POST {{apiBase}}/se-list/v1/confirmation-status/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "project_id": "{{targetProjectId}}",
+  "se_parameter_id": "{{targetParameterId}}",
+  "phase_id": "{{targetPhaseId}}",
+  "variation_id": "{{targetVariationId}}",
+  "action": "reset_unconfirmed"
+}
+
+> {%
+  client.test("Precondition unconfirmed", function () {
+    client.assert(response.status === 200, response.body?.message ?? "Reset that bai");
+    client.assert(response.body?.confirmation_status === "unconfirmed", "Status khong phai unconfirmed");
+  });
+%}
+
+### 9. Doi version CUBE 002 -> 001 voi payload dung chieu
+# Regression quan trong:
+# - df_editeds = danh sach cac ma tran CUBE
+# - df_edited_z = danh sach mot object Z
+### @name changeCubeVersion
+# @no-log
+POST {{apiBase}}/se-list/se-map/map-edit/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "chosen_id": 1,
+  "mode": "CUBE",
+  "project_id": "{{targetProjectId}}",
+  "parameter_id": "{{targetParameterId}}",
+  "scenario_parameter_id": "{{targetParameterId}}",
+  "phase_id": "{{targetPhaseId}}",
+  "variation_id": "{{targetVariationId}}",
+  "map_name": "{{cubeMap002}}",
+  "new_map_name": "{{cubeMap001}}",
+  "scope_name": null,
+  "xname": "{{xVariableName}}",
+  "yname": "{{yVariableName}}",
+  "zname": "{{zVariableName}}",
+  "map_version": "001",
+  "study_id": null,
+  "vallist": [],
+  "df_edited": null,
+  "df_editeds": [
+    [
+      {"0": "↓Y \\ X→", "1": 1000, "2": 2000},
+      {"0": 10, "1": 1311, "2": 1312},
+      {"0": 20, "1": 1321, "2": 1322}
+    ],
+    [
+      {"0": "↓Y \\ X→", "1": 1000, "2": 2000},
+      {"0": 10, "1": 1611, "2": 1612},
+      {"0": 20, "1": 1621, "2": 1622}
+    ]
+  ],
+  "df_edited_z": [{"0": "Z→", "1": 300, "2": 600}],
+  "map_variable_name": null,
+  "cube_variable_name": "{{cubeVariableName}}",
+  "tablenames": null,
+  "add_new": null
+}
+
+> {%
+  client.test("Doi version CUBE khong con loi scalar DataFrame", function () {
+    client.assert(response.status === 200, response.body?.message ?? "Map edit that bai");
+    client.assert(response.body?.status === "success", response.body?.message ?? "Map edit that bai");
+  });
+%}
+
+### 10. Kiem tra SE List tro den version 001 va confirmed_changed
+### @name verifyCubeVersionAndConfirmation
+# @no-log
+POST {{apiBase}}/se-list/v2/list-se-list-parameters-new/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+[
+  [
+    {
+      "projects_key": ["{{projectId}}"],
+      "project": "{{projectName}}",
+      "destination": "{{destination}}",
+      "drivetrain": "{{drivetrain}}",
+      "body_type": "{{bodyType}}",
+      "lot": "{{lot}}",
+      "phase": "{{phaseName}}"
+    }
+  ]
+]
+
+> {%
+  const groups = response.body?.projects?.[0]?.data ?? [];
+  let target = null;
+  for (const group of groups) {
+    for (const row of group.children ?? []) {
+      if (String(row.se_parameter_id) !== String(client.global.get("targetParameterId"))) continue;
+      for (const value of Object.values(row)) {
+        if (value && typeof value === "object" && String(value.variation_id) === String(client.global.get("targetVariationId"))) {
+          target = value;
+        }
+      }
+    }
+  }
+  client.test("Version va confirmation dung", function () {
+    client.assert(Boolean(target), "Khong tim lai duoc target");
+    client.assert(String(target?.z_request_median ?? "").includes("_Ver.001"), `Gia tri hien tai=${target?.z_request_median}`);
+    client.assert(target?.confirmation_status === "confirmed_changed", `Status=${target?.confirmation_status}`);
+  });
+%}
+
+### 11. Kiem tra map_save history
+### @name verifyCubeMapHistory
+# @no-log
+GET {{apiBase}}/se-list/v1/parameter-history/?project_id={{targetProjectId}}&se_parameter_id={{targetParameterId}}&phase_id={{targetPhaseId}}&variation_id={{targetVariationId}}
+Authorization: Bearer {{access_token}}
+Accept: application/json
+
+> {%
+  const first = response.body?.confirmation_history?.[0];
+  client.test("History ghi map_save", function () {
+    client.assert(response.status === 200, "History khong tra HTTP 200");
+    client.assert(first?.new_status === "confirmed_changed", "History sai new_status");
+    client.assert(first?.handling_type === "map_save", `handling_type=${first?.handling_type}`);
+  });
+%}
+
+### 12. Cleanup: xoa toan bo series CUBE demo
+### @name deleteCubeConfirmationDemo
+# @no-log
+POST {{apiBase}}/se-list/se-map/map-delete/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "scope": "all",
+  "chosen_id": 1,
+  "project_id": "{{targetProjectId}}",
+  "se_parameter_id": "{{targetParameterId}}",
+  "phase_id": "{{targetPhaseId}}",
+  "variation_id": "{{targetVariationId}}",
+  "z_request_median": "{{cubeMap001}}"
+}
+
+> {%
+  client.test("Xoa CUBE demo thanh cong", function () {
+    client.assert(response.status === 200, "Delete map khong tra HTTP 200");
+    client.assert(response.body?.status === "success", response.body?.message ?? "Delete map that bai");
+  });
+%}
+
+### 13. Cleanup confirmation ve unconfirmed
+### @name cleanupCubeConfirmation
+# @no-log
+POST {{apiBase}}/se-list/v1/confirmation-status/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "project_id": "{{targetProjectId}}",
+  "se_parameter_id": "{{targetParameterId}}",
+  "phase_id": "{{targetPhaseId}}",
+  "variation_id": "{{targetVariationId}}",
+  "action": "reset_unconfirmed"
+}
+
+> {%
+  client.test("Cleanup confirmation thanh cong", function () {
+    client.assert(response.status === 200, response.body?.message ?? "Cleanup that bai");
+    client.assert(response.body?.confirmation_status === "unconfirmed", "Status cuoi khong phai unconfirmed");
+  });
+%}

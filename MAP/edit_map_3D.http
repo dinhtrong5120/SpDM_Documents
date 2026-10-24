@@ -1,0 +1,437 @@
+### UU3 SPDM - demo vong doi Map 3D
+#
+# Trong backend hien tai, Map 3D duoc bieu dien boi mode = "CUBE":
+# - 1 bien truc X
+# - 1 bien truc Y
+# - 1 bien truc Z
+# - 1 bien CUBE chua mot ma tran Y x X cho moi gia tri Z
+#
+# Chay tung request tu tren xuong duoi trong cung mot phien PyCharm.
+# Chon Run with -> dev. Environment dev can co:
+#   devBaseUrl, devApiBase, username, password
+#
+# Demo dung Z = [300, 600] va hai ma tran 2 x 2.
+# Luong: login -> chon parameter rong -> tao -> doc -> sua -> doc -> xoa -> cleanup.
+# Luu y: day la demo CO GHI DU LIEU tren moi truong dang chon.
+
+@healthBase = {{devBaseUrl}}
+@apiBase = {{devApiBase}}
+@scopeName = System_Control
+
+### 1. Kiem tra server
+# @name health3D
+# @no-log
+GET {{healthBase}}/healthz
+Accept: application/json
+
+#> {%
+#  client.test("Server san sang", function () {
+#    client.assert(response.status === 200, "Health check khong tra HTTP 200");
+#  });
+#%}
+
+### 2. Dang nhap va tao ten Map 3D duy nhat
+# @name login3D
+# @no-log
+POST {{apiBase}}/user/login/
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username": "{{username}}",
+  "password": "{{password}}"
+}
+
+> {%
+  client.test("Dang nhap thanh cong", function () {
+    client.assert(response.status === 200, "Login khong tra HTTP 200");
+    client.assert(Boolean(response.body?.access), "Response login khong co access token");
+  });
+
+  if (response.body?.access) {
+    const timestamp = new Date().toISOString().replace(/\D/g, "").slice(0, 14);
+    const demoMapName = `HTTP_DEMO_3D_${timestamp}_001`;
+
+    client.global.set("access_token", response.body.access);
+    client.global.set("refresh_token", response.body.refresh);
+    client.global.set("demoMapName", demoMapName);
+    client.log("Map demo cua lan chay nay: " + demoMapName);
+  }
+%}
+
+### 3. Lay project dau tien va luu metadata
+# Neu muon dung project khac, sua [0] trong response handler.
+# @name selectProject3D
+# @no-log
+GET {{apiBase}}/project/all-projects/
+Authorization: Bearer {{access_token}}
+Accept: application/json
+
+> {%
+  const project = response.body?.data?.[0];
+
+  client.test("Tim thay project", function () {
+    client.assert(Boolean(project), "Khong co project tai data[0]");
+  });
+
+  if (project) {
+    client.global.set("projectId", String(project.project_id));
+    client.global.set("projectName", project.project_name);
+    client.global.set("phaseName", project.phase_name);
+    client.global.set("destination", project.destination);
+    client.global.set("drivetrain", project.drivetrain);
+    client.global.set("powertrain", project.powertrain);
+    client.global.set("lot", project.lot);
+    client.log(`Da chon project ${project.project_name}, phase ${project.phase_name}`);
+  }
+%}
+
+### 4. Chon mot SE parameter dang N/A hoac rong
+# @name selectEmptyParameter3D
+# @no-log
+POST {{apiBase}}/se-list/v2/list-se-list-parameters-new/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+[
+  [
+    {
+      "projects_key": ["{{projectId}}"],
+      "project": "{{projectName}}",
+      "destination": "{{destination}}",
+      "drivetrain": "{{drivetrain}}",
+      "powertrain": "{{powertrain}}",
+      "lot": "{{lot}}",
+      "phase": "{{phaseName}}"
+    }
+  ]
+]
+
+> {%
+  const groups = response.body?.projects?.[0]?.data ?? [];
+  let selected = null;
+
+  for (const group of groups) {
+    for (const row of group.children ?? []) {
+      for (const [variationName, value] of Object.entries(row)) {
+        if (!value || typeof value !== "object" || !("variation_id" in value)) continue;
+
+        const currentValue = value.z_request_median;
+        const isEmpty = currentValue === null
+          || currentValue === undefined
+          || String(currentValue).trim() === ""
+          || String(currentValue).trim().toUpperCase() === "N/A";
+
+        if (isEmpty) {
+          selected = {
+            projectId: row.project_id,
+            parameterId: row.se_parameter_id,
+            phaseId: row.phase_id,
+            variationId: value.variation_id,
+            variationName,
+            title: row.title_row
+          };
+          break;
+        }
+      }
+      if (selected) break;
+    }
+    if (selected) break;
+  }
+
+  client.test("Tim thay parameter an toan cho demo", function () {
+    client.assert(
+      Boolean(selected),
+      "Khong co SE parameter N/A/rong. Hay chon project khac; khong nen ghi de du lieu dang co."
+    );
+  });
+
+  if (selected) {
+    client.global.set("targetProjectId", String(selected.projectId));
+    client.global.set("targetParameterId", String(selected.parameterId));
+    client.global.set("targetPhaseId", String(selected.phaseId));
+    client.global.set("targetVariationId", String(selected.variationId));
+    client.global.set("targetVariationName", selected.variationName);
+    client.log(
+      `Da chon parameter ${selected.parameterId} (${selected.title}), variation ${selected.variationName}`
+    );
+  }
+%}
+
+### 5. Chon bien X, Y, Z va CUBE dau tien
+# Trong response get-infomation, danh sach bien CUBE nam o key "MAP変数名".
+# @name selectMapVariables3D
+# @no-log
+POST {{apiBase}}/se-list/se-map/get-infomation/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+{}
+
+> {%
+  const cubeInfo = response.body?.data?.CUBE;
+  const xVariable = cubeInfo?.["X軸名"]?.[0];
+  const yVariable = cubeInfo?.["Y軸名"]?.[0];
+  const zVariable = cubeInfo?.["Z軸名"]?.[0];
+  const cubeVariable = cubeInfo?.["MAP変数名"]?.[0];
+
+  client.test("Tim thay bien X, Y, Z va CUBE", function () {
+    client.assert(Boolean(xVariable), "Khong co map_variable axis X");
+    client.assert(Boolean(yVariable), "Khong co map_variable axis Y");
+    client.assert(Boolean(zVariable), "Khong co map_variable axis Z");
+    client.assert(Boolean(cubeVariable), "Khong co map_variable axis CUBE");
+  });
+
+  if (xVariable && yVariable && zVariable && cubeVariable) {
+    client.global.set("xVariableName", xVariable);
+    client.global.set("yVariableName", yVariable);
+    client.global.set("zVariableName", zVariable);
+    client.global.set("cubeVariableName", cubeVariable);
+    client.log("Bien X: " + xVariable);
+    client.log("Bien Y: " + yVariable);
+    client.log("Bien Z: " + zVariable);
+    client.log("Bien CUBE: " + cubeVariable);
+  }
+%}
+
+### 6. Tao Map 3D (CUBE)
+# df_edited_z co 2 gia tri Z, nen df_editeds cung co dung 2 ma tran.
+# Moi ma tran co X = [1000, 2000], Y = [10, 20] va 4 gia tri CUBE.
+# @name createMap3D
+# @no-log
+POST {{apiBase}}/se-list/se-map/map-create/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "chosen_id": 1,
+  "mode": "CUBE",
+  "df_edited": null,
+  "df_edited_z": [
+    {"0": "Z→", "1": 300, "2": 600}
+  ],
+  "df_editeds": [
+    [
+      {"0": "↓Y \\ X→", "1": 1000, "2": 2000},
+      {"0": 10, "1": 311, "2": 312},
+      {"0": 20, "1": 321, "2": 322}
+    ],
+    [
+      {"0": "↓Y \\ X→", "1": 1000, "2": 2000},
+      {"0": 10, "1": 611, "2": 612},
+      {"0": 20, "1": 621, "2": 622}
+    ]
+  ],
+  "map_name": "N/A",
+  "new_map_name": "{{demoMapName}}",
+  "xname": "{{xVariableName}}",
+  "yname": "{{yVariableName}}",
+  "zname": "{{zVariableName}}",
+  "cube_variable_name": "{{cubeVariableName}}",
+  "map_variable_name": null,
+  "tablenames": null,
+  "project_id": "{{targetProjectId}}",
+  "parameter_id": "{{targetParameterId}}",
+  "phase_id": "{{targetPhaseId}}",
+  "variation_id": "{{targetVariationId}}",
+  "study_id": null,
+  "scope_name": "{{scopeName}}",
+  "add_new": {},
+  "username": "{{username}}",
+  "create_new_map_flg": true
+}
+
+> {%
+  client.test("Tao Map 3D thanh cong", function () {
+    client.assert(response.status === 200, "Create map khong tra HTTP 200");
+    client.assert(response.body?.status === "success", response.body?.message ?? "Create map that bai");
+  });
+%}
+
+### 7. Doc Map 3D vua tao
+# @name readCreatedMap3D
+# @no-log
+POST {{apiBase}}/se-list/se-map/map-button/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+[
+  {
+    "z_request_median": "{{demoMapName}}",
+    "project_id": "{{targetProjectId}}",
+    "phase_id": "{{targetPhaseId}}",
+    "se_parameter_id": "{{targetParameterId}}",
+    "variation_id": "{{targetVariationId}}",
+    "URL": "",
+    "chosen_id": 1
+  }
+]
+
+> {%
+  client.test("Doc duoc Map 3D", function () {
+    client.assert(response.status === 200, "Read map khong tra HTTP 200");
+    client.assert(response.body?.status === "success", response.body?.message ?? "Read map that bai");
+  });
+%}
+
+### 8. Sua hai ma tran cua Map 3D
+# Giu nguyen X/Y/Z, tang moi gia tri CUBE them 10.
+# @name editMap3D
+# @no-log
+POST {{apiBase}}/se-list/se-map/map-edit/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "chosen_id": 1,
+  "mode": "CUBE",
+  "df_edited": null,
+  "df_edited_z": [
+    {"0": "Z→", "1": 300, "2": 600}
+  ],
+  "df_editeds": [
+    [
+      {"0": "↓Y \\ X→", "1": 1000, "2": 2000},
+      {"0": 10, "1": 321, "2": 322},
+      {"0": 20, "1": 331, "2": 332}
+    ],
+    [
+      {"0": "↓Y \\ X→", "1": 1000, "2": 2000},
+      {"0": 10, "1": 621, "2": 622},
+      {"0": 20, "1": 631, "2": 632}
+    ]
+  ],
+  "map_name": "{{demoMapName}}",
+  "new_map_name": "{{demoMapName}}",
+  "xname": "{{xVariableName}}",
+  "yname": "{{yVariableName}}",
+  "zname": "{{zVariableName}}",
+  "cube_variable_name": "{{cubeVariableName}}",
+  "map_variable_name": null,
+  "tablenames": null,
+  "project_id": "{{targetProjectId}}",
+  "parameter_id": "{{targetParameterId}}",
+  "phase_id": "{{targetPhaseId}}",
+  "variation_id": "{{targetVariationId}}",
+  "study_id": null,
+  "scope_name": "{{scopeName}}",
+  "add_new": {},
+  "username": "{{username}}",
+  "create_new_map_flg": false
+}
+
+> {%
+  client.test("Sua Map 3D thanh cong", function () {
+    client.assert(response.status === 200, "Edit map khong tra HTTP 200");
+    client.assert(response.body?.status === "success", response.body?.message ?? "Edit map that bai");
+  });
+%}
+
+### 9. Doc lai Map 3D sau khi sua
+# @name readEditedMap3D
+# @no-log
+POST {{apiBase}}/se-list/se-map/map-button/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+[
+  {
+    "z_request_median": "{{demoMapName}}",
+    "project_id": "{{targetProjectId}}",
+    "phase_id": "{{targetPhaseId}}",
+    "se_parameter_id": "{{targetParameterId}}",
+    "variation_id": "{{targetVariationId}}",
+    "URL": "",
+    "chosen_id": 1
+  }
+]
+
+> {%
+  client.test("Doc lai Map 3D thanh cong", function () {
+    client.assert(response.status === 200, "Read edited map khong tra HTTP 200");
+    client.assert(response.body?.status === "success", response.body?.message ?? "Read edited map that bai");
+  });
+%}
+
+### 10. Xoa toan bo Map 3D demo
+# @name deleteMap3D
+# @no-log
+POST {{apiBase}}/se-list/se-map/map-delete/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "scope": "all",
+  "project_id": "{{targetProjectId}}",
+  "se_parameter_id": "{{targetParameterId}}",
+  "phase_id": "{{targetPhaseId}}",
+  "variation_id": "{{targetVariationId}}",
+  "z_request_median": "{{demoMapName}}"
+}
+
+> {%
+  client.test("Xoa Map 3D thanh cong", function () {
+    client.assert(response.status === 200, "Delete map khong tra HTTP 200");
+    client.assert(response.body?.status === "success", response.body?.message ?? "Delete map that bai");
+  });
+%}
+
+### 11. Xac nhan parameter da tro ve null
+# @name verifyCleanup3D
+# @no-log
+POST {{apiBase}}/se-list/v2/list-se-list-parameters-new/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+[
+  [
+    {
+      "projects_key": ["{{projectId}}"],
+      "project": "{{projectName}}",
+      "destination": "{{destination}}",
+      "drivetrain": "{{drivetrain}}",
+      "powertrain": "{{powertrain}}",
+      "lot": "{{lot}}",
+      "phase": "{{phaseName}}"
+    }
+  ]
+]
+
+> {%
+  const groups = response.body?.projects?.[0]?.data ?? [];
+  let finalValue;
+
+  for (const group of groups) {
+    for (const row of group.children ?? []) {
+      if (String(row.se_parameter_id) !== String(client.global.get("targetParameterId"))) continue;
+
+      for (const value of Object.values(row)) {
+        if (
+          value
+          && typeof value === "object"
+          && String(value.variation_id) === String(client.global.get("targetVariationId"))
+        ) {
+          finalValue = value.z_request_median;
+          break;
+        }
+      }
+    }
+  }
+
+  client.test("Cleanup hoan tat", function () {
+    client.assert(
+      finalValue === null,
+      `Gia tri sau khi xoa la '${finalValue}', mong doi 'null'`
+    );
+  });
+
+  client.log("Da xoa map " + client.global.get("demoMapName") + "; parameter tro ve " + finalValue);
+%}

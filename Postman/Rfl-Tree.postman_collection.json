@@ -1,0 +1,369 @@
+{
+  "info": {
+    "_postman_id": "11211348-ca96-439c-8d50-49a8f8b22628",
+    "name": "Rfl-Tree",
+    "description": "Postman Collection hoàn chỉnh cho module RFL-Tree của SPDM Backend (Cây phân cấp R-Item, Allocation Tree, Metadata, và Node Details) đối chiếu từ rfl_tree/urls.py và rfl_tree/swagger_docs.py.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "23416820",
+    "_collection_link": "https://go.postman.co/collection/23416820-11211348-ca96-439c-8d50-49a8f8b22628?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "01 - Metadata & Discovery",
+      "item": [
+        {
+          "name": "List Distinct Phase and Project IDs",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rfl-tree/list-phase-and-prj-ids",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rfl-tree",
+                "list-phase-and-prj-ids"
+              ]
+            },
+            "description": "Trả về hai mảng đã sắp xếp gồm phase_ids và project_ids (pj_id) phân biệt từ rfl_view."
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Project Information",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rfl-tree/all-project-info",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rfl-tree",
+                "all-project-info"
+              ]
+            },
+            "description": "Lấy danh sách thông tin cơ bản của tất cả các project (project_name, destination, drivetrain, powertrain, lot, phase_name)."
+          },
+          "response": []
+        },
+        {
+          "name": "List Work Package Names by Project Metadata",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"project_name\": \"P33A\",\n  \"destination\": \"JPN\",\n  \"drivetrain\": \"2WD\",\n  \"powertrain\": \"HEV\",\n  \"lot\": \"L1\",\n  \"phase_name\": \"Phase1\",\n  \"hierarchy_id\": 3\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rfl-tree/list-work-packages",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rfl-tree",
+                "list-work-packages"
+              ]
+            },
+            "description": "Phân giải metadata dự án (tên xe, đích đến, hệ dẫn động, powertrain, lot, phase) → trả về danh sách distinct work-package names (wp_names) cùng project_id, phase_id và hierarchy_id (3 = Unit, 2 = System, 1 = Vehicle)."
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints tra cứu danh sách ID, thông tin tổng thể dự án và phân giải danh sách Work Package names."
+    },
+    {
+      "name": "02 - Tree Generation",
+      "item": [
+        {
+          "name": "Get R-Item Tree (Supports Multiple L_WP)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"project_id\": 14,\n  \"phase_id\": 3,\n  \"l_wp\": [\n    \"WP-001\",\n    \"WP-002\"\n  ],\n  \"hierarchy_id\": 3\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rfl-tree/r-item-tree",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rfl-tree",
+                "r-item-tree"
+              ]
+            },
+            "description": "Xây dựng và trả về cây phân cấp R-Item tree cho từng work-package (l_wp) theo luồng Unit → System → Vehicle → Performance."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Allocation Tree (Supports Multiple L_WP)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"project_id\": 14,\n  \"phase_id\": 3,\n  \"l_wp\": [\n    \"WP-001\",\n    \"WP-002\"\n  ],\n  \"hierarchy_id\": 3\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rfl-tree/allocation-tree",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rfl-tree",
+                "allocation-tree"
+              ]
+            },
+            "description": "Xây dựng và trả về cây phân bổ Allocation tree cho từng work-package (l_wp) theo các node phân bổ."
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints xây dựng cây cấu trúc R-Item Tree và Allocation Tree theo dự án, phase, hierarchy_id và mảng work packages."
+    },
+    {
+      "name": "03 - Node Details",
+      "item": [
+        {
+          "name": "Get R-Item Node Detail Info",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"project_id\": 14,\n  \"phase_id\": 3,\n  \"r_item\": \"Item R ABC\",\n  \"l_item\": \"Item L XYZ\",\n  \"hierarchy_id\": 3\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rfl-tree/info-r-item-node",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rfl-tree",
+                "info-r-item-node"
+              ]
+            },
+            "description": "Lấy danh sách bản ghi chi tiết khớp với r_item và l_item được chỉ định cho project_id, phase_id và hierarchy_id (thông tin phán đoán, người gửi, ngày gửi, người nhận, comment)."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Allocation Node Detail Info",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"project_id\": 14,\n  \"phase_id\": 3,\n  \"l_wp\": \"WP-001\",\n  \"hierarchy_id\": 3\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rfl-tree/info-allocation-node",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rfl-tree",
+                "info-allocation-node"
+              ]
+            },
+            "description": "Lấy danh sách bản ghi chi tiết khớp với tên l_wp được chỉ định cho project_id, phase_id và hierarchy_id."
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints tra cứu chi tiết thông tin phán đoán, người duyệt, ngày gửi/nhận và comment khi click vào từng node trên cây."
+    },
+    {
+      "name": "04 - System Health",
+      "item": [
+        {
+          "name": "RFL-Tree Health Check",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rfl-tree/health",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rfl-tree",
+                "health"
+              ]
+            },
+            "description": "Kiểm tra trạng thái hoạt động của app rfl_tree và routing URL."
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoint kiểm tra sức khỏe và khả năng sẵn sàng của service rfl_tree."
+    }
+  ],
+  "variable": [
+    {
+      "key": "SUB_PATH",
+      "value": "",
+      "description": "Sub path prefix configured in Django settings (e.g., '' hoặc 'spdm/')"
+    }
+  ]
+}

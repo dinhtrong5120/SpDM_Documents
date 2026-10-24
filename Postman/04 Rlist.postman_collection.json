@@ -1,0 +1,1592 @@
+{
+  "info": {
+    "_postman_id": "59c64b2c-9e10-475f-b76e-6e01beb8453f",
+    "name": "04 Rlist",
+    "description": "Postman Collection cho module R-List của SPDM Backend, đã được chuẩn hóa và tổ chức lại theo chức năng (Read -> Create -> Update -> Delete), bổ sung đầy đủ các endpoint hiện hành từ codebase và làm sạch JSON payload.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "23416820",
+    "_collection_link": "https://go.postman.co/collection/23416820-59c64b2c-9e10-475f-b76e-6e01beb8453f?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "01 - Project R-List Parameters",
+      "item": [
+        {
+          "name": "List R-List Parameters (By Project & Phase)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"projects_key\": [\n      \"14\"\n    ],\n    \"project\": \"[J32V]\",\n    \"destination\": \"JPN\",\n    \"drivetrain\": \"2WD\",\n    \"powertrain\": \"HEV\",\n    \"lot\": \"Pre-Pro\",\n    \"phase\": \"中間確認会#1\",\n    \"variation\": \"Kick off仕様②\"\n  }\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rlist/list-r-list-parameters/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rlist",
+                "list-r-list-parameters",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "List RList parameters",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\n  {\n    \"projects_key\": [\n      \"14\"\n    ],\n    \"project\": \"[J32V]\",\n    \"destination\": \"JPN\",\n    \"drivetrain\": \"2WD\",\n    \"powertrain\": \"HEV\",\n    \"lot\": \"Pre-Pro\",\n    \"phase\": \"PTシステムレビュー#1\"\n  }\n]",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rlist/list-r-list-parameters/",
+                  "protocol": "http",
+                  "host": [
+                    "127",
+                    "0",
+                    "0",
+                    "1"
+                  ],
+                  "port": "8000",
+                  "path": [
+                    "{{SUB_PATH}}",
+                    "api",
+                    "rlist",
+                    "list-r-list-parameters",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": ""
+            },
+            {
+              "name": "List RList parameters_new",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\n  {\n    \"projects_key\": [\n      \"14\"\n    ],\n    \"project\": \"[J32V]\",\n    \"destination\": \"JPN\",\n    \"drivetrain\": \"2WD\",\n    \"powertrain\": \"HEV\",\n    \"lot\": \"Pre-Pro\",\n    \"phase\": \"PTシステムレビュー#1\",\n    \"variation\": \"\"\n  }\n]",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rlist/list-r-list-parameters/",
+                  "protocol": "http",
+                  "host": [
+                    "127",
+                    "0",
+                    "0",
+                    "1"
+                  ],
+                  "port": "8000",
+                  "path": [
+                    "{{SUB_PATH}}",
+                    "api",
+                    "rlist",
+                    "list-r-list-parameters",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            },
+            {
+              "name": "List RList parameters",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\n  {\n    \"projects_key\": [\n      \"14\"\n    ],\n    \"project\": \"[J32V]\",\n    \"destination\": \"JPN\",\n    \"drivetrain\": \"2WD\",\n    \"powertrain\": \"HEV\",\n    \"lot\": \"Pre-Pro\",\n    \"phase\": \"中間確認会#1\",\n    \"variation\": \"Kick off仕様②\"\n  }\n]",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rlist/list-r-list-parameters/",
+                  "protocol": "http",
+                  "host": [
+                    "127",
+                    "0",
+                    "0",
+                    "1"
+                  ],
+                  "port": "8000",
+                  "path": [
+                    "{{SUB_PATH}}",
+                    "api",
+                    "rlist",
+                    "list-r-list-parameters",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "List R-List Parameters v2 (Multiple Projects Batch)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n    [\n        {\n            \"projects_key\": [\n            \"14\"\n            ],\n            \"project\": \"[J32V]\",\n            \"destination\": \"JPN\",\n            \"drivetrain\": \"2WD\",\n            \"powertrain\": \"HEV\",\n            \"lot\": \"Pre-Pro\",\n            \"phase\": \"PTシステムレビュー#1\",\n            \"variation\": \"\"\n        }\n    ],\n    [\n        {\n            \"projects_key\": [\n            \"14\"\n            ],\n            \"project\": \"[J32V]\",\n            \"destination\": \"JPN\",\n            \"drivetrain\": \"2WD\",\n            \"powertrain\": \"HEV\",\n            \"lot\": \"Pre-Pro\",\n            \"phase\": \"中間確認会#1\",\n            \"variation\": \"\"\n        }\n    ]\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rlist/v2/list-r-list-parameters/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rlist",
+                "v2",
+                "list-r-list-parameters",
+                ""
+              ]
+            },
+            "description": "Endpoint v2 từ codebase SPDM (views_v1.list_r_list_parameters_v2) hỗ trợ truy vấn R-List cho nhiều project/phase đồng thời. Payload nhận mảng lồng mảng các project."
+          },
+          "response": []
+        },
+        {
+          "name": "List R-List Parameters (Compare Variant)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"r_parameter_id\": 10002,\n    \"performance\": \"動力\",\n    \"design_item_1\": \"【魅力】発進加速性能\",\n    \"design_item_2\": \"発進加速タイム\",\n    \"design_item_3\": \"0-100km/h到達時間\",\n    \"r_unit\": \"[sec]\",\n    \"index\": 10002,\n    \"usecase_id\": 10009,\n    \"usecase\": \"発進 0-100km/h GVWR\",\n    \"usecase_parameter_id\": 32,\n    \"parameter_name\": \"Cabin_AC_req\",\n    \"usecase_unit\": \"0:Off, 1:On\",\n    \"category\": \"Driver\",\n    \"value\": \"0\",\n    \"13;project_id;1529\": 13,\n    \"13;setup_id;1529\": 3,\n    \"13;phase_id;1529\": 15,\n    \"13;phase;1529\": \"中間確認会#1\",\n    \"13;variation_id;1529\": 29,\n    \"13;variation;1529\": \"BCS仕様\",\n    \"13;wp_id;1529\": 2,\n    \"13;spec_to_study;1529\": \"最重量\",\n    \"13;status;1529\": \"2.設定完了\",\n    \"13;target;1529\": null,\n    \"13;adjusted_target;1529\": null,\n    \"13;design;1529\": null,\n    \"13;judge;1529\": null,\n    \"13;judge_evidence;1529\": null,\n    \"13;auto_judge_id;1529\": 3,\n    \"13;manager_approval;1529\": null,\n    \"13;manager_approval_comment;1529\": null,\n    \"13;date;1529\": \"2024-11-21\",\n    \"13;note;1529\": \"\",\n    \"13;priority;1529\": \"\",\n    \"13;employee_number;1529\": \"N151364\",\n    \"13;detail_and_output;1529\": \"\",\n    \"13;tool;1529\": \"\",\n    \"13;responsible;1529\": \"\",\n    \"13;period;1529\": \"\",\n    \"13;flag_primary;1529\": 1,\n    \"13;section_code;1529\": \"US2\",\n    \"13;employee_name;1529\": \"章博 豊福\",\n    \"13;r_parameter_id;1529\": 10002,\n    \"13;performance;1529\": \"動力\",\n    \"13;design_item_1;1529\": \"【魅力】発進加速性能\",\n    \"13;design_item_2;1529\": \"発進加速タイム\",\n    \"13;design_item_3;1529\": \"0-100km/h到達時間\",\n    \"13;r_unit;1529\": \"[sec]\",\n    \"13;auto_judge_type;1529\": \"以下\",\n    \"13;auto_judge_result;1529\": \"\",\n    \"標高　時系列\": \"0, 0, 0, 0\",\n    \"勾配　時系列\": \"0, 0, 0, 0\",\n    \"勾配\": \"\",\n    \"モードセレクト(例 D:Standard)\": \"\",\n    \"走行パターン\": \"\",\n    \"Test Weight\": \"\",\n    \"Towing\": \"\",\n    \"走行時間\": \"\",\n    \"走行距離\": \"\",\n    \"標高\": \"\",\n    \"外気温\": \"25\",\n    \"LT　水温\": \"\",\n    \"HT　水温\": \"\",\n    \"APO\": \"\",\n    \"空調条件\": \"\",\n    \"Test前条件\": \"\",\n    \"Initial SOC\": \"80\",\n    \"BAT初期温度\": \"\",\n    \"ePT入口水温\": \"\",\n    \"冷却水流量\": \"\",\n    \"情報元\": \"\",\n    \"BAT SOR\": \"\",\n    \"BAT SOH\": \"\",\n    \"submodel\": \"GRMVRSTC_01_VELOCITY_CYCLE_001_SSWOT\",\n    \"風速　時系列\": \"0, 0, 0, 0\",\n    \"Cabin_AC_req\": \"0\",\n    \"COLD_sw\": \"1\",\n    \"VSPcontrolFlag\": \"1\",\n    \"ImitationIGOff_SW\": \"0\",\n    \"Cooling_Heating_SW\": \"1\",\n    \"flag_primary\": \"主要性能\",\n    \"13;target_selected;1529\": false,\n    \"timeseries_selected\": true\n  },\n  {\n    \"r_parameter_id\": 10008,\n    \"performance\": \"動力\",\n    \"design_item_1\": \"【魅力】Vmax性能\",\n    \"design_item_2\": \"最高速\",\n    \"design_item_3\": \"Vmax車速\",\n    \"r_unit\": \"[kph]\",\n    \"index\": 10008,\n    \"usecase_id\": 10006,\n    \"usecase\": \"Vmax MinC.W+240kg\",\n    \"usecase_parameter_id\": 20,\n    \"parameter_name\": \"BAT初期温度\",\n    \"usecase_unit\": \"[degC]\",\n    \"category\": \"Vehicle\",\n    \"value\": \"35\",\n    \"13;project_id;1529\": 13,\n    \"13;setup_id;1529\": 3,\n    \"13;phase_id;1529\": 15,\n    \"13;phase;1529\": \"中間確認会#1\",\n    \"13;variation_id;1529\": 29,\n    \"13;variation;1529\": \"BCS仕様\",\n    \"13;wp_id;1529\": 2,\n    \"13;spec_to_study;1529\": \"最重量\",\n    \"13;status;1529\": \"2.設定完了\",\n    \"13;target;1529\": \"\",\n    \"13;adjusted_target;1529\": null,\n    \"13;design;1529\": null,\n    \"13;judge;1529\": null,\n    \"13;judge_evidence;1529\": null,\n    \"13;auto_judge_id;1529\": 2,\n    \"13;manager_approval;1529\": null,\n    \"13;manager_approval_comment;1529\": null,\n    \"13;date;1529\": \"2024-11-21\",\n    \"13;note;1529\": \"\",\n    \"13;priority;1529\": \"\",\n    \"13;employee_number;1529\": \"N151364\",\n    \"13;detail_and_output;1529\": \"\",\n    \"13;tool;1529\": \"\",\n    \"13;responsible;1529\": \"\",\n    \"13;period;1529\": \"\",\n    \"13;flag_primary;1529\": 0,\n    \"13;section_code;1529\": \"US2\",\n    \"13;employee_name;1529\": \"章博 豊福\",\n    \"13;r_parameter_id;1529\": 10008,\n    \"13;performance;1529\": \"動力\",\n    \"13;design_item_1;1529\": \"【魅力】Vmax性能\",\n    \"13;design_item_2;1529\": \"最高速\",\n    \"13;design_item_3;1529\": \"Vmax車速\",\n    \"13;r_unit;1529\": \"[kph]\",\n    \"13;auto_judge_type;1529\": \"以上\",\n    \"13;auto_judge_result;1529\": \"\",\n    \"標高　時系列\": \"0, 0, 0, 0\",\n    \"勾配　時系列\": \"0, 0, 0, 0\",\n    \"勾配\": \"0\",\n    \"モードセレクト(例 D:Standard)\": \"D:Standard\",\n    \"走行パターン\": \"Vmax\",\n    \"Test Weight\": \"\",\n    \"Towing\": \"\",\n    \"走行時間\": \"100\",\n    \"走行距離\": \"\",\n    \"標高\": \"0\",\n    \"外気温\": \"35\",\n    \"LT　水温\": \"40\",\n    \"HT　水温\": \"80\",\n    \"APO\": \"100\",\n    \"空調条件\": \"ALL Off\",\n    \"Test前条件\": \"-\",\n    \"Initial SOC\": \"65\",\n    \"BAT初期温度\": \"35\",\n    \"ePT入口水温\": \"80\",\n    \"冷却水流量\": \"-\",\n    \"情報元\": \"-\",\n    \"BAT SOR\": \"BOL\",\n    \"BAT SOH\": \"BOL\",\n    \"submodel\": null,\n    \"風速　時系列\": null,\n    \"Cabin_AC_req\": null,\n    \"COLD_sw\": null,\n    \"VSPcontrolFlag\": null,\n    \"ImitationIGOff_SW\": null,\n    \"Cooling_Heating_SW\": null,\n    \"flag_primary\": \"詳細性能\",\n    \"13;target_selected;1529\": false,\n    \"timeseries_selected\": true\n  }\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rlist/list-r-list-parameters/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rlist",
+                "list-r-list-parameters",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Project R-List Parameters (Filter by WP)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"projects_key\": [\n      \"13\"\n    ],\n    \"project\": \"[J32V]\",\n    \"destination\": \"JPN\",\n    \"drivetrain\": \"4WD\",\n    \"powertrain\": \"HEV\",\n    \"lot\": \"Pre-Pro\",\n    \"phase\": \"中間確認会#1\",\n    \"variation\": \"Kick off仕様①\",\n    \"wp\": [\n      \"4WD\"\n    ]\n  }\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rlist/parameter/get-data/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rlist",
+                "parameter",
+                "get-data",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Rlist Parameter Get Data",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\n  {\n    \"projects_key\": [\n      \"14\"\n    ],\n    \"project\": \"[J32V]\",\n    \"destination\": \"JPN\",\n    \"drivetrain\": \"2WD\",\n    \"powertrain\": \"HEV\",\n    \"lot\": \"Pre-Pro\",\n    \"phase\": \"PTシステムレビュー#1\",\n    \"wp\": [\n      \"動力\"\n    ]\n  }\n]",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rlist/parameter/get-data/",
+                  "protocol": "http",
+                  "host": [
+                    "127",
+                    "0",
+                    "0",
+                    "1"
+                  ],
+                  "port": "8000",
+                  "path": [
+                    "{{SUB_PATH}}",
+                    "api",
+                    "rlist",
+                    "parameter",
+                    "get-data",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": ""
+            },
+            {
+              "name": "Rlist Parameter Get Data",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\n  {\n    \"projects_key\": [\n      \"13\"\n    ],\n    \"project\": \"[J32V]\",\n    \"destination\": \"JPN\",\n    \"drivetrain\": \"4WD\",\n    \"powertrain\": \"HEV\",\n    \"lot\": \"Pre-Pro\",\n    \"phase\": \"中間確認会#1\",\n    \"variation\": \"Kick off仕様①\",\n    \"wp\": [\n      \"4WD\"\n    ]\n  }\n]",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rlist/parameter/get-data/",
+                  "protocol": "http",
+                  "host": [
+                    "127",
+                    "0",
+                    "0",
+                    "1"
+                  ],
+                  "port": "8000",
+                  "path": [
+                    "{{SUB_PATH}}",
+                    "api",
+                    "rlist",
+                    "parameter",
+                    "get-data",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            },
+            {
+              "name": "Rlist Parameter Get Data",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\n  {\n    \"projects_key\": [\n      \"13\"\n    ],\n    \"project\": \"[J32V]\",\n    \"destination\": \"JPN\",\n    \"drivetrain\": \"4WD\",\n    \"powertrain\": \"HEV\",\n    \"lot\": \"Pre-Pro\",\n    \"phase\": \"中間確認会#1\",\n    \"variation\": \"Kick off仕様①\",\n    \"wp\": [\n      \"4WD\"\n    ]\n  }\n]",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rlist/parameter/get-data/",
+                  "protocol": "http",
+                  "host": [
+                    "127",
+                    "0",
+                    "0",
+                    "1"
+                  ],
+                  "port": "8000",
+                  "path": [
+                    "{{SUB_PATH}}",
+                    "api",
+                    "rlist",
+                    "parameter",
+                    "get-data",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "Add Project R-List Parameters",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"project_id\": \"13\",\n  \"phase_id\": \"15\",\n  \"variation_id\": \"30\",\n  \"setup_id\": 3,\n  \"data\": [\n    {\n      \"r_parameter_id\": 70034,\n      \"flag_primary\": \"主要性能\"\n    },\n    {\n      \"r_parameter_id\": 70035,\n      \"flag_primary\": \"詳細性能\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rlist/parameter/add/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rlist",
+                "parameter",
+                "add",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Edit Project R-List Parameters",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"project_id\": \"14\",\n  \"phase_id\": \"15\",\n  \"variation_id\": \"30\",\n  \"data\": [\n    {\n      \"r_parameter_id_old\": \"1\",\n      \"r_parameter_id_new\": \"2\",\n      \"flag_primary\": \"主要性能\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rlist/parameter/edit/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rlist",
+                "parameter",
+                "edit",
+                ""
+              ]
+            },
+            "description": "575 WOT_Torque_Curve (標高別) => 754 Max_Power _1  \n572 Type => 755 Max_Torque_1"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Project R-List Parameters",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"project_id\": \"13\",\n  \"phase_id\": \"15\",\n  \"variation_id\": \"30\",\n  \"r_parameter_id\": [\n    2\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rlist/parameter/delete/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rlist",
+                "parameter",
+                "delete",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints quản lý và tra cứu tham số R-List theo dự án, phase, variation và WP."
+    },
+    {
+      "name": "02 - Master R-Parameters",
+      "item": [
+        {
+          "name": "Get All Master R-Parameters",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rlist/r-parameter/get-data/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rlist",
+                "r-parameter",
+                "get-data",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Batch Update & Order Master R-Parameters",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"add\": [\n    {\n      \"wp_id\": 12,\n      \"wp\": \"HV BATT\",\n      \"性能\": \"performance_1\",\n      \"設計項目（大）\": \"design_item_1_1\",\n      \"設計項目（小）\": \"design_item_2_1\",\n      \"目標性能\": \"design_item_3_1\",\n      \"Unit\": \"unit_1\"\n    }\n  ],\n  \"update\": [\n    {\n      \"r_parameter_id\": 2,\n      \"wp_id\": 12,\n      \"wp\": \"HV BATT\",\n      \"性能\": \"performance_1\",\n      \"設計項目（大）\": \"design_item_1_1\",\n      \"設計項目（小）\": \"design_item_2_1\",\n      \"目標性能\": \"design_item_3_1\",\n      \"Unit\": \"unit_1\"\n    }\n  ],\n  \"list_id_order\": [\n    1,\n    200002,\n    200001,\n    9999,\n    200003,\n    3,\n    2,\n    4,\n    90002,\n    90003,\n    90004,\n    90001,\n    10019,\n    10018,\n    210001,\n    210004,\n    210005,\n    210006,\n    19999,\n    10020,\n    10016,\n    10008,\n    10003,\n    10004,\n    10005,\n    10006,\n    10007,\n    10017,\n    10002,\n    10001,\n    10009,\n    10011,\n    10012,\n    10013,\n    10014,\n    10015,\n    10010,\n    120004,\n    210002,\n    30019,\n    270024,\n    270001,\n    270002,\n    270003,\n    270004,\n    270005,\n    270006,\n    270007,\n    70001,\n    270008,\n    70002,\n    270009,\n    70003,\n    270010,\n    70004,\n    270011,\n    70005,\n    270013,\n    70007,\n    270014,\n    70008,\n    270015,\n    70009,\n    270016,\n    70030,\n    270018,\n    70032,\n    270017,\n    70031,\n    270019,\n    70033,\n    270020,\n    70034,\n    270021,\n    70035,\n    270022,\n    70036,\n    270023,\n    70037,\n    270012,\n    70006,\n    70019,\n    70024,\n    70025,\n    70026,\n    70027,\n    70028,\n    70029,\n    70023,\n    70022,\n    70021,\n    70020,\n    70010,\n    70011,\n    70012,\n    70013,\n    70014,\n    70015,\n    70016,\n    70017,\n    70018,\n    79999,\n    210003,\n    240002,\n    40007,\n    40005,\n    40006,\n    40008,\n    40004,\n    40001,\n    40002,\n    40003,\n    240001,\n    40013,\n    40010,\n    40011,\n    40012,\n    40014,\n    40015,\n    40016,\n    40017,\n    240003,\n    40009,\n    240025,\n    240007,\n    240023,\n    40018,\n    240006,\n    240005,\n    240004,\n    240010,\n    240024,\n    240012,\n    240015,\n    240016,\n    240017,\n    240018,\n    240019,\n    240020,\n    240021,\n    240022,\n    240014,\n    40019,\n    40020,\n    49999,\n    40021,\n    40022,\n    240008,\n    40033,\n    40032,\n    40031,\n    40030,\n    40029,\n    40028,\n    40027,\n    40026,\n    40025,\n    40024,\n    40023,\n    240009,\n    220002,\n    69999,\n    60018,\n    60017,\n    60006,\n    220020,\n    220015,\n    60016,\n    220030,\n    60001,\n    60002,\n    60003,\n    60004,\n    60005,\n    220003,\n    60007,\n    220021,\n    60008,\n    220022,\n    60009,\n    220023,\n    220016,\n    60010,\n    220024,\n    220017,\n    60011,\n    220025,\n    220018,\n    60012,\n    220026,\n    220019,\n    60013,\n    220027,\n    60014,\n    220028,\n    60015,\n    220029,\n    220004,\n    220012,\n    220006,\n    220005,\n    220031,\n    220033,\n    220039,\n    220040,\n    220041,\n    220042,\n    220046,\n    220043,\n    220044,\n    220045,\n    220051,\n    220007,\n    220008,\n    220009,\n    220011,\n    220013,\n    220014,\n    220010,\n    100004,\n    100005,\n    100002,\n    100001,\n    100003,\n    120001,\n    120002,\n    120003,\n    22047,\n    220047,\n    220048,\n    220049,\n    220050,\n    110003,\n    110002,\n    110007,\n    110005,\n    110004,\n    110006,\n    110001,\n    220001,\n    55008,\n    55007,\n    55006,\n    55005,\n    55001,\n    55003,\n    55002,\n    55000,\n    55004,\n    55009,\n    55013,\n    55011,\n    55010,\n    55019,\n    55018,\n    55017,\n    55020,\n    55015,\n    55014,\n    55012,\n    55016,\n    50001,\n    51023,\n    51024,\n    51022,\n    51021,\n    51063,\n    51030,\n    51028,\n    51029,\n    51031,\n    51036,\n    51033,\n    51034,\n    51035,\n    51032,\n    51037,\n    51038,\n    51039,\n    51040,\n    51041,\n    51042,\n    51043,\n    51045,\n    51044,\n    51025,\n    51026,\n    50004,\n    51027,\n    51017,\n    51082,\n    51019,\n    50999,\n    51000,\n    51001,\n    51002,\n    51003,\n    51004,\n    51005,\n    51006,\n    51007,\n    51020,\n    51008,\n    51010,\n    51013,\n    51068,\n    51067,\n    51011,\n    51014,\n    51012,\n    51015,\n    51072,\n    51016,\n    51018,\n    50031,\n    51009,\n    51048,\n    51046,\n    51047,\n    51049,\n    51050,\n    51051,\n    51052,\n    51053,\n    51054,\n    51055,\n    51073,\n    50021,\n    51074,\n    50022,\n    51075,\n    50023,\n    51076,\n    50024,\n    51077,\n    50025,\n    51078,\n    50026,\n    51079,\n    50027,\n    51080,\n    50028,\n    51081,\n    50029,\n    51083,\n    50043,\n    50110,\n    50108,\n    50109,\n    51087,\n    50075,\n    50113,\n    50112,\n    50111,\n    51088,\n    51090,\n    50016,\n    51089,\n    51091,\n    50012,\n    51092,\n    50008,\n    51071,\n    51070,\n    51069,\n    51056,\n    51058,\n    51057,\n    50014,\n    51059,\n    51060,\n    51061,\n    51062,\n    51064,\n    51065,\n    51066,\n    50030,\n    50032,\n    50033,\n    50034,\n    50035,\n    50036,\n    50037,\n    50038,\n    50044,\n    50074,\n    50072,\n    50041,\n    50042,\n    50046,\n    50047,\n    50048,\n    50049,\n    50050,\n    50051,\n    50040,\n    50052,\n    50002,\n    50003,\n    50005,\n    50006,\n    50007,\n    50009,\n    50010,\n    50011,\n    50013,\n    50015,\n    50017,\n    50018,\n    50019,\n    50053,\n    50045,\n    50055,\n    50087,\n    50088,\n    50089,\n    50090,\n    50091,\n    50054,\n    50093,\n    50094,\n    50095,\n    50096,\n    50097,\n    50098,\n    50099,\n    50100,\n    50101,\n    50102,\n    50103,\n    50104,\n    50105,\n    50106,\n    50107,\n    50086,\n    50084,\n    50092,\n    50082,\n    50056,\n    50057,\n    50058,\n    50083,\n    50060,\n    50061,\n    50062,\n    50063,\n    50064,\n    50065,\n    50066,\n    50059,\n    50068,\n    50067,\n    50078,\n    50077,\n    50071,\n    50070,\n    50069,\n    20005,\n    20001,\n    20002,\n    20003,\n    20004,\n    20006,\n    20008,\n    20009,\n    20010,\n    20007,\n    20012,\n    20011,\n    30015,\n    30014,\n    30009,\n    30010,\n    30025,\n    30011,\n    30016,\n    30017,\n    30008,\n    30007,\n    30006,\n    30005,\n    30004,\n    30003,\n    30002,\n    30001,\n    30026,\n    30024,\n    30027,\n    30022,\n    30021,\n    30020,\n    30018,\n    30023,\n    30012,\n    30013,\n    30029,\n    30030,\n    30031,\n    30032,\n    30034,\n    30036,\n    30035,\n    30033,\n    30028,\n    30037,\n    80001,\n    80002,\n    57018,\n    57017,\n    57019,\n    57020,\n    57016,\n    57006,\n    57012,\n    57014,\n    57008,\n    57002,\n    57010,\n    57004,\n    57024,\n    57021,\n    57022,\n    57015,\n    57009,\n    57003,\n    57013,\n    57007,\n    57001,\n    57011,\n    57025,\n    57005,\n    57023,\n    139999,\n    130025,\n    130024,\n    130023,\n    130022,\n    130021,\n    130020,\n    130019,\n    130018,\n    130017,\n    130016,\n    130015,\n    130014,\n    130011,\n    130010,\n    130009,\n    130008,\n    130007,\n    130006,\n    130005,\n    130004,\n    130003,\n    130002,\n    130001,\n    130000,\n    130013,\n    130012,\n    140000,\n    140001,\n    150000,\n    150001,\n    280000,\n    280001,\n    290000,\n    290001\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rlist/r-parameter/get-data/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rlist",
+                "r-parameter",
+                "get-data",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Lỗi",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"add\": [\n    {\n      \"wp_id\": 1,\n      \"wp\": \"燃費電費\",\n      \"性能\": \"コスト\",\n      \"設計項目（大）\": \"111\",\n      \"設計項目（小）\": \"a\",\n      \"目標性能\": \"a\",\n      \"Unit\": \"G\"\n    }\n  ],\n  \"update\": [\n    {\n      \"r_parameter_id\": 290000,\n      \"wp_id\": 242,\n      \"wp\": \"コスト\",\n      \"性能\": \"コスト\",\n      \"設計項目（大）\": \"適用開発（ギア新設）\",\n      \"設計項目（小）\": \"\",\n      \"目標性能\": \"\",\n      \"Unit\": \"￥\"\n    },\n    {\n      \"r_parameter_id\": 290001,\n      \"wp_id\": 242,\n      \"wp\": \"コスト\",\n      \"性能\": \"ET\",\n      \"設計項目（大）\": \"MOT トルクUP1\",\n      \"設計項目（小）\": \"\",\n      \"目標性能\": \"\",\n      \"Unit\": \"￥\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rlist/r-parameter/get-data/",
+                  "protocol": "http",
+                  "host": [
+                    "127",
+                    "0",
+                    "0",
+                    "1"
+                  ],
+                  "port": "8000",
+                  "path": [
+                    "{{SUB_PATH}}",
+                    "api",
+                    "rlist",
+                    "r-parameter",
+                    "get-data",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "Set Master R-Parameter Active / Inactive",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"is_active\": false,\n  \"items\": [\n    {\n      \"id\": 1,\n      \"reason\": \"廃止予定のため\"\n    },\n    {\n      \"id\": 2,\n      \"reason\": \"重複データのため\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rlist/r-parameter/set-active/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rlist",
+                "r-parameter",
+                "set-active",
+                ""
+              ]
+            },
+            "description": "Endpoint từ codebase SPDM (views.r_parameter_set_active) cập nhật trạng thái kích hoạt/ngưng sử dụng cho Master R-Parameters (is_active) và lưu lịch sử r_parameter_history."
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints quản lý danh mục Master R-Parameter (định nghĩa tham số, thứ tự, kích hoạt/ngưng dùng)."
+    },
+    {
+      "name": "03 - R-List Value Management",
+      "item": [
+        {
+          "name": "Update R-List Values (Standard Values)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"14\": \n    [\n        {\n        \"r_parameter_id\": 1,\n        \"variation_id\": 48,\n        \"phase_id\": 3,\n        \"update_approval\": 0,\n        \"data\": {\n            \"target\": \"20.0\",\n            \"設計値\": \"1234567\",\n            \"判断\": \"OK\",\n            \"判断エビデンス資料\": \"燃動連#0で、CPS/PD交え合意後update予定\",\n            \"主管承認\": \"鈴木-S\",\n            \"主管承認コメント\": \"\",\n            \"メモ\": \"no content\",\n            \"優先度\": \"High\",\n            \"担当者\": \"\",\n            \"検討内容と必要なOutput\": \"\",\n            \"必要なOutputの計算方法(ツール)\": \"\",\n            \"必要なOutputの責任者(責任者/実行者)\": \"\",\n            \"期日\": \"\",\n            \"条件\": \"より大きい\",\n            \"responsible_employee\": \"\",\n            \"need_to_shounin\": 1,\n            \"manager_comment\": \"\",\n            \"manager_number\": \"admin\"\n        }\n        }\n    ]\n  }\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rlist/update-r-list-value/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rlist",
+                "update-r-list-value",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update R-List Values (With Manager & Approval Flag)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"14\": [\n    {\n      \"r_parameter_id\": 30001,\n      \"variation_id\": 48,\n      \"phase_id\": 3,\n      \"data\": {\n        \"target\": \"999999\",\n        \"条件\": \"未定\",\n        \"設計値\": \"888888\",\n        \"判断\": \"OK\",\n        \"判断エビデンス資料\": \"\",\n        \"主管承認\": \"木村-S\",\n        \"主管承認コメント\": \"J32V 25MC流用でOBD診断EMを満足出来る見込み。最新動作点での診断時間確保も問題無し。\",\n        \"メモ\": \"\",\n        \"need_to_shounin\": 1,\n        \"manager_comment\": \"internal manager comment\",\n        \"manager_number\": \"admin\"\n      }\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rlist/update-r-list-value/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rlist",
+                "update-r-list-value",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints cập nhật giá trị chỉ tiêu, thiết kế, phán đoán và thông tin phê duyệt cho R-List."
+    },
+    {
+      "name": "04 - Summary & Statement",
+      "item": [
+        {
+          "name": "Get R-List Summary by Query Params",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rlist/r-summary/?project_id=14&phase_id=3&variation_id=48",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rlist",
+                "r-summary",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "project_id",
+                  "value": "14"
+                },
+                {
+                  "key": "phase_id",
+                  "value": "3"
+                },
+                {
+                  "key": "variation_id",
+                  "value": "48"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Display R-List Summary (By Project Criteria)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"projects_key\": [\n    \"25\"\n  ],\n  \"project\": \"P13C\",\n  \"destination\": \"EUR\",\n  \"drivetrain\": \"2WD\",\n  \"powertrain\": \"HEV\",\n  \"lot\": \"Pre-Pro\",\n  \"phase\": \"EKO事前\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rlist/display-r-summary/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rlist",
+                "display-r-summary",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update R-List Summary Status",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"project_id\": 14,\n    \"phase_id\": 3,\n    \"wp_id\": 1,\n    \"manager_approval\": null,\n    \"manager_approval_comment\": null\n  }\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rlist/update-r-summary/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rlist",
+                "update-r-summary",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update R-List Statement",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"project_id\": 14,\n  \"phase_id\": 3,\n  \"statement\": \"KNT21617 Trong depzai\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rlist/update-r-statement/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rlist",
+                "update-r-statement",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get R Parameter History - V1",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rlist/v1/parameter-history/?project_id={{project_id}}&r_parameter_id={{r_parameter_id}}&phase_id={{phase_id}}&variation_id={{variation_id}}",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rlist",
+                "v1",
+                "parameter-history",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "project_id",
+                  "value": "{{project_id}}"
+                },
+                {
+                  "key": "r_parameter_id",
+                  "value": "{{r_parameter_id}}"
+                },
+                {
+                  "key": "phase_id",
+                  "value": "{{phase_id}}"
+                },
+                {
+                  "key": "variation_id",
+                  "value": "{{variation_id}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints xem và cập nhật tổng hợp trạng thái (Summary) và tuyên bố (Statement) của R-List."
+    },
+    {
+      "name": "05 - Approval & Workflow",
+      "item": [
+        {
+          "name": "Get R-List Approval Data",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"project_id\": 14,\n    \"phase_id\": 3,\n    \"variation_id\": 48,\n    \"r_parameter_id\": 30001\n  },\n  {\n    \"project_id\": 14,\n    \"phase_id\": 3,\n    \"variation_id\": 48,\n    \"r_parameter_id\": 10002\n  }\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rlist/approval/get-data/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rlist",
+                "approval",
+                "get-data",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Manager List by WP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"wp\": [\n    \"MOT FAN\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rlist/manager/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rlist",
+                "manager",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Send Email Request Approval",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employee_number\": \"KNT21617\",\n  \"manager_number\": \"KNT21617\",\n  \"project_name\": \"[J32V]\",\n  \"destination\": \"JPN\",\n  \"drivetrain\": \"2WD\",\n  \"lot\": \"Pre-Pro\",\n  \"phase\": \"PTシステムレビュー#1\",\n  \"request\": [],\n  \"approval\": [\n    {\n      \"性能\": \"OBD\",\n      \"設計項目_大\": \"診断成立性\",\n      \"設計項目_小\": \"触媒診断\",\n      \"(Requirement)\": \"定点燃焼継続時間\",\n      \"Unit\": \"mg/km\",\n      \"Status\": \"目標値検討中\",\n      \"Comment\": \"\",\n      \"目標値\": 35,\n      \"条件\": \"以下\",\n      \"考え方\": \"\"\n    },\n    {\n      \"性能\": \"4WD\",\n      \"設計項目_大\": \"診断成立性\",\n      \"設計項目_小\": \"触媒診断\",\n      \"(Requirement)\": \"定点燃焼継続時間\",\n      \"Unit\": \"mg/km\",\n      \"Status\": \"目標値検討中\",\n      \"Comment\": \"\",\n      \"目標値\": 55,\n      \"条件\": \"以下\",\n      \"考え方\": \"\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rlist/send-mail/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rlist",
+                "send-mail",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Send email",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"manager_number\": \"admin\",\n  \"project_name\": \"[J32V]\",\n  \"destination\": \"JPN\",\n  \"drivetrain\": \"2WD\",\n  \"lot\": \"Pre-Pro\",\n  \"phase\": \"PTシステムレビュー#1\",\n  \"request\": [],\n  \"approval\": {\n    \"employee_number\": \"KNT21617\",\n    \"data\": [\n      {\n        \"性能\": \"動力\",\n        \"設計項目_大\": \"Gp~60km/h\",\n        \"設計項目_小\": \"\",\n        \"(Requirement)\": \"\",\n        \"Unit\": \"G\",\n        \"Status\": \"目標値承認済\",\n        \"Comment\": \"Đồng ý với chú\",\n        \"目標値\": 10,\n        \"条件\": \"以下\",\n        \"考え方\": \"\"\n      }\n    ]\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rlist/send-mail/",
+                  "protocol": "http",
+                  "host": [
+                    "127",
+                    "0",
+                    "0",
+                    "1"
+                  ],
+                  "port": "8000",
+                  "path": [
+                    "{{SUB_PATH}}",
+                    "api",
+                    "rlist",
+                    "send-mail",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "Approve R-List Parameter Values",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"project_id\": 14,\n  \"phase_id\": 3,\n  \"variation_id\": 48,\n  \"approve\": [\n    {\n      \"r_parameter_id\": 30001,\n      \"current_status\": \"rejected\",\n      \"data\": {\n        \"new\": {\n          \"target\": \"350000\",\n          \"条件\": \"未定\",\n          \"設計値\": \"36000\",\n          \"判断\": \"OK\",\n          \"判断エビデンス資料\": \"\",\n          \"主管承認\": \"木村-S\",\n          \"主管承認コメント\": \"J32V 25MC流用でOBD診断EMを満足出来る見込み。最新動作点での診断時間確保も問題無し。\",\n          \"メモ\": \"\",\n          \"employee_number\": \"KNT21617\",\n          \"created_at\": \"2025-12-02T10:31:37\",\n          \"manager_comment\": \"Sep dong y roi nha\"\n        },\n        \"old\": {\n          \"target\": \"35\",\n          \"条件\": \"未定\",\n          \"設計値\": \"35\",\n          \"判断\": \"OK\",\n          \"判断エビデンス資料\": \"\",\n          \"主管承認\": \"木村-S\",\n          \"主管承認コメント\": \"J32V 25MC流用でOBD診断EMを満足出来る見込み。最新動作点での診断時間確保も問題無し。\",\n          \"メモ\": \"\",\n          \"employee_number\": \"KNT16931\",\n          \"date\": \"2025-04-01T00:00:00\"\n        }\n      }\n    }\n  ],\n  \"reject\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rlist/approval/approve/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rlist",
+                "approval",
+                "approve",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Approve",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"project_id\": 14,\n  \"phase_id\": 3,\n  \"variation_id\": 48,\n  \"approve\": [\n    {\n      \"r_parameter_id\": 30001,\n      \"current_status\": \"rejected\",\n      \"data\": {\n        \"new\": {\n          \"target\": \"350000\",\n          \"条件\": \"未定\",\n          \"設計値\": \"36000\",\n          \"判断\": \"OK\",\n          \"判断エビデンス資料\": \"\",\n          \"主管承認\": \"木村-S\",\n          \"主管承認コメント\": \"J32V 25MC流用でOBD診断EMを満足出来る見込み。最新動作点での診断時間確保も問題無し。\",\n          \"メモ\": \"\",\n          \"employee_number\": \"KNT21617\",\n          \"created_at\": \"2025-12-02T10:31:37\",\n          \"manager_comment\": \"Sep dong y roi nha\"\n        },\n        \"old\": {\n          \"target\": \"35\",\n          \"条件\": \"未定\",\n          \"設計値\": \"35\",\n          \"判断\": \"OK\",\n          \"判断エビデンス資料\": \"\",\n          \"主管承認\": \"木村-S\",\n          \"主管承認コメント\": \"J32V 25MC流用でOBD診断EMを満足出来る見込み。最新動作点での診断時間確保も問題無し。\",\n          \"メモ\": \"\",\n          \"employee_number\": \"KNT16931\",\n          \"date\": \"2025-04-01T00:00:00\"\n        }\n      }\n    }\n  ],\n  \"reject\": []\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rlist/approval/approve/",
+                  "protocol": "http",
+                  "host": [
+                    "127",
+                    "0",
+                    "0",
+                    "1"
+                  ],
+                  "port": "8000",
+                  "path": [
+                    "{{SUB_PATH}}",
+                    "api",
+                    "rlist",
+                    "approval",
+                    "approve",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "Reject R-List Parameter Values",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"project_id\": 14,\n  \"phase_id\": 3,\n  \"variation_id\": 48,\n  \"approve\": [],\n  \"reject\": [\n    {\n      \"r_parameter_id\": 30001,\n      \"current_status\": \"approved\",\n      \"data\": {\n        \"new\": {\n          \"target\": \"999999\",\n          \"条件\": \"未定\",\n          \"設計値\": \"888888\",\n          \"判断\": \"OK\",\n          \"判断エビデンス資料\": \"\",\n          \"主管承認\": \"木村-S\",\n          \"主管承認コメント\": \"J32V 25MC流用でOBD診断EMを満足出来る見込み。最新動作点での診断時間確保も問題無し。\",\n          \"manager_comment\": \"Sep hoan toan dong y hahhaa\",\n          \"メモ\": \"\",\n          \"employee_number\": \"KNT21617\",\n          \"created_at\": \"2025-12-02T17:58:48\"\n        },\n        \"old\": {\n          \"target\": \"350000\",\n          \"条件\": \"未定\",\n          \"設計値\": \"36000\",\n          \"判断\": \"OK\",\n          \"判断エビデンス資料\": \"\",\n          \"主管承認\": \"木村-S\",\n          \"主管承認コメント\": \"J32V 25MC流用でOBD診断EMを満足出来る見込み。最新動作点での診断時間確保も問題無し。\",\n          \"メモ\": \"\",\n          \"employee_number\": \"KNT21617\",\n          \"date\": \"2025-12-02T10:31:37\"\n        }\n      }\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rlist/approval/approve/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rlist",
+                "approval",
+                "approve",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Assigned Manager for R-List Parameters",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"project_id\": 14,\n  \"phase_id\": 3,\n  \"variation_id\": 48,\n  \"r_parameter_id\": [\n    1,\n    30001\n  ],\n  \"manager_number\": \"KNT21617\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rlist/update-manager/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rlist",
+                "update-manager",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints luồng phê duyệt: lấy dữ liệu duyệt, danh sách manager, gửi mail, phê duyệt/từ chối và gán manager."
+    },
+    {
+      "name": "90 - Legacy / Not in current routes",
+      "item": [
+        {
+          "name": "Export R-List (Legacy Download)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"projects_key\": [\n      \"14\"\n    ],\n    \"project\": \"[J32V]\",\n    \"destination\": \"JPN\",\n    \"drivetrain\": \"2WD\",\n    \"powertrain\": \"HEV\",\n    \"lot\": \"Pre-Pro\",\n    \"phase\": \"中間確認会#1\"\n  }\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rlist/export-rlist/download/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rlist",
+                "export-rlist",
+                "download",
+                ""
+              ]
+            },
+            "description": "Endpoint /api/rlist/export-rlist/download/ không còn tồn tại trong URL routing hiện tại của backend SPDM."
+          },
+          "response": []
+        }
+      ],
+      "description": "Các endpoint không còn trong URL configuration hiện tại của codebase SPDM."
+    }
+  ],
+  "variable": [
+    {
+      "key": "SUB_PATH",
+      "value": "",
+      "description": "Sub path prefix configured in Django settings (e.g., '' hoặc 'spdm/')"
+    }
+  ]
+}

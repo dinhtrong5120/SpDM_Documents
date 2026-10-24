@@ -1,0 +1,3164 @@
+{
+  "info": {
+    "_postman_id": "0076ea37-e43f-4bd5-a180-f56748d82280",
+    "name": "06 Scenario list (Organized)",
+    "description": "Organized against the current SPDM frontend/backend source. Requests are static examples and were not executed.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "23416820",
+    "_collection_link": "https://go.postman.co/collection/23416820-0076ea37-e43f-4bd5-a180-f56748d82280?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "01 - Scenario List & Study Setup",
+      "item": [
+        {
+          "name": "Get Scenario Parameters — 中間確認会#1",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"project\": \"[J32V]\",\n    \"destination\": \"JPN\",\n    \"powertrain\": \"HEV\",\n    \"drivertrain\": \"2WD\",\n    \"lot\": \"Pre-Pro\",\n    \"phase\": \"中間確認会#1\",\n    \"page_number\": 1,\n    \"number_of_page\": 50\n  }\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/list-scenario-parameters/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "list-scenario-parameters",
+                ""
+              ]
+            },
+            "description": "Payload normalized from the current frontend call site (drivertrain and pagination fields)."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Scenario Parameters — PTシステムレビュー#1",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"project\": \"[J32V]\",\n    \"destination\": \"JPN\",\n    \"powertrain\": \"HEV\",\n    \"drivertrain\": \"2WD\",\n    \"lot\": \"Pre-Pro\",\n    \"phase\": \"PTシステムレビュー#1\",\n    \"page_number\": 1,\n    \"number_of_page\": 50\n  }\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/list-scenario-parameters/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "list-scenario-parameters",
+                ""
+              ]
+            },
+            "description": "Second useful payload variant retained from the original collection and normalized to the current frontend contract."
+          },
+          "response": []
+        },
+        {
+          "name": "Get New Scenario Setup Options",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"projects_key\": [\n      \"14\"\n    ],\n    \"project\": \"[J32V]\",\n    \"destination\": \"JPN\",\n    \"drivetrain\": \"2WD\",\n    \"powertrain\": \"HEV\",\n    \"lot\": \"Pre-Pro\",\n    \"phase\": \"PTシステムレビュー#1\",\n    \"variation\": [\n      \"提案仕様\"\n    ]\n  }\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/scenario-shinki/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "scenario-shinki",
+                ""
+              ]
+            },
+            "description": "Added the variation array required by the current frontend/backend contract."
+          },
+          "response": [
+            {
+              "name": "Scenario Shinki",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\n  {\n    \"projects_key\": [\n      \"14\"\n    ],\n    \"project\": \"[J32V]\",\n    \"destination\": \"JPN\",\n    \"drivetrain\": \"2WD\",\n    \"powertrain\": \"HEV\",\n    \"lot\": \"Pre-Pro\",\n    \"phase\": \"PTシステムレビュー#1\",\n    \"variation\": [\n      \"提案仕様\"\n    ]\n  }\n]",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/scenario-shinki/",
+                  "protocol": "http",
+                  "host": [
+                    "127",
+                    "0",
+                    "0",
+                    "1"
+                  ],
+                  "port": "8000",
+                  "path": [
+                    "{{SUB_PATH}}",
+                    "api",
+                    "scenario",
+                    "scenario-shinki",
+                    ""
+                  ]
+                },
+                "description": "Added the variation array required by the current frontend/backend contract."
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "Get Selectable Base Studies",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"projects_key\": [\n      \"14\"\n    ],\n    \"project\": \"[J32V]\",\n    \"destination\": \"JPN\",\n    \"drivetrain\": \"2WD\",\n    \"powertrain\": \"HEV\",\n    \"lot\": \"Pre-Pro\",\n    \"phase\": \"PTシステムレビュー#1\",\n    \"variation\": [\n      \"提案仕様\"\n    ],\n    \"type\": \"SE_list\"\n  }\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/select-scenario-shinki/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "select-scenario-shinki",
+                ""
+              ]
+            },
+            "description": "Current frontend sends an array and defaults type to SE_list."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Scenario Study",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"params\": [14, 3, 48, \"Study003\", \"燃費\", \"WLTC 3Phase\", \"WLTC JPN L.M.H 23degC\", \"GRMVRSTC_01_VELOCITY_CYCLE_001_WLTC_woExHi\", \"009_CLW_2WD_WLTP_MotScaling_v2\"],\n  \"submodels\": [\n    \"GRTRNCARBODY_LEVELA_002_CLW\",\n    \"EM_LEVELA_000_EM_Lmot_expscal_v1_QHBL_Opt\",\n    \"EM_LEVELA_000_V1_DUMMY\",\n    null,\n    null,\n    \"BAT_DAMMY_CALC_IN_MATLAB_002_BEV_LFP_keiEV\"\n  ],\n  \"variables\": [\n    [\n      {\n        \"102\": \"1970\"\n      },\n      {\n        \"106\": \"0.32\"\n      },\n      {\n        \"107\": \"154.6\"\n      },\n      {\n        \"108\": \"-0.282\"\n      },\n      {\n        \"109\": \"0.05140\"\n      }\n    ],\n    [\n      {\n        \"400\": \"QH S(SiC)\"\n      },\n      {\n        \"403\": \"315\"\n      },\n      {\n        \"404\": \"-220\"\n      },\n      {\n        \"405\": \"120@300V\"\n      },\n      {\n        \"406\": \"-70\"\n      },\n      {\n        \"409\": \"0.031\"\n      }\n    ],\n    [\n      {\n        \"407\": \"FR MOT出力 電圧ごとのN-Tカーブ(第１～4象限)- 車両要求特性__[J32V]_JPN_4WD_中間確認会#1_Kick off仕様①\"\n      }\n    ],\n    [\n      {\n        \"500\": \"N/A\"\n      },\n      {\n        \"503\": \"132\"\n      },\n      {\n        \"504\": \"N/A\"\n      },\n      {\n        \"505\": \"54@283V\"\n      },\n      {\n        \"506\": \"N/A\"\n      },\n      {\n        \"509\": \"N/A\"\n      }\n    ],\n    [\n      {\n        \"507\": \"RR MOT/INV損失ノミナル 350V_N/A_[J32V]_JPN_2WD_中間確認会#2_H仕様(BAT96)\"\n      }\n    ],\n    [\n      {\n        \"410\": \"8.386\"\n      },\n      {\n        \"412\": \"0.0024 \"\n      }\n    ],\n    [\n      {\n        \"411\": \"【GB】FR_損失特性_002\"\n      }\n    ],\n    [\n      {\n        \"510\": \"10.437\"\n      },\n      {\n        \"512\": \"N/A\"\n      }\n    ],\n    [\n      {\n        \"511\": \"【GB】RR_損失特性_001\"\n      }\n    ],\n    [\n      {\n        \"600\": \"提出済\"\n      },\n      {\n        \"602\": \"88\"\n      },\n      {\n        \"650\": null\n      }\n    ],\n    []\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/scenario-shinki-add-study/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "scenario-shinki-add-study",
+                ""
+              ]
+            },
+            "description": "Original detailed sample payload retained; the current backend reads params, submodels and variables."
+          },
+          "response": [
+            {
+              "name": "Test loi 1",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"params\": [14, 3, 48, \"Study003\", \"燃費\", \"WLTC 3Phase\", \"WLTC JPN L.M.H 23degC\", \"GRMVRSTC_01_VELOCITY_CYCLE_001_WLTC_woExHi\", \"009_CLW_2WD_WLTP_MotScaling_v2\"],\n  \"submodels\": [\n    \"GRTRNCARBODY_LEVELA_002_CLW\",\n    \"EM_LEVELA_000_EM_Lmot_expscal_v1_QHBL_Opt\",\n    \"EM_LEVELA_000_V1_DUMMY\",\n    null,\n    null,\n    \"BAT_DAMMY_CALC_IN_MATLAB_002_BEV_LFP_keiEV\"\n  ],\n  \"variables\": [\n    [\n      {\n        \"102\": \"1970\"\n      },\n      {\n        \"106\": \"0.32\"\n      },\n      {\n        \"107\": \"154.6\"\n      },\n      {\n        \"108\": \"-0.282\"\n      },\n      {\n        \"109\": \"0.05140\"\n      }\n    ],\n    [\n      {\n        \"400\": \"QH S(SiC)\"\n      },\n      {\n        \"403\": \"315\"\n      },\n      {\n        \"404\": \"-220\"\n      },\n      {\n        \"405\": \"120@300V\"\n      },\n      {\n        \"406\": \"-70\"\n      },\n      {\n        \"409\": \"0.031\"\n      }\n    ],\n    [\n      {\n        \"407\": \"FR MOT出力 電圧ごとのN-Tカーブ(第１～4象限)- 車両要求特性__[J32V]_JPN_4WD_中間確認会#1_Kick off仕様①\"\n      }\n    ],\n    [\n      {\n        \"500\": \"N/A\"\n      },\n      {\n        \"503\": \"132\"\n      },\n      {\n        \"504\": \"N/A\"\n      },\n      {\n        \"505\": \"54@283V\"\n      },\n      {\n        \"506\": \"N/A\"\n      },\n      {\n        \"509\": \"N/A\"\n      }\n    ],\n    [\n      {\n        \"507\": \"RR MOT/INV損失ノミナル 350V_N/A_[J32V]_JPN_2WD_中間確認会#2_H仕様(BAT96)\"\n      }\n    ],\n    [\n      {\n        \"410\": \"8.386\"\n      },\n      {\n        \"412\": \"0.0024 \"\n      }\n    ],\n    [\n      {\n        \"411\": \"【GB】FR_損失特性_002\"\n      }\n    ],\n    [\n      {\n        \"510\": \"10.437\"\n      },\n      {\n        \"512\": \"N/A\"\n      }\n    ],\n    [\n      {\n        \"511\": \"【GB】RR_損失特性_001\"\n      }\n    ],\n    [\n      {\n        \"600\": \"提出済\"\n      },\n      {\n        \"602\": \"88\"\n      },\n      {\n        \"650\": null\n      }\n    ],\n    []\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/scenario-shinki-add-study/",
+                  "protocol": "http",
+                  "host": [
+                    "127",
+                    "0",
+                    "0",
+                    "1"
+                  ],
+                  "port": "8000",
+                  "path": [
+                    "{{SUB_PATH}}",
+                    "api",
+                    "scenario",
+                    "scenario-shinki-add-study",
+                    ""
+                  ]
+                },
+                "description": "Original detailed sample payload retained; the current backend reads params, submodels and variables."
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            },
+            {
+              "name": "Test loi loi2loi",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"params\": [14, 3, 48, \"Study003\", \"燃費\", \"WLTC 3Phase\", \"WLTC JPN L.M.H 23degC\", \"GRMVRSTC_01_VELOCITY_CYCLE_001_WLTC_woExHi\", \"009_CLW_2WD_WLTP_MotScaling_v2\"],\n  \"submodels\": [\n    \"GRTRNCARBODY_LEVELA_002_CLW\",\n    \"EM_LEVELA_000_EM_Lmot_expscal_v1_QHBL_Opt\",\n    \"EM_LEVELA_000_V1_DUMMY\",\n    null,\n    null,\n    \"BAT_DAMMY_CALC_IN_MATLAB_002_BEV_LFP_keiEV\"\n  ],\n  \"variables\": [\n    [\n      {\n        \"102\": \"1970\"\n      },\n      {\n        \"106\": \"0.32\"\n      },\n      {\n        \"107\": \"154.6\"\n      },\n      {\n        \"108\": \"-0.282\"\n      },\n      {\n        \"109\": \"0.05140\"\n      }\n    ],\n    [\n      {\n        \"400\": \"QH S(SiC)\"\n      },\n      {\n        \"403\": \"315\"\n      },\n      {\n        \"404\": \"-220\"\n      },\n      {\n        \"405\": \"120@300V\"\n      },\n      {\n        \"406\": \"-70\"\n      },\n      {\n        \"409\": \"0.031\"\n      }\n    ],\n    [\n      {\n        \"407\": \"FR MOT出力 電圧ごとのN-Tカーブ(第１～4象限)- 車両要求特性__[J32V]_JPN_4WD_中間確認会#1_Kick off仕様①\"\n      }\n    ],\n    [\n      {\n        \"500\": \"N/A\"\n      },\n      {\n        \"503\": \"132\"\n      },\n      {\n        \"504\": \"N/A\"\n      },\n      {\n        \"505\": \"54@283V\"\n      },\n      {\n        \"506\": \"N/A\"\n      },\n      {\n        \"509\": \"N/A\"\n      }\n    ],\n    [\n      {\n        \"507\": \"RR MOT/INV損失ノミナル 350V_N/A_[J32V]_JPN_2WD_中間確認会#2_H仕様(BAT96)\"\n      }\n    ],\n    [\n      {\n        \"410\": \"8.386\"\n      },\n      {\n        \"412\": \"0.0024 \"\n      }\n    ],\n    [\n      {\n        \"411\": \"【GB】FR_損失特性_002\"\n      }\n    ],\n    [\n      {\n        \"510\": \"10.437\"\n      },\n      {\n        \"512\": \"N/A\"\n      }\n    ],\n    [\n      {\n        \"511\": \"【GB】RR_損失特性_001\"\n      }\n    ],\n    [\n      {\n        \"600\": \"提出済\"\n      },\n      {\n        \"602\": \"88\"\n      },\n      {\n        \"650\": null\n      }\n    ],\n    []\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/scenario-shinki-add-study/",
+                  "protocol": "http",
+                  "host": [
+                    "127",
+                    "0",
+                    "0",
+                    "1"
+                  ],
+                  "port": "8000",
+                  "path": [
+                    "{{SUB_PATH}}",
+                    "api",
+                    "scenario",
+                    "scenario-shinki-add-study",
+                    ""
+                  ]
+                },
+                "description": "Original detailed sample payload retained; the current backend reads params, submodels and variables."
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "Update Scenario Values",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"id\": \"sim16167\",\n    \"senario_parameter_id\": 0.0,\n    \"value\": null,\n    \"user_memo\": \"new study\"\n  }, \n  {\n    \"id\": \"sim16168\",\n    \"senario_parameter_id\": 1.0,\n    \"value\": null,\n    \"user_memo\": \"new study\"\n  }, \n  {\"id\": \"sim16403\",\n    \"senario_parameter_id\": 0.0,\n    \"value\": null,\n    \"user_memo\": \"new study\"\n  }\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/update-scenario-value/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "update-scenario-value",
+                ""
+              ]
+            },
+            "description": "Batch payload retained from the original collection and verified against the current backend view."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "02 - Scenario Maps",
+      "item": [
+        {
+          "name": "Get Scenario Map — Identifiers",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"project_id\": 14.0, \n    \"senario_parameter_id\": 0.0, \n    \"phase_id\": 3.0, \n    \"variation_id\": 48.0, \n    \"study_id\": \"00_J32V\", \n    \"value\": \"aaatest\"\n  }\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/scenario-map/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "scenario-map",
+                ""
+              ]
+            },
+            "description": "Compact original payload variant with the identifiers used to locate a Scenario map."
+          },
+          "response": [
+            {
+              "name": "Map View(MAP)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\n  {\n    \"project_id\": 14.0, \n    \"senario_parameter_id\": 0.0, \n    \"phase_id\": 3.0, \n    \"variation_id\": 48.0, \n    \"study_id\": \"00_J32V\", \n    \"value\": \"aaatest\"\n  }\n]",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/scenario-map/",
+                  "protocol": "http",
+                  "host": [
+                    "127",
+                    "0",
+                    "0",
+                    "1"
+                  ],
+                  "port": "8000",
+                  "path": [
+                    "{{SUB_PATH}}",
+                    "api",
+                    "scenario",
+                    "scenario-map",
+                    ""
+                  ]
+                },
+                "description": "Compact original payload variant with the identifiers used to locate a Scenario map."
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "Get Scenario Map — Full Row",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"id\": \"sim16167\", \n    \"project_id\": 14.0, \n    \"senario_parameter_id\": 0.0, \n    \"phase_id\": 3.0, \n    \"phase\": \"PTシステムレビュー#1\", \n    \"variation_id\": 48.0, \n    \"variation\": \"提案仕様\", \n    \"study_id\": \"00_J32V\", \n    \"parameter_name_1\": \"Sim\", \n    \"parameter_name_2\": \"Simulation Status\", \n    \"rflcategory\": null, \n    \"rflid\": null, \n    \"parameter_unit\": null, \n    \"parameter_unit_copy\": null, \n    \"original_value\": null, \n    \"value\": \"aaatest\", \n    \"contac_user\": \"XP6 由基 大出\", \n    \"edited_user\": \"XP6 由基 大出\", \n    \"update_day\": \"2025-10-15\",\n    \"employee_number\": \"ELR00028\", \n    \"user_memo\": null\n  }\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/scenario-map/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "scenario-map",
+                ""
+              ]
+            },
+            "description": "Full-row payload variant retained from the original collection."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Scenario Map — Value-only Original Variant",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"value\": \"aaatest\"\n  }\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/scenario-map/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "scenario-map",
+                ""
+              ]
+            },
+            "description": "Original payload variant retained because it differs, although the current map lookup normally also needs identifying fields."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "03 - Design Values",
+      "item": [
+        {
+          "name": "Get Confirmed Design Values — Confirm",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"project_id\": 14,\n  \"phase_id\": 3,\n  \"variation_id\": 48,\n  \"performance\": \"燃費\",\n  \"design_item_1\": \"カタログ燃費値\",\n  \"design_item_2\": \"WLTC\",\n  \"design_item_3\": \"WLTC 3Phase\",\n  \"confirm\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/designs/confirmed-values/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "designs",
+                "confirmed-values",
+                ""
+              ]
+            },
+            "description": "Normalized to the current frontend/backend contract; obsolete index and list_study_id fields were removed."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Confirmed Design Values — Unconfirm",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"project_id\": 14,\n  \"phase_id\": 3,\n  \"variation_id\": 48,\n  \"performance\": \"燃費\",\n  \"design_item_1\": \"カタログ燃費値\",\n  \"design_item_2\": \"WLTC\",\n  \"design_item_3\": \"\",\n  \"confirm\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/designs/confirmed-values/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "designs",
+                "confirmed-values",
+                ""
+              ]
+            },
+            "description": "Current frontend payload variant for the unconfirm flow."
+          },
+          "response": [
+            {
+              "name": "loi",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"project_id\": 14,\n  \"phase_id\": 3,\n  \"variation_id\": 48,\n  \"performance\": \"燃費\",\n  \"design_item_1\": \"カタログ燃費値\",\n  \"design_item_2\": \"WLTC\",\n  \"design_item_3\": \"\",\n  \"confirm\": false\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/designs/confirmed-values/",
+                  "protocol": "http",
+                  "host": [
+                    "127",
+                    "0",
+                    "0",
+                    "1"
+                  ],
+                  "port": "8000",
+                  "path": [
+                    "{{SUB_PATH}}",
+                    "api",
+                    "scenario",
+                    "designs",
+                    "confirmed-values",
+                    ""
+                  ]
+                },
+                "description": "Current frontend payload variant for the unconfirm flow."
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "Confirm Design Value",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"performance\": \"燃費\",\n    \"design_item_1\": \"カタログ燃費値\",\n    \"design_item_2\": \"WLTC\",\n    \"design_item_3\": \"WLTC 3Phase\",\n    \"unit\": \"[km/l]\",\n    \"rflcategory\": \"R\",\n    \"rflid\": 1,\n    \"senario_parameter_id\": 10001,\n    \"project_id\": 14,\n    \"phase_id\": 3,\n    \"variation_id\": 48,\n    \"study_id\": \"00_J32V\",\n    \"updated_value\": \"19.3\",\n    \"item\": \"19.3[km/l]\",\n    \"flag\": 1\n  }\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/designs/update/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "designs",
+                "update",
+                ""
+              ]
+            },
+            "description": "Converted to the array payload and flag used by the current frontend confirmation flow."
+          },
+          "response": []
+        },
+        {
+          "name": "Unconfirm Design Value",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"rflid\": 1,\n    \"project_id\": 14,\n    \"phase_id\": 3,\n    \"variation_id\": 48,\n    \"study_id\": \"00_J32V\",\n    \"updated_value\": \"19.3\",\n    \"flag\": 0\n  }\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/designs/update/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "designs",
+                "update",
+                ""
+              ]
+            },
+            "description": "Current frontend unconfirm payload variant."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "04 - Study Comparison",
+      "item": [
+        {
+          "name": "Get Study Comparison View Settings",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"shared_project_info\": [\n    {\n      \"project_id\": 14,\n      \"project_code\": \"[J32V]\",\n      \"destination\": \"JPN\",\n      \"drivetrain\": \"2WD\",\n      \"powertrain\": \"HEV\",\n      \"lot\": \"Pre-Pro\",\n      \"phase_id\": 3,\n      \"phase\": \"PTシステムレビュー#1\",\n      \"variation_id\": 48,\n      \"variation\": \"提案仕様\",\n      \"study_id\": \"00_J32V\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/view_settings/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "view_settings",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Study Comparison Dashboard",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"shared_project_info\": [\n      {\n        \"project_id\": 14,\n        \"project_code\": \"[J32V]\",\n        \"destination\": \"JPN\",\n        \"drivetrain\": \"2WD\",\n        \"powertrain\": \"HEV\",\n        \"lot\": \"Pre-Pro\",\n        \"phase_id\": 3,\n        \"phase\": \"PTシステムレビュー#1\",\n        \"variation_id\": 48,\n        \"variation\": \"提案仕様\",\n        \"study_id\": \"00_J32V\"\n      }\n    ],\n    \"study_id\": [\n      \"00_J32V\"\n    ],\n    \"consideration_name\": \"Sample consideration\",\n    \"variation_id\": 48,\n    \"radar_scale\": \"difference\",\n    \"radar_axes\": [],\n    \"specification_axes\": [],\n    \"performance_axes\": []\n  }\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/compare_study_dashboard/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "compare_study_dashboard",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Selectable Comparison Items",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"study_id\": [\n      \"00_J32V\"\n    ],\n    \"shared_project_info\": [\n      {\n        \"project_id\": 14,\n        \"project_code\": \"[J32V]\",\n        \"destination\": \"JPN\",\n        \"drivetrain\": \"2WD\",\n        \"powertrain\": \"HEV\",\n        \"lot\": \"Pre-Pro\",\n        \"phase_id\": 3,\n        \"phase\": \"PTシステムレビュー#1\",\n        \"variation_id\": 48,\n        \"variation\": \"提案仕様\",\n        \"study_id\": \"00_J32V\"\n      }\n    ],\n    \"variation_id\": 48\n  }\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/select_items/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "select_items",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Statement History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/compare_study_dashboard/history_statement/?consideration_name=Sample consideration&page=1",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "compare_study_dashboard",
+                "history_statement",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "consideration_name",
+                  "value": "Sample consideration"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Comment History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/compare_study_dashboard/history_comment/?consideration_name=Sample consideration&page=1",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "compare_study_dashboard",
+                "history_comment",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "consideration_name",
+                  "value": "Sample consideration"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Study Statement",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"project_id\": 14,\n    \"phase_id\": 3,\n    \"variation_id\": 48,\n    \"study_id\": [\n      \"00_J32V\"\n    ],\n    \"statement\": \"Sample study comparison statement\",\n    \"condition\": \"draft\",\n    \"consideration_name\": \"Sample consideration\",\n    \"selected_axes\": {\n      \"variation_id\": 48,\n      \"radar_scale\": \"difference\",\n      \"radar_axes\": [],\n      \"specification_axes\": [],\n      \"performance_axes\": []\n    }\n  }\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/compare_study_dashboard/create_study_statement/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "compare_study_dashboard",
+                "create_study_statement",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Study Statement Comment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"consideration_name\": \"Sample consideration\",\n  \"comment\": \"Sample comment\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/compare_study_dashboard/add_comment/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "compare_study_dashboard",
+                "add_comment",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Study Statement",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"project_id\": 14,\n    \"phase_id\": 3,\n    \"variation_id\": 48,\n    \"study_id\": [\n      \"00_J32V\"\n    ],\n    \"statement\": \"Sample study comparison statement\",\n    \"condition\": \"draft\",\n    \"consideration_name\": \"Sample consideration\",\n    \"selected_axes\": {\n      \"variation_id\": 48,\n      \"radar_scale\": \"difference\",\n      \"radar_axes\": [],\n      \"specification_axes\": [],\n      \"performance_axes\": []\n    }\n  }\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/compare_study_dashboard/update_study_statement/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "compare_study_dashboard",
+                "update_study_statement",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Study Consideration",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/compare_study_dashboard/delete_consideration/?consideration=Sample consideration",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "compare_study_dashboard",
+                "delete_consideration",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "consideration",
+                  "value": "Sample consideration"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "05 - Export & TD Templates",
+      "item": [
+        {
+          "name": "Get TD Template File Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/td_template_file_status/1/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "td_template_file_status",
+                "1",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get TD Template Download URL",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/td_template/SampleModel/download-url/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "td_template",
+                "SampleModel",
+                "download-url",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Export Scenario TD Files",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"project_id\": 14,\n  \"phase_id\": 3,\n  \"variation_id\": [\n    48\n  ],\n  \"study_id\": [\n    \"00_J32V\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/td_files_export/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "td_files_export",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Export Scenario RFL File",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"hr\": [\n    \"システム\"\n  ],\n  \"wp\": [\n    \"4WD\"\n  ],\n  \"project\": [\n    \"[J32V]\"\n  ],\n  \"phase\": [\n    \"中間確認会#1\"\n  ],\n  \"hierarchy\": [\n    \"システム\"\n  ],\n  \"architecture_name\": [\n    \"HEV\"\n  ],\n  \"lot\": [\n    \"Pre-Pro\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/rfl-export/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "rfl-export",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get TD Template Upload URL",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/td_template/SampleModel/upload-url/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "td_template",
+                "SampleModel",
+                "upload-url",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Complete TD Template Upload",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/td_template/SampleModel/complete/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "td_template",
+                "SampleModel",
+                "complete",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "06 - Unit Conversion",
+      "item": [
+        {
+          "name": "Get Unit Conversion Rules — Page 1",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/sa_unit_conversion/1/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "sa_unit_conversion",
+                "1",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Unit Conversion Rules",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/sa_unit_conversion/all/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "sa_unit_conversion",
+                "all",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Unit Conversion Rules — Merge",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"merge\",\n  \"rules\": [\n    {\n      \"scenario_parameter_id\": 10001,\n      \"formula\": \"x * 2.54\",\n      \"note\": \"Sample conversion rule\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/sa_unit_conversion-update/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "sa_unit_conversion-update",
+                ""
+              ]
+            },
+            "description": "Payload follows the current frontend interface."
+          },
+          "response": []
+        },
+        {
+          "name": "Replace Unit Conversion Rules",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"replace\",\n  \"rules\": [\n    {\n      \"scenario_parameter_id\": 10001,\n      \"formula\": \"x * 2.54\",\n      \"note\": \"Sample conversion rule\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/sa_unit_conversion-update/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "sa_unit_conversion-update",
+                ""
+              ]
+            },
+            "description": "Second current frontend payload variant."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "07 - Study Links & Notes",
+      "item": [
+        {
+          "name": "Get Study Links and Note",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/link-refer/?projects_id=14&phase_id=3&study_id=00_J32V",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "link-refer",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "projects_id",
+                  "value": "14"
+                },
+                {
+                  "key": "phase_id",
+                  "value": "3"
+                },
+                {
+                  "key": "study_id",
+                  "value": "00_J32V"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Scenario Note",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/note-link-refer/?project=[J32V]&destination=JPN&drivetrain=2WD&powertrain=HEV&lot=Pre-Pro&phase=PTシステムレビュー%231",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "note-link-refer",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "project",
+                  "value": "[J32V]"
+                },
+                {
+                  "key": "destination",
+                  "value": "JPN"
+                },
+                {
+                  "key": "drivetrain",
+                  "value": "2WD"
+                },
+                {
+                  "key": "powertrain",
+                  "value": "HEV"
+                },
+                {
+                  "key": "lot",
+                  "value": "Pre-Pro"
+                },
+                {
+                  "key": "phase",
+                  "value": "PTシステムレビュー#1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Study Links and Note",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"projects_id\": 14,\n  \"phase_id\": 3,\n  \"study_id\": \"00_J32V\",\n  \"note\": \"Sample note\",\n  \"prerequi_info\": [\n    {\n      \"folder\": \"Prerequisite\",\n      \"link\": \"https://example.com/prerequisite\"\n    }\n  ],\n  \"consider_info\": [\n    {\n      \"folder\": \"Consideration\",\n      \"link\": \"https://example.com/consideration\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/create-link-refer/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "create-link-refer",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Study Links and Note",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"projects_id\": 14,\n  \"phase_id\": 3,\n  \"study_id\": \"00_J32V\",\n  \"note\": \"Sample note\",\n  \"prerequi_info\": [\n    {\n      \"folder\": \"Prerequisite\",\n      \"link\": \"https://example.com/prerequisite\"\n    }\n  ],\n  \"consider_info\": [\n    {\n      \"folder\": \"Consideration\",\n      \"link\": \"https://example.com/consideration\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/update-link-refer/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "update-link-refer",
+                ""
+              ]
+            },
+            "description": "The current backend exposes PUT but does not yet consume request fields; the create payload is retained as a useful editable sample."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "08 - Related SE List APIs",
+      "item": [
+        {
+          "name": "Get SE Map for Scenario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"project_id\": 14,\n    \"phase_id\": 3,\n    \"variation_id\": 48,\n    \"study_id\": \"00_J32V\",\n    \"senario_parameter_id\": 10001,\n    \"value\": \"aaatest\",\n    \"chosen_id\": 3,\n    \"z_request_median\": null\n  }\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/se-list/se-map/map-button/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "se-list",
+                "se-map",
+                "map-button",
+                ""
+              ]
+            },
+            "description": "Payload populated from the current Scenario MapModal frontend call site."
+          },
+          "response": [
+            {
+              "name": "map-button(MAP)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\n  {\n    \"project_id\": 14,\n    \"phase_id\": 3,\n    \"variation_id\": 48,\n    \"study_id\": \"00_J32V\",\n    \"senario_parameter_id\": 10001,\n    \"value\": \"aaatest\",\n    \"chosen_id\": 3,\n    \"z_request_median\": null\n  }\n]",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/se-list/se-map/map-button/",
+                  "protocol": "http",
+                  "host": [
+                    "127",
+                    "0",
+                    "0",
+                    "1"
+                  ],
+                  "port": "8000",
+                  "path": [
+                    "{{SUB_PATH}}",
+                    "api",
+                    "se-list",
+                    "se-map",
+                    "map-button",
+                    ""
+                  ]
+                },
+                "description": "Payload populated from the current Scenario MapModal frontend call site."
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "Update SE Map for Scenario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"chosen_id\": 3,\n  \"project_id\": 14,\n  \"scenario_parameter_id\": 10001,\n  \"phase_id\": 3,\n  \"variation_id\": 48,\n  \"study_id\": \"00_J32V\",\n  \"value\": \"aaatest\",\n  \"mode\": \"TABLE\",\n  \"df_edited\": [\n    {\n      \"0\": \"X→\",\n      \"1\": 0,\n      \"2\": 1\n    },\n    {\n      \"0\": 0,\n      \"1\": 10,\n      \"2\": 20\n    }\n  ],\n  \"df_edited_z\": null,\n  \"df_editeds\": null,\n  \"map_name\": \"Sample map\",\n  \"new_map_name\": null,\n  \"scope_name\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/se-list/se-map/map-edit/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "se-list",
+                "se-map",
+                "map-edit",
+                ""
+              ]
+            },
+            "description": "Payload populated from the current Scenario MapModal frontend call site."
+          },
+          "response": [
+            {
+              "name": "map-edit(MAP)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"chosen_id\": 3,\n  \"project_id\": 14,\n  \"scenario_parameter_id\": 10001,\n  \"phase_id\": 3,\n  \"variation_id\": 48,\n  \"study_id\": \"00_J32V\",\n  \"value\": \"aaatest\",\n  \"mode\": \"TABLE\",\n  \"df_edited\": [\n    {\n      \"0\": \"X→\",\n      \"1\": 0,\n      \"2\": 1\n    },\n    {\n      \"0\": 0,\n      \"1\": 10,\n      \"2\": 20\n    }\n  ],\n  \"df_edited_z\": null,\n  \"df_editeds\": null,\n  \"map_name\": \"Sample map\",\n  \"new_map_name\": null,\n  \"scope_name\": null\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/se-list/se-map/map-edit/",
+                  "protocol": "http",
+                  "host": [
+                    "127",
+                    "0",
+                    "0",
+                    "1"
+                  ],
+                  "port": "8000",
+                  "path": [
+                    "{{SUB_PATH}}",
+                    "api",
+                    "se-list",
+                    "se-map",
+                    "map-edit",
+                    ""
+                  ]
+                },
+                "description": "Payload populated from the current Scenario MapModal frontend call site."
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "Add SE Parameters",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"project_id\": \"13\",\n    \"phase_id\": \"15\",\n    \"se_parameter_id\":[754, 755]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/se-list/parameter/add/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "se-list",
+                "parameter",
+                "add",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Replace SE Parameters",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"project_id\": \"14\",\n    \"phase_id\": \"15\",\n    \"data\":[\n            {\n                \"se_parameter_id_old\": \"575\",\n                \"se_parameter_id_new\": \"754\"\n            },\n            {\n                \"se_parameter_id_old\": \"572\",\n                \"se_parameter_id_new\": \"755\"\n            }\n        ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/se-list/parameter/edit/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "se-list",
+                "parameter",
+                "edit",
+                ""
+              ]
+            },
+            "description": "575 WOT_Torque_Curve (標高別) => 754 Max_Power _1  \n572 Type => 755 Max_Torque_1"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete SE Parameters",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"project_id\": \"13\",\n    \"phase_id\": \"15\",\n    \"se_parameter_id\":[754, 755]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/se-list/parameter/delete/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "se-list",
+                "parameter",
+                "delete",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "01 - Scenario Project Configuration",
+      "item": [
+        {
+          "name": "Get Scenario Project Config",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/project-config/?project_id={{project_id}}&phase_id={{phase_id}}",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "project-config",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "project_id",
+                  "value": "{{project_id}}"
+                },
+                {
+                  "key": "phase_id",
+                  "value": "{{phase_id}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ensure Scenario Project Config",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/project-config/ensure/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "project-config",
+                "ensure",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"project_id\": \"{{project_id}}\",\n  \"phase_id\": \"{{phase_id}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Save Scenario Project Config",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/project-config/save/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "project-config",
+                "save",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"project_id\": \"{{project_id}}\",\n  \"phase_id\": \"{{phase_id}}\",\n  \"version\": 1,\n  \"selected_ids\": [\n    \"{{scenario_parameter_id}}\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "02 - Scenario Master",
+      "item": [
+        {
+          "name": "List Scenario Master Parameters",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/master/parameters/?keyword={{keyword}}",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "master",
+                "parameters",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "keyword",
+                  "value": "{{keyword}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Scenario Parent Options",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/master/parent-options/?category=SE&keyword={{keyword}}",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "master",
+                "parent-options",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "SE"
+                },
+                {
+                  "key": "keyword",
+                  "value": "{{keyword}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Scenario RFL Options",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/master/rfl-options/?rflcategory=R&keyword={{keyword}}",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "master",
+                "rfl-options",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "rflcategory",
+                  "value": "R"
+                },
+                {
+                  "key": "keyword",
+                  "value": "{{keyword}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Save Scenario Master Parameters",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/master/parameters/save/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "master",
+                "parameters",
+                "save",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"add\": [],\n  \"update\": [],\n  \"list_id_order\": [],\n  \"sync_se\": true,\n  \"sync_r\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Set Scenario Master Active",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/master/parameters/set-active/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "master",
+                "parameters",
+                "set-active",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"is_active\": false,\n  \"items\": [\n    {\n      \"id\": \"{{scenario_parameter_id}}\",\n      \"reason\": \"{{reason}}\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "08 - Scenario Simulation",
+      "item": [
+        {
+          "name": "Get Model Upload URL",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/upload-py-model/?filename={{model_filename}}&filetype=text/x-python",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "upload-py-model",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "filename",
+                  "value": "{{model_filename}}"
+                },
+                {
+                  "key": "filetype",
+                  "value": "text/x-python"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Validate Uploaded Model",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/validate-model/?s3_key={{s3_key}}",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "validate-model",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "s3_key",
+                  "value": "{{s3_key}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Simulation Parameter Info",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/get-info-params-sim/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "get-info-params-sim",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Studies",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/get-all-studies/?project_id={{project_id}}&phase_id={{phase_id}}",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "get-all-studies",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "project_id",
+                  "value": "{{project_id}}"
+                },
+                {
+                  "key": "phase_id",
+                  "value": "{{phase_id}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Registered Models",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/get-all-registered_models/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "get-all-registered_models",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"project_id\": \"{{project_id}}\",\n  \"phase_id\": \"{{phase_id}}\",\n  \"study_ids\": [\n    \"{{study_id}}\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Registered Model Parameters",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/get-params-registered-model/?model_name={{model_name}}&project_id={{project_id}}&phase_id={{phase_id}}&study_id={{study_id}}",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "get-params-registered-model",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "model_name",
+                  "value": "{{model_name}}"
+                },
+                {
+                  "key": "project_id",
+                  "value": "{{project_id}}"
+                },
+                {
+                  "key": "phase_id",
+                  "value": "{{phase_id}}"
+                },
+                {
+                  "key": "study_id",
+                  "value": "{{study_id}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Register New Model",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/register-new-model/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "register-new-model",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model_name\": \"{{model_name}}\",\n  \"function_name\": \"{{function_name}}\",\n  \"s3_key\": \"{{s3_key}}\",\n  \"category\": \"{{category}}\",\n  \"input\": {},\n  \"output\": {}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Requires an uploaded and validated model file in S3."
+          },
+          "response": []
+        },
+        {
+          "name": "Execute Model Simulation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/execute-model-simulation/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "execute-model-simulation",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"study_id\": \"{{study_id}}\",\n  \"project_id\": \"{{project_id}}\",\n  \"phase_id\": \"{{phase_id}}\",\n  \"model_name\": \"{{model_name}}\",\n  \"argument\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Starts an external model execution."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Model Execution Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/executions-status/{{execution_id}}/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "executions-status",
+                "{{execution_id}}",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Study ID Creation Options",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/info-to-create-studyids/?project={{project}}&destination={{destination}}&drivetrain={{drivetrain}}&powertrain={{powertrain}}&lot={{lot}}&phase={{phase}}",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "info-to-create-studyids",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "project",
+                  "value": "{{project}}"
+                },
+                {
+                  "key": "destination",
+                  "value": "{{destination}}"
+                },
+                {
+                  "key": "drivetrain",
+                  "value": "{{drivetrain}}"
+                },
+                {
+                  "key": "powertrain",
+                  "value": "{{powertrain}}"
+                },
+                {
+                  "key": "lot",
+                  "value": "{{lot}}"
+                },
+                {
+                  "key": "phase",
+                  "value": "{{phase}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Selected Study IDs",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/create-selected-studyids/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "create-selected-studyids",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"project\": \"{{project}}\",\n  \"destination\": \"{{destination}}\",\n  \"drivetrain\": \"{{drivetrain}}\",\n  \"powertrain\": \"{{powertrain}}\",\n  \"lot\": \"{{lot}}\",\n  \"phase\": \"{{phase}}\",\n  \"studyids\": {}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "90 - Legacy / Not in current routes",
+      "item": [
+        {
+          "name": "Legacy — Get Scenario Parameter Data",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"projects_key\": [\n      \"13\"\n    ],\n    \"project\": \"[J32V]\",\n    \"destination\": \"JPN\",\n    \"drivetrain\": \"4WD\",\n    \"powertrain\": \"HEV\",\n    \"lot\": \"Pre-Pro\",\n    \"phase\": \"中間確認会#1\",\n    \"wp\": [\n      \"ENG\"\n    ]\n  }\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/parameter/get-data/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "parameter",
+                "get-data",
+                ""
+              ]
+            },
+            "description": "The body comments were removed to make valid JSON. Endpoint is absent from the current scenario URL config."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

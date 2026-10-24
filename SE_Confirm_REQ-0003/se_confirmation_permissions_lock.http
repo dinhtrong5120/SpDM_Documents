@@ -1,0 +1,283 @@
+### UU3 SPDM - tu dong tao precondition project lock
+#
+# Coverage:
+# - LK-01: project dang lock chan confirm/reset/update
+# - LK-02: unlock xong co the thao tac lai
+#
+# File tu dang nhap, chon project dang unlock, chon target SE, lock project,
+# kiem tra 409, sau do unlock va cleanup. Khong can truyen bat ky ID nao.
+# File CO DOI trang thai confirmation cua target; trang thai cuoi la unconfirmed.
+
+@healthBase = {{devBaseUrl}}
+@apiBase = {{devApiBase}}
+
+### 1. Kiem tra server
+### @name healthConfirmationLock
+# @no-log
+GET {{healthBase}}/healthz
+Accept: application/json
+
+> {%
+  client.test("Server san sang", function () {
+    client.assert(response.status === 200, "Health check khong tra HTTP 200");
+  });
+%}
+
+### 2. Dang nhap Admin
+# API lock/unlock chi cho group Admin.
+### @name loginConfirmationLock
+# @no-log
+POST {{apiBase}}/user/login/
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username": "{{username}}",
+  "password": "{{password}}"
+}
+
+> {%
+  client.test("Dang nhap Admin thanh cong", function () {
+    client.assert(response.status === 200, "Login khong tra HTTP 200");
+    client.assert(Boolean(response.body?.access), "Khong co access token");
+    client.assert(response.body?.groups?.includes("Admin"), "Tai khoan test phai thuoc group Admin");
+  });
+  client.global.set("access_token", response.body.access);
+%}
+
+### 3. Tu chon mot project dang unlock
+### @name selectUnlockedProject
+# @no-log
+GET {{apiBase}}/project/all-projects/
+Authorization: Bearer {{access_token}}
+Accept: application/json
+
+> {%
+  const projects = response.body?.data ?? [];
+  const project = projects.find((item) => item.is_lock !== true);
+  client.test("Tim thay project dang unlock", function () {
+    client.assert(Boolean(project), "Khong co project dang unlock de test");
+  });
+  if (project) {
+    client.global.set("projectId", String(project.project_id));
+    client.global.set("projectName", project.project_name);
+    client.global.set("destination", project.destination);
+    client.global.set("drivetrain", project.drivetrain);
+    client.global.set("bodyType", project.grade);
+    client.global.set("lot", project.lot);
+    client.global.set("phaseName", project.phase_name);
+    client.log(`Project test: ${project.project_name}/${project.phase_name}`);
+  }
+%}
+
+### 4. Tu chon mot target SE trong project
+### @name selectLockTarget
+# @no-log
+POST {{apiBase}}/se-list/v2/list-se-list-parameters-new/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+[
+  [
+    {
+      "projects_key": ["{{projectId}}"],
+      "project": "{{projectName}}",
+      "destination": "{{destination}}",
+      "drivetrain": "{{drivetrain}}",
+      "body_type": "{{bodyType}}",
+      "lot": "{{lot}}",
+      "phase": "{{phaseName}}"
+    }
+  ]
+]
+
+> {%
+  const groups = response.body?.projects?.[0]?.data ?? [];
+  let target = null;
+  for (const group of groups) {
+    for (const row of group.children ?? []) {
+      for (const [variationName, value] of Object.entries(row)) {
+        if (!value || typeof value !== "object" || !("variation_id" in value)) continue;
+        target = {
+          projectId: row.project_id,
+          parameterId: row.se_parameter_id,
+          phaseId: row.phase_id,
+          variationId: value.variation_id,
+          title: row.title_row,
+          variationName
+        };
+        break;
+      }
+      if (target) break;
+    }
+    if (target) break;
+  }
+  client.test("Tim thay target SE", function () {
+    client.assert(Boolean(target), "Project khong co target SE de test");
+  });
+  if (target) {
+    client.global.set("targetProjectId", String(target.projectId));
+    client.global.set("targetParameterId", String(target.parameterId));
+    client.global.set("targetPhaseId", String(target.phaseId));
+    client.global.set("targetVariationId", String(target.variationId));
+    client.log(`Target: ${target.title}/${target.variationName}`);
+  }
+%}
+
+### 5. Lock project bang API
+### @name lockProjectForConfirmation
+# @no-log
+POST {{apiBase}}/project/lock-project/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "project_id": "{{targetProjectId}}",
+  "phase_id": "{{targetPhaseId}}"
+}
+
+> {%
+  client.test("Lock project thanh cong", function () {
+    client.assert(response.status === 200, response.body?.message ?? "Lock that bai");
+    client.assert(response.body?.status === "success", response.body?.message ?? "Lock that bai");
+  });
+%}
+
+### 6. Project lock chan confirm
+### @name lockedProjectCannotConfirm
+# @no-log
+POST {{apiBase}}/se-list/v1/confirmation-status/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "project_id": "{{targetProjectId}}",
+  "se_parameter_id": "{{targetParameterId}}",
+  "phase_id": "{{targetPhaseId}}",
+  "variation_id": "{{targetVariationId}}",
+  "action": "confirm_no_change"
+}
+
+> {%
+  client.test("Project lock chan confirm", function () {
+    client.assert(response.status === 409, `Mong doi 409, nhan ${response.status}`);
+    client.assert(response.body?.message === "Project is locked.", "Sai message project lock");
+  });
+%}
+
+### 7. Project lock chan reset
+### @name lockedProjectCannotReset
+# @no-log
+POST {{apiBase}}/se-list/v1/confirmation-status/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "project_id": "{{targetProjectId}}",
+  "se_parameter_id": "{{targetParameterId}}",
+  "phase_id": "{{targetPhaseId}}",
+  "variation_id": "{{targetVariationId}}",
+  "action": "reset_unconfirmed"
+}
+
+> {%
+  client.test("Project lock chan reset", function () {
+    client.assert(response.status === 409, `Mong doi 409, nhan ${response.status}`);
+  });
+%}
+
+### 8. Project lock chan update value
+### @name lockedProjectCannotUpdate
+# @no-log
+POST {{apiBase}}/se-list/v1/update-se-list-value-new/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+[
+  {
+    "project_id": "{{targetProjectId}}",
+    "se_parameter_id": "{{targetParameterId}}",
+    "phase_id": "{{targetPhaseId}}",
+    "variation_id": "{{targetVariationId}}",
+    "user_memo": "THIS MUST NOT BE SAVED"
+  }
+]
+
+> {%
+  client.test("Project lock chan update", function () {
+    client.assert(response.status === 409, `Mong doi 409, nhan ${response.status}`);
+    client.assert(response.body?.message === "Project is locked.", "Sai message project lock");
+  });
+%}
+
+### 9. Unlock project - cleanup bat buoc
+# Neu request truoc fail, van chay request nay de tranh de lai project bi lock.
+### @name unlockProjectAfterConfirmationTest
+# @no-log
+POST {{apiBase}}/project/unlock-project/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "project_id": "{{targetProjectId}}",
+  "phase_id": "{{targetPhaseId}}"
+}
+
+> {%
+  client.test("Unlock project thanh cong", function () {
+    client.assert(response.status === 200, response.body?.message ?? "Unlock that bai");
+    client.assert(response.body?.status === "success", response.body?.message ?? "Unlock that bai");
+  });
+%}
+
+### 10. Sau unlock co the confirm lai
+### @name confirmAfterUnlock
+# @no-log
+POST {{apiBase}}/se-list/v1/confirmation-status/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "project_id": "{{targetProjectId}}",
+  "se_parameter_id": "{{targetParameterId}}",
+  "phase_id": "{{targetPhaseId}}",
+  "variation_id": "{{targetVariationId}}",
+  "action": "confirm_no_change"
+}
+
+> {%
+  client.test("Confirm hoat dong sau unlock", function () {
+    client.assert(response.status === 200, response.body?.message ?? "Confirm that bai");
+    client.assert(response.body?.confirmation_status === "confirmed_no_change", "Sai status sau unlock");
+  });
+%}
+
+### 11. Cleanup confirmation ve unconfirmed
+### @name cleanupAfterLockTest
+# @no-log
+POST {{apiBase}}/se-list/v1/confirmation-status/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "project_id": "{{targetProjectId}}",
+  "se_parameter_id": "{{targetParameterId}}",
+  "phase_id": "{{targetPhaseId}}",
+  "variation_id": "{{targetVariationId}}",
+  "action": "reset_unconfirmed"
+}
+
+> {%
+  client.test("Cleanup confirmation thanh cong", function () {
+    client.assert(response.status === 200, response.body?.message ?? "Cleanup that bai");
+    client.assert(response.body?.confirmation_status === "unconfirmed", "Status cuoi khong phai unconfirmed");
+  });
+%}

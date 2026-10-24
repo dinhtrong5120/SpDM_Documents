@@ -1,0 +1,426 @@
+### UU3 SPDM - validation va loi API confirmation
+#
+# Coverage:
+# - PM-06: chua dang nhap -> 401
+# - API-01: thieu tung ID/action bat buoc -> 400
+# - API-02: action khong hop le -> 400
+# - API-03: dong khong ton tai -> 404
+# - API-04: sai kieu request body -> 400
+# - API-05: approval status khong phai so -> 400
+# - ED-11: payload update trung khoa -> 400
+# - ED-12: request nhieu dong co dong khong ton tai -> 404, khong update dong truoc
+#
+# Cac request trong file nay khong duoc phep thay doi du lieu.
+
+@healthBase = {{devBaseUrl}}
+@apiBase = {{devApiBase}}
+@missingId = 2147483647
+
+### 1. Confirmation khong co token
+### @name confirmationWithoutToken
+# @no-log
+POST {{apiBase}}/se-list/v1/confirmation-status/
+Content-Type: application/json
+Accept: application/json
+
+{
+  "project_id": 1,
+  "se_parameter_id": 1,
+  "phase_id": 1,
+  "variation_id": 1,
+  "action": "confirm_no_change"
+}
+
+> {%
+  client.test("Khong co token bi tu choi", function () {
+    client.assert(response.status === 401, `Mong doi 401, nhan ${response.status}`);
+  });
+%}
+
+### 2. Dang nhap
+### @name loginConfirmationErrors
+# @no-log
+POST {{apiBase}}/user/login/
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username": "{{username}}",
+  "password": "{{password}}"
+}
+
+> {%
+  client.test("Dang nhap thanh cong", function () {
+    client.assert(response.status === 200, "Login khong tra HTTP 200");
+    client.assert(Boolean(response.body?.access), "Khong co access token");
+  });
+  client.global.set("access_token", response.body.access);
+%}
+
+### 3. Chon project
+### @name selectProjectConfirmationErrors
+# @no-log
+GET {{apiBase}}/project/all-projects/
+Authorization: Bearer {{access_token}}
+Accept: application/json
+
+> {%
+  const project = response.body?.data?.[0];
+  client.test("Tim thay project", function () {
+    client.assert(Boolean(project), "Khong co project tai data[0]");
+  });
+  if (project) {
+    client.global.set("projectId", String(project.project_id));
+    client.global.set("projectName", project.project_name);
+    client.global.set("destination", project.destination);
+    client.global.set("drivetrain", project.drivetrain);
+    client.global.set("bodyType", project.grade);
+    client.global.set("lot", project.lot);
+    client.global.set("phaseName", project.phase_name);
+  }
+%}
+
+### 4. Chon mot target that cho cac test validation sau lock
+### @name selectConfirmationErrorTarget
+# @no-log
+POST {{apiBase}}/se-list/v2/list-se-list-parameters-new/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+[
+  [
+    {
+      "projects_key": ["{{projectId}}"],
+      "project": "{{projectName}}",
+      "destination": "{{destination}}",
+      "drivetrain": "{{drivetrain}}",
+      "body_type": "{{bodyType}}",
+      "lot": "{{lot}}",
+      "phase": "{{phaseName}}"
+    }
+  ]
+]
+
+> {%
+  const groups = response.body?.projects?.[0]?.data ?? [];
+  let target = null;
+  for (const group of groups) {
+    for (const row of group.children ?? []) {
+      for (const value of Object.values(row)) {
+        if (value && typeof value === "object" && "variation_id" in value) {
+          target = {
+            projectId: row.project_id,
+            parameterId: row.se_parameter_id,
+            phaseId: row.phase_id,
+            variationId: value.variation_id
+          };
+          break;
+        }
+      }
+      if (target) break;
+    }
+    if (target) break;
+  }
+  client.test("Tim thay target", function () {
+    client.assert(Boolean(target), "Project khong co o SE List de test");
+  });
+  if (target) {
+    client.global.set("targetProjectId", String(target.projectId));
+    client.global.set("targetParameterId", String(target.parameterId));
+    client.global.set("targetPhaseId", String(target.phaseId));
+    client.global.set("targetVariationId", String(target.variationId));
+  }
+%}
+
+### 5. Confirmation body la array
+### @name confirmationArrayBody
+# @no-log
+POST {{apiBase}}/se-list/v1/confirmation-status/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+[]
+
+> {%
+  client.test("Body array bi tu choi", function () {
+    client.assert(response.status === 400, `Mong doi 400, nhan ${response.status}`);
+    client.assert(response.body?.message === "Request body must be an object.", "Sai message");
+  });
+%}
+
+### 6. Thieu project_id
+### @name missingProjectId
+# @no-log
+POST {{apiBase}}/se-list/v1/confirmation-status/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "se_parameter_id": "{{targetParameterId}}",
+  "phase_id": "{{targetPhaseId}}",
+  "variation_id": "{{targetVariationId}}",
+  "action": "confirm_no_change"
+}
+
+> {%
+  client.test("Bao thieu project_id", function () {
+    client.assert(response.status === 400, `Mong doi 400, nhan ${response.status}`);
+    client.assert(response.body?.missing_params?.includes("project_id"), "Response khong bao project_id");
+  });
+%}
+
+### 7. Thieu se_parameter_id
+### @name missingParameterId
+# @no-log
+POST {{apiBase}}/se-list/v1/confirmation-status/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "project_id": "{{targetProjectId}}",
+  "phase_id": "{{targetPhaseId}}",
+  "variation_id": "{{targetVariationId}}",
+  "action": "confirm_no_change"
+}
+
+> {%
+  client.test("Bao thieu se_parameter_id", function () {
+    client.assert(response.status === 400, `Mong doi 400, nhan ${response.status}`);
+    client.assert(response.body?.missing_params?.includes("se_parameter_id"), "Response khong bao se_parameter_id");
+  });
+%}
+
+### 8. Thieu phase_id
+### @name missingPhaseId
+# @no-log
+POST {{apiBase}}/se-list/v1/confirmation-status/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "project_id": "{{targetProjectId}}",
+  "se_parameter_id": "{{targetParameterId}}",
+  "variation_id": "{{targetVariationId}}",
+  "action": "confirm_no_change"
+}
+
+> {%
+  client.test("Bao thieu phase_id", function () {
+    client.assert(response.status === 400, `Mong doi 400, nhan ${response.status}`);
+    client.assert(response.body?.missing_params?.includes("phase_id"), "Response khong bao phase_id");
+  });
+%}
+
+### 9. Thieu variation_id
+### @name missingVariationId
+# @no-log
+POST {{apiBase}}/se-list/v1/confirmation-status/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "project_id": "{{targetProjectId}}",
+  "se_parameter_id": "{{targetParameterId}}",
+  "phase_id": "{{targetPhaseId}}",
+  "action": "confirm_no_change"
+}
+
+> {%
+  client.test("Bao thieu variation_id", function () {
+    client.assert(response.status === 400, `Mong doi 400, nhan ${response.status}`);
+    client.assert(response.body?.missing_params?.includes("variation_id"), "Response khong bao variation_id");
+  });
+%}
+
+### 10. Thieu action
+### @name missingAction
+# @no-log
+POST {{apiBase}}/se-list/v1/confirmation-status/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "project_id": "{{targetProjectId}}",
+  "se_parameter_id": "{{targetParameterId}}",
+  "phase_id": "{{targetPhaseId}}",
+  "variation_id": "{{targetVariationId}}"
+}
+
+> {%
+  client.test("Bao thieu action", function () {
+    client.assert(response.status === 400, `Mong doi 400, nhan ${response.status}`);
+    client.assert(response.body?.missing_params?.includes("action"), "Response khong bao action");
+  });
+%}
+
+### 11. Action khong hop le
+### @name invalidConfirmationAction
+# @no-log
+POST {{apiBase}}/se-list/v1/confirmation-status/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "project_id": "{{targetProjectId}}",
+  "se_parameter_id": "{{targetParameterId}}",
+  "phase_id": "{{targetPhaseId}}",
+  "variation_id": "{{targetVariationId}}",
+  "action": "invalid_action"
+}
+
+> {%
+  client.test("Action khong hop le bi tu choi", function () {
+    client.assert(response.status === 400, `Mong doi 400, nhan ${response.status}`);
+    client.assert(response.body?.message === "Invalid action.", "Sai message");
+  });
+%}
+
+### 12. Target khong ton tai
+### @name missingConfirmationTarget
+# @no-log
+POST {{apiBase}}/se-list/v1/confirmation-status/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "project_id": {{missingId}},
+  "se_parameter_id": {{missingId}},
+  "phase_id": {{missingId}},
+  "variation_id": {{missingId}},
+  "action": "confirm_no_change"
+}
+
+> {%
+  client.test("Target khong ton tai tra 404", function () {
+    client.assert(response.status === 404, `Mong doi 404, nhan ${response.status}`);
+  });
+%}
+
+### 13. Update endpoint nhan object thay vi array
+### @name updateObjectBody
+# @no-log
+POST {{apiBase}}/se-list/v1/update-se-list-value-new/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "project_id": "{{targetProjectId}}"
+}
+
+> {%
+  client.test("Update body object bi tu choi", function () {
+    client.assert(response.status === 400, `Mong doi 400, nhan ${response.status}`);
+    client.assert(response.body?.message === "Request body must be an array.", "Sai message");
+  });
+%}
+
+### 14. Update payload trung khoa
+### @name duplicateUpdateItems
+# @no-log
+POST {{apiBase}}/se-list/v1/update-se-list-value-new/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+[
+  {
+    "project_id": "{{targetProjectId}}",
+    "se_parameter_id": "{{targetParameterId}}",
+    "phase_id": "{{targetPhaseId}}",
+    "variation_id": "{{targetVariationId}}"
+  },
+  {
+    "project_id": "{{targetProjectId}}",
+    "se_parameter_id": "{{targetParameterId}}",
+    "phase_id": "{{targetPhaseId}}",
+    "variation_id": "{{targetVariationId}}"
+  }
+]
+
+> {%
+  client.test("Duplicate item bi tu choi", function () {
+    client.assert(response.status === 400, `Mong doi 400, nhan ${response.status}`);
+    client.assert(response.body?.message === "Duplicate SE item in request.", "Sai message");
+  });
+%}
+
+### 15. Approval status khong phai so
+### @name nonNumericApprovalStatus
+# @no-log
+POST {{apiBase}}/se-list/v1/update-se-list-value-new/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+[
+  {
+    "project_id": "{{targetProjectId}}",
+    "se_parameter_id": "{{targetParameterId}}",
+    "phase_id": "{{targetPhaseId}}",
+    "variation_id": "{{targetVariationId}}",
+    "state_name": "not-a-number"
+  }
+]
+
+> {%
+  client.test("Approval status khong phai so bi tu choi", function () {
+    client.assert(response.status === 400, `Mong doi 400, nhan ${response.status}`);
+    client.assert(response.body?.message === "state_name must be numeric.", "Sai message");
+  });
+%}
+
+### 16. Request nhieu dong co mot target khong ton tai
+# Dong dau khong gui field thay doi, nen ngay ca khi rollback hong cung khong sua du lieu.
+### @name multiRowWithMissingTarget
+# @no-log
+POST {{apiBase}}/se-list/v1/update-se-list-value-new/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+[
+  {
+    "project_id": "{{targetProjectId}}",
+    "se_parameter_id": "{{targetParameterId}}",
+    "phase_id": "{{targetPhaseId}}",
+    "variation_id": "{{targetVariationId}}"
+  },
+  {
+    "project_id": {{missingId}},
+    "se_parameter_id": {{missingId}},
+    "phase_id": {{missingId}},
+    "variation_id": {{missingId}}
+  }
+]
+
+> {%
+  client.test("Mot dong khong ton tai lam request that bai", function () {
+    client.assert(response.status === 404, `Mong doi 404, nhan ${response.status}`);
+    client.assert(response.body?.message === "SE item not found.", "Sai message");
+  });
+%}
+
+### 17. History thieu cac query parameter bat buoc
+### @name historyMissingParameters
+# @no-log
+GET {{apiBase}}/se-list/v1/parameter-history/?project_id={{targetProjectId}}
+Authorization: Bearer {{access_token}}
+Accept: application/json
+
+> {%
+  client.test("History bao du query parameter", function () {
+    client.assert(response.status === 400, `Mong doi 400, nhan ${response.status}`);
+    client.assert(response.body?.missing_params?.includes("se_parameter_id"), "Thieu se_parameter_id trong response");
+    client.assert(response.body?.missing_params?.includes("phase_id"), "Thieu phase_id trong response");
+  });
+%}

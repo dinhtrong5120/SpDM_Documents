@@ -1,0 +1,97 @@
+### UU3 SPDM API: demo SE-List
+# Chay Django local tren 127.0.0.1:8000 truoc.
+# SUB_PATH trong configs.ini hien la uu3-spdm/.
+# Tranh ghi username/password trong file .http:
+#   Run with -> Add Environment to Private File...
+#   Tao environment "local" voi username va password.
+# Muc 4 se tu luu metadata project dau tien tu /project/all-projects/.
+# Muc 5 dung metadata do de goi API SE-List v2 (chi doc).
+# Environment "dev" must define devBaseUrl (origin only) and devApiBase
+# (full API base URL), for example https://<dev-host> and
+# https://<dev-host>/uu3-spdm/api.
+@healthBase = {{devBaseUrl}}
+@apiBase = {{devApiBase}}
+### 1. Kiem tra server
+# @no-log
+GET {{healthBase}}/healthz
+Accept: application/json
+
+### 2. Dang nhap, luu access va refresh token vao session PyCharm
+# Login cap nhat last_login tren tai khoan theo code hien tai.
+# @no-log
+POST {{apiBase}}/user/login/
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username": "{{username}}",
+  "password": "{{password}}"
+}
+
+> {%
+  client.global.set("access_token", response.body.access);
+  client.global.set("refresh_token", response.body.refresh);
+%}
+
+### 3. Xem thong tin tai khoan (chay sau request 2)
+# @no-log
+GET {{apiBase}}/user/info/
+Authorization: Bearer {{access_token}}
+Accept: application/json
+
+### 4. Lay tat ca project va luu vao session
+# @no-log
+GET {{apiBase}}/project/all-projects/
+Authorization: Bearer {{access_token}}
+Accept: application/json
+
+> {%
+  const projects = response.body?.data ?? [];
+
+  if (projects.length > 0) {
+    client.global.set("projects", projects);
+
+    client.log("Da lay " + projects.length + " projects");
+
+    projects.forEach((project, index) => {
+      client.log(
+        `${index + 1}. ${project.project_name} / ${project.phase_name}`
+      );
+    });
+  } else {
+    client.log("Khong co project trong response.");
+  }
+%}
+
+
+### 5. Loop tat ca project va goi SE-List v2
+# @no-log
+< {%
+  request.variables.set("projects", client.global.get("projects"));
+%}
+POST {{apiBase}}/se-list/v2/list-se-list-parameters-new/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+[
+  [
+    {
+      "projects_key": ["{{$.projects..project_id}}"],
+      "project": "{{$.projects..project_name}}",
+      "destination": "{{$.projects..destination}}",
+      "drivetrain": "{{$.projects..drivetrain}}",
+      "powertrain": "{{$.projects..powertrain}}",
+      "lot": "{{$.projects..lot}}",
+      "phase": "{{$.projects..phase_name}}"
+    }
+  ]
+]
+
+> {%
+  const current = request.variables.get("projects")[request.iteration()];
+
+  client.log(
+    `SE-List: ${current.project_name} / ${current.phase_name}`
+  );
+%}

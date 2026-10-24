@@ -1,0 +1,99 @@
+### UU3 SPDM API: demo SE-List
+# Chay Django local tren 127.0.0.1:8000 truoc.
+# SUB_PATH trong configs.ini hien la uu3-spdm/.
+# Tranh ghi username/password trong file .http:
+#   Run with -> Add Environment to Private File...
+#   Tao environment "local" voi username va password.
+# Muc 4 se tu luu metadata project dau tien tu /project/all-projects/.
+# Muc 5 dung metadata do de goi API SE-List v2 (chi doc).
+@apiBase = http://127.0.0.1:8000/uu3-spdm/api
+### 1. Kiem tra server
+# @no-log
+GET http://127.0.0.1:8000/healthz
+Accept: application/json
+
+### 2. Dang nhap, luu access va refresh token vao session PyCharm
+# Login cap nhat last_login tren tai khoan theo code hien tai.
+# @no-log
+POST {{apiBase}}/user/login/
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username": "{{username}}",
+  "password": "{{password}}"
+}
+
+> {%
+  client.global.set("access_token", response.body.access);
+  client.global.set("refresh_token", response.body.refresh);
+%}
+
+### 3. Xem thong tin tai khoan (chay sau request 2)
+# @no-log
+GET {{apiBase}}/user/info/
+Authorization: Bearer {{access_token}}
+Accept: application/json
+
+### 4. Lay project va chon metadata cua project dau tien
+# Neu data rong, chon project khac trong response va dien metadata thu cong.
+# @no-log
+GET {{apiBase}}/project/all-projects/
+Authorization: Bearer {{access_token}}
+Accept: application/json
+
+> {%
+  const project = response.body?.data?.[0];
+  if (project) {
+    client.global.set("projectId", String(project.project_id));
+    client.global.set("projectName", project.project_name);
+    client.global.set("phaseName", project.phase_name);
+    client.global.set("destination", project.destination);
+    client.global.set("drivetrain", project.drivetrain);
+    client.global.set("powertrain", project.powertrain);
+    client.global.set("lot", project.lot);
+    client.log("Da chon project: " + project.project_name + " / " + project.phase_name);
+  } else {
+    client.log("Khong co project trong response; hay chon metadata thu cong.");
+  }
+%}
+
+### 5. Lay SE-List v2 cho project da chon (chi doc du lieu)
+# Endpoint v2 nhan mang long: moi project la mot mang chua dung 1 object.
+# API hien tai khong dung powertrain lam dieu kien loc query; truong nay chi gui metadata.
+# @no-log
+POST {{apiBase}}/se-list/v2/list-se-list-parameters-new/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+[
+  [
+    {
+      "projects_key": ["{{projectId}}"],
+      "project": "{{projectName}}",
+      "destination": "{{destination}}",
+      "drivetrain": "{{drivetrain}}",
+      "powertrain": "{{powertrain}}",
+      "lot": "{{lot}}",
+      "phase": "{{phaseName}}"
+    }
+  ]
+]
+
+### 6. Refresh access token neu het han
+# @no-log
+POST {{apiBase}}/token/refresh/
+Content-Type: application/json
+Accept: application/json
+
+{
+  "refresh": "{{refresh_token}}"
+}
+
+> {%
+  client.global.set("access_token", response.body.access);
+  if (response.body.refresh) {
+    client.global.set("refresh_token", response.body.refresh);
+  }
+%}

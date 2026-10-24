@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>AT変速線 Map Update — 1D重ね書き</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<style>
+:root{--brand:#1F3A5F;--brand2:#2C5578;--card:#FFF;--line:#D5DBE2;--line2:#E6EAEF;
+ --hdr:#2B4A6F;--rowhdr:#EAF0F6;--rowhdrX:#DCE7F1;--rowhdrT:#DDEBF1;
+ --hl:#FFF3CD;--hl-text:#C0392B;--ok:#3FA34D;--ng:#C0392B;--mute:#6B7480;--text:#1E2733;--ctrl:34px;}
+*{box-sizing:border-box;}
+body{font-family:"Meiryo UI","Yu Gothic UI","Segoe UI",system-ui,sans-serif;
+ background:#cfd6df;margin:0;padding:22px;color:var(--text);font-size:13px;}
+.modal{background:var(--card);max-width:1180px;margin:0 auto;border-radius:6px;box-shadow:0 10px 40px rgba(0,0,0,.28);overflow:hidden;}
+.m-head{display:flex;align-items:center;justify-content:space-between;background:linear-gradient(180deg,var(--brand) 0%,var(--brand2) 100%);color:#fff;padding:12px 18px;}
+.m-title{font-size:16px;font-weight:700;letter-spacing:.3px;}
+.h-tools{display:flex;align-items:center;gap:18px;font-size:12px;}
+.tgl{display:flex;align-items:center;gap:7px;}
+.sw{position:relative;width:38px;height:20px;border-radius:20px;background:#8A97A6;cursor:pointer;transition:.2s;}
+.sw.on{background:#3FA34D;}.sw.red{background:#D46A6A;}
+.sw::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.2s;}
+.sw.on::after{left:20px;}
+.x-btn{width:30px;height:30px;border:none;border-radius:5px;background:rgba(255,255,255,.18);color:#fff;font-size:17px;cursor:pointer;}
+.m-body{padding:16px 18px;max-height:calc(100vh - 190px);overflow-y:auto;background:#fff;}
+.sec{margin-bottom:16px;}
+.sec-t{font-size:12px;font-weight:700;color:#2A2F36;margin:0 0 8px;}
+.sec-box{border:1px solid var(--line);border-radius:4px;padding:12px 14px;}
+.info{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;}
+.fld label{display:block;font-size:11px;font-weight:700;color:#3A424D;margin-bottom:4px;}
+.fld label i{color:var(--ng);font-style:normal;margin-right:2px;}
+.fld input,.fld select{width:100%;height:var(--ctrl);border:1px solid var(--line);border-radius:4px;padding:6px 9px;font-size:13px;background:#fff;color:var(--text);}
+.fld input:disabled,.fld select:disabled{background:#EEF1F4;color:#8A929B;}
+.tbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.btn{height:30px;padding:0 12px;font-size:12px;border:1px solid var(--line);border-radius:4px;background:#fff;color:#33404E;cursor:pointer;}
+.btn.sm{height:26px;padding:0 10px;font-size:11px;}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff;}
+.btn.primary:disabled{background:#A9B4C0;border-color:#A9B4C0;cursor:default;}
+.btn.ghostbrand{color:var(--brand);border-color:#BCC7D3;}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:4px;max-height:360px;}
+table{border-collapse:collapse;font-size:12px;width:max-content;min-width:100%;}
+th,td{border:1px solid var(--line2);text-align:center;padding:0;height:30px;white-space:nowrap;}
+thead th{background:var(--hdr);color:#fff;font-weight:700;min-width:52px;padding:4px 6px;position:sticky;top:0;z-index:2;}
+th.corner,td.rowhdr{position:sticky;left:0;z-index:1;text-align:left;padding:4px 12px;min-width:180px;font-weight:700;}
+th.corner{background:var(--rowhdr);color:#2A3542;z-index:3;}
+tr.rX td.rowhdr{background:var(--rowhdrX);color:#123;}
+tr.rT td.rowhdr{background:var(--rowhdrT);color:#123;}
+tr.grp td{border-top:2px solid #9DB0C4;}
+td input{width:56px;height:28px;border:none;background:transparent;text-align:center;font-size:12px;color:var(--text);}
+td input:focus{outline:2px solid var(--brand2);background:#fff;}
+td.changed input{background:var(--hl);color:var(--hl-text);font-weight:700;}
+td.empty{background:#F7F8FA;}
+.swatch{display:inline-block;width:18px;height:3px;border-radius:2px;margin-right:6px;vertical-align:middle;}
+.pts{color:#888;font-size:11px;font-weight:400;margin-left:6px;}
+.g-note{font-size:11px;color:var(--mute);margin:0 0 8px;}
+.g-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border:1px solid var(--line2);border-radius:4px;padding:8px 10px;margin-bottom:8px;background:#FAFBFC;}
+.g-lbl{font-size:11px;font-weight:700;color:#3A424D;}
+.pillbtn{background:#E7EEF5;color:var(--brand);border:1px solid #C6D4E2;border-radius:4px;height:26px;padding:0 12px;font-size:12px;font-weight:700;cursor:pointer;}
+.ck{display:flex;align-items:center;gap:5px;font-size:12px;color:#333;}
+.chips{display:flex;gap:6px;flex-wrap:wrap;flex:1;max-height:64px;overflow:auto;}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid #C6D4E2;border-radius:16px;padding:3px 12px;font-size:12px;cursor:pointer;background:#fff;user-select:none;}
+.chip.off{opacity:.35;}
+.chip .cl{display:inline-block;width:20px;}
+#plot{width:100%;height:440px;border:1px solid var(--line2);border-radius:4px;}
+.m-foot{display:flex;align-items:center;justify-content:space-between;background:#F2F5F8;border-top:1px solid var(--line);padding:12px 18px;}
+.stamp{background:#fff;border:1px solid var(--line);border-radius:16px;padding:5px 16px;font-size:12px;color:#44505E;}
+.foot-r{display:flex;gap:8px;}
+#toast{position:fixed;top:18px;right:18px;z-index:9999;}
+.tst{background:var(--brand);color:#fff;padding:9px 15px;border-radius:5px;margin-bottom:8px;font-size:12px;opacity:0;transform:translateX(16px);transition:.25s;}
+.tst.show{opacity:1;transform:none;}.tst.ok{background:var(--ok);}
+</style>
+</head>
+<body>
+<div class="modal">
+  <div class="m-head">
+    <div class="m-title">AT変速線 (Shift Pattern) Map Update</div>
+    <div class="h-tools">
+      <div class="tgl"><span>編集モード</span><div id="editSw" class="sw red" onclick="toggleEdit()"></div></div>
+      <div class="tgl"><span>MAP表示</span><div id="visSw" class="sw on" onclick="toggleVis()"></div></div>
+      <button class="x-btn">&times;</button>
+    </div>
+  </div>
+
+  <div class="m-body">
+    <div class="sec">
+      <div class="sec-t">基本情報</div>
+      <div class="sec-box">
+        <div class="info">
+          <div class="fld"><label><i>*</i>Map種類</label>
+            <select disabled><option>MAP (1D重ね書き)</option></select></div>
+          <div class="fld"><label>テンプレート</label>
+            <select id="preset" onchange="onPresetChange()">
+              <option value="shift" selected>変速線</option>
+              <option value="ntcurve">N-T Curve</option>
+              <option value="other">その他</option>
+            </select></div>
+          <div class="fld"><label><i>*</i>Map名</label>
+            <input type="text" id="mapName" value="AT変速線_ノーマル_9速" disabled></div>
+          <div class="fld"><label>Version</label>
+            <select id="mode" disabled onchange="renderPlot()">
+              <option>ノーマル</option><option>スポーツ</option><option>エコ</option></select></div>
+          <div class="fld"><label>段数 N (2-12)</label>
+            <input type="number" id="gearCount" min="2" max="12" step="1" onchange="onGearCountChange()"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="tbar">
+        <div class="sec-t" style="margin:0;">データテーブル</div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn sm ghostbrand" onclick="loadSample()">サンプル再投入</button>
+          <button class="btn sm" onclick="copyTable()">表コピー</button>
+        </div>
+      </div>
+      <div class="tbl-wrap" id="tableWrap"></div>
+      <div class="g-note" style="margin-top:6px;">
+        1系列 = Vsp[km/h] / vAPO[deg] の2行（系列ごと独立X・点数バラバラOK・空欄は描画スキップ）。UP=実線 / DOWN=点線、色はギア段基準。複数系列を同一平面へ<b>1D重ね書き</b>。
+      </div>
+    </div>
+
+    <div class="sec" id="visSection">
+      <div class="sec-t">グラフ表示（1D重ね書き）</div>
+      <div class="sec-box">
+        <div class="g-row">
+          <span class="g-lbl">表示種別:</span>
+          <button class="pillbtn">1D 重ね書き</button>
+          <label class="ck"><input type="checkbox" id="showLabel" checked onchange="renderPlot()"> 軸ラベル</label>
+          <label class="ck"><input type="checkbox" id="showGrid" checked onchange="renderPlot()"> グリッド</label>
+          <label class="ck"><input type="checkbox" id="showMarkers" onchange="renderPlot()"> マーカー</label>
+          <label class="ck"><input type="checkbox" id="showUp" checked onchange="renderPlot()"> UP Shift</label>
+          <label class="ck"><input type="checkbox" id="showDown" checked onchange="renderPlot()"> DOWN Shift</label>
+          <label class="ck"><input type="checkbox" id="fourQuad" onchange="renderPlot()"> 四象限(負値許容)</label>
+        </div>
+        <div class="g-row">
+          <span class="g-lbl">グラフ表示:</span>
+          <div class="chips" id="chips"></div>
+          <button class="btn sm" onclick="setAll(true)">全て表示</button>
+          <button class="btn sm" onclick="setAll(false)">全て非表示</button>
+        </div>
+        <div id="plot"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="m-foot">
+    <button class="btn" onclick="clearAll()">Map削除</button>
+    <div class="stamp" id="stamp">2026/06/18 06:25:53 N206446 (UN4 梨香子 萩原)</div>
+    <div class="foot-r">
+      <button class="btn" onclick="downloadCsv()">↓ CSV出力</button>
+      <button class="btn" onclick="downloadJson()">JSON出力</button>
+      <button class="btn">キャンセル</button>
+      <button id="updBtn" class="btn primary" disabled onclick="onUpdate()">更新</button>
+    </div>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script>
+const SEED = [
+  {"id":"UP_1-2","dir":"UP","from":1,"to":2,"vsp":[12.648,12.648,14.5,23,30,48,48],"apo":[0,18,20,30,40,70,80]},
+  {"id":"UP_2-3","dir":"UP","from":2,"to":3,"vsp":[18.5,18.5,24,39,56,81,81],"apo":[0,17,20,30,40,70,80]},
+  {"id":"UP_3-4","dir":"UP","from":3,"to":4,"vsp":[25,25,32,55,77,119.5,119.5],"apo":[0,17,20,30,40,70,80]},
+  {"id":"UP_4-5","dir":"UP","from":4,"to":5,"vsp":[34,34,42,70,100,163.88,163.88],"apo":[0,17,20,30,40,70,80]},
+  {"id":"UP_5-6","dir":"UP","from":5,"to":6,"vsp":[42,42,56,92,128,215.559,215.559],"apo":[0,17,20,30,40,70,80]},
+  {"id":"UP_6-7","dir":"UP","from":6,"to":7,"vsp":[51,51,70,112,165,250,250],"apo":[0,16.5,20,30,40,60,80]},
+  {"id":"UP_7-8","dir":"UP","from":7,"to":8,"vsp":[62,62,82,135,190,250,250],"apo":[0,16,20,30,40,52.5,80]},
+  {"id":"UP_8-9","dir":"UP","from":8,"to":9,"vsp":[71,71,85,128,160,219.958,250,250],"apo":[0,15,17.5,25,30,40,45,80]},
+  {"id":"DOWN_2-1","dir":"DOWN","from":2,"to":1,"vsp":[0.25,0.25,16.497,16.497],"apo":[0,70,70.001,80]},
+  {"id":"DOWN_3-2","dir":"DOWN","from":3,"to":2,"vsp":[15.5,15.5,35,52,67,67],"apo":[0,45,55,65,75,80]},
+  {"id":"DOWN_4-3","dir":"DOWN","from":4,"to":3,"vsp":[22,22,35,53,64,83,95,105,105],"apo":[0,32.5,40,50,57.5,70,75,75.001,80]},
+  {"id":"DOWN_5-4","dir":"DOWN","from":5,"to":4,"vsp":[31,31,48,65.987,89,112,130,140,140],"apo":[0,25,32.5,42.5,60,70,75,75.001,80]},
+  {"id":"DOWN_6-5","dir":"DOWN","from":6,"to":5,"vsp":[39,39,48,80,97,112,131.975,168,168],"apo":[0,17.5,22.5,40,52,60,67.5,75,80]},
+  {"id":"DOWN_7-6","dir":"DOWN","from":7,"to":6,"vsp":[48,48,48,80,98,117,140,180,195,195],"apo":[0,17.5,22.5,40,45,52.5,60,70,75.001,80]},
+  {"id":"DOWN_8-7","dir":"DOWN","from":8,"to":7,"vsp":[59,59,69.287,100,117,140,160,210,210],"apo":[0,20,25,37.5,42.5,50,55,67.5,80]},
+  {"id":"DOWN_9-8","dir":"DOWN","from":9,"to":8,"vsp":[68,68,80,100,160,240,240],"apo":[0,17.5,22.5,27.5,44,60,80]}
+];
+
+const PRESETS = {
+  shift:   { label:"変速線型", mapName:"AT変速線_ノーマル_9速", x:{name:"車速",unit:"km/h"}, y:{name:"アクセル開度",unit:"deg"}, xr:{name:"Vsp",unit:"km/h"}, yr:{name:"vAPO",unit:"deg"} },
+  ntcurve: { label:"N-T Curve", mapName:"N-T_Curve", x:{name:"N-T rpm",unit:"rpm"}, y:{name:"N-T Nm",unit:"Nm"}, xr:{name:"X",unit:"rpm"}, yr:{name:"T",unit:"Nm"} },
+  other:   { label:"その他", mapName:"その他", x:{name:"X",unit:"-"}, y:{name:"Y",unit:"-"}, xr:{name:"X",unit:"-"}, yr:{name:"Y",unit:"-"} }
+};
+
+const PAIR_COLORS = ["#000080","#FF00FF","#FF0000","#0000FF","#008000","#800000",
+                     "#558ED5","#F79646","#7030A0","#00B0F0","#92D050","#C00000"];
+const MAX_POINTS = 20, MAX_GEAR = 12, MIN_GEAR = 2, UP_WIDTH = 3.2, DOWN_WIDTH = 1.6;
+const pairColor = (from,to)=>PAIR_COLORS[(Math.min(from,to)-1)%PAIR_COLORS.length];
+const styleOf = dir => dir==="UP" ? {width:UP_WIDTH,dash:"solid"} : {width:DOWN_WIDTH,dash:"dot"};
+
+let editMode=false, visOn=true, gearCount=9;
+let series=[], baseline=[], visible={};
+const clone = o=>JSON.parse(JSON.stringify(o));
+const numOrNull = v=>{const s=String(v).trim(); if(s===""||s==="-"||s===".")return null; const f=parseFloat(s); return isNaN(f)?null:f;};
+const fmt = v=>(v===null||v===undefined)?"":String(v);
+
+function curPreset(){ return PRESETS[document.getElementById("preset").value]; }
+
+function buildSeries(n, prev){
+  const out=[]; const find=id=>(prev||[]).find(s=>s.id===id)||SEED.find(s=>s.id===id);
+  for(let g=1; g<=n-1; g++){ const id="UP_"+g+"-"+(g+1),src=find(id);
+    out.push({id,dir:"UP",from:g,to:g+1,vsp:src?[...src.vsp]:[],apo:src?[...src.apo]:[]}); }
+  for(let g=2; g<=n; g++){ const id="DOWN_"+g+"-"+(g-1),src=find(id);
+    out.push({id,dir:"DOWN",from:g,to:g-1,vsp:src?[...src.vsp]:[],apo:src?[...src.apo]:[]}); }
+  return out;
+}
+function loadSample(){
+  const preset=document.getElementById("preset").value;
+  if(preset==="ntcurve"){ loadNtSample(); return; }
+  if(preset==="other"){ loadOtherSample(); return; }
+  loadShiftSample();
+}
+function loadShiftSample(){
+  gearCount=9; series=buildSeries(gearCount,null); baseline=clone(series);
+  visible={}; series.forEach(s=>visible[s.id]=true);
+  document.getElementById("gearCount").value=gearCount;
+  rebuildAll(); toast(series.length+" 系列を投入しました","ok");
+}
+function onGearCountChange(){
+  let n=parseInt(document.getElementById("gearCount").value,10);
+  if(isNaN(n)||n<MIN_GEAR)n=MIN_GEAR; if(n>MAX_GEAR)n=MAX_GEAR;
+  document.getElementById("gearCount").value=n; gearCount=n;
+  series=buildSeries(n,series);
+  series.forEach(s=>{ if(visible[s.id]===undefined)visible[s.id]=true; });
+  rebuildAll(); toast("段数 "+n+" に変更 (系列数 "+series.length+")");
+}
+function onPresetChange(){
+  const p=curPreset();
+  document.getElementById("mapName").value=p.mapName;
+  const shift = document.getElementById("preset").value==="shift";
+  document.getElementById("gearCount").disabled = !shift || !editMode;
+  document.getElementById("mode").disabled = !shift || !editMode;
+  document.getElementById("fourQuad").checked = !shift;
+  loadSample();
+}
+function loadNtSample(){
+  series=[
+    {id:"T1",dir:"UP",from:1,to:2,vsp:[0,500,1592,2000,3000,4000,5000,6600],apo:[300,300,299.9,238.7,159.2,119.4,95.5,43.4]},
+    {id:"T2",dir:"UP",from:2,to:3,vsp:[0,2000,4000,6600],apo:[-220,-180,-110,-40]},
+    {id:"T3",dir:"UP",from:3,to:4,vsp:[0,-1000,-2000,-3235],apo:[-315,-260,-150,0]}
+  ];
+  baseline=clone(series); visible={}; series.forEach(s=>visible[s.id]=true);
+  rebuildAll(); toast("N-T_Curve サンプルを投入しました","ok");
+}
+function loadOtherSample(){
+  series=[{id:"S1",dir:"UP",from:1,to:2,vsp:[],apo:[]}];
+  baseline=clone(series); visible={S1:true};
+  rebuildAll(); toast("その他の入力欄を用意しました","ok");
+}
+
+function baselineOf(id,kind){ const b=baseline.find(s=>s.id===id); return b?b[kind]:[]; }
+function rebuildTable(){
+  const p=curPreset(), wrap=document.getElementById("tableWrap");
+  if(!series.length){ wrap.innerHTML="<div style='padding:16px;color:#888'>データ未投入。「サンプル再投入」を押してください。</div>"; return; }
+  const maxLen=Math.max(1,...series.map(s=>Math.max(s.vsp.length,s.apo.length)));
+  const cols=Math.min(MAX_POINTS,Math.max(maxLen+1,8));
+  let h="<table><thead><tr><th class='corner'>系列 / 種別</th>";
+  for(let i=0;i<cols;i++) h+="<th>P"+(i+1)+"</th>";
+  h+="</tr></thead><tbody>";
+  series.forEach(s=>{
+    const col=pairColor(s.from,s.to);
+    [["vsp",p.xr.name,p.xr.unit,"rX grp"],["apo",p.yr.name,p.yr.unit,"rT"]].forEach((t,ri)=>{
+      const kind=t[0],kn=t[1],unit=t[2],cls=t[3];
+      const cnt=s[kind].filter(v=>v!==null&&v!==undefined).length;
+      const label = ri===0
+        ? "<span class='swatch' style='background:"+col+"'></span><b>"+s.id+"</b> <span class='pts'>("+(s.dir)+")</span>"
+        : "<span style='padding-left:22px;color:#5a6b7d'>"+ (s.dir==="UP"?"up":"dn") +"</span>";
+      h+="<tr class='"+cls+"'><td class='rowhdr'>"+label+"<span style='color:#888;font-size:11px'> / "+kn+" ["+unit+"]</span><span class='pts'>("+cnt+"点)</span></td>";
+      const base=baselineOf(s.id,kind);
+      for(let i=0;i<cols;i++){
+        const v=s[kind][i]??null, ch=(base[i]??null)!==v, emp=(v===null);
+        h+="<td class='"+(ch?"changed ":"")+(emp?"empty":"")+"'><input value='"+fmt(v)+"' data-id='"+s.id+"' data-kind='"+kind+"' data-idx='"+i+"' oninput='onCellEdit(this)' "+(editMode?"":"disabled")+"></td>";
+      }
+      h+="</tr>";
+    });
+  });
+  h+="</tbody></table>";
+  wrap.innerHTML=h;
+}
+function onCellEdit(el){
+  const id=el.dataset.id,kind=el.dataset.kind,i=parseInt(el.dataset.idx,10);
+  const s=series.find(x=>x.id===id); if(!s)return;
+  while(s[kind].length<=i)s[kind].push(null);
+  s[kind][i]=numOrNull(el.value);
+  const base=baselineOf(id,kind);
+  el.parentElement.classList.toggle("changed",(base[i]??null)!==(s[kind][i]??null));
+  renderPlot();
+}
+
+function rebuildChips(){
+  let h="";
+  series.forEach(s=>{
+    const col=pairColor(s.from,s.to), off=visible[s.id]===false?" off":"";
+    h+="<div class='chip"+off+"' onclick=\"toggleSeries('"+s.id+"')\"><span class='cl' style='border-top:3px "+(s.dir==="UP"?"solid":"dotted")+" "+col+"'></span>"+s.id+"</div>";
+  });
+  document.getElementById("chips").innerHTML=h;
+}
+function toggleSeries(id){ visible[id]=!(visible[id]!==false); rebuildChips(); renderPlot(); }
+function setAll(v){ series.forEach(s=>visible[s.id]=v); rebuildChips(); renderPlot(); }
+
+function pairXY(s){
+  const n=Math.min(s.vsp.length,s.apo.length),x=[],y=[];
+  for(let i=0;i<n;i++){ const a=s.vsp[i],b=s.apo[i];
+    if(a===null||a===undefined||b===null||b===undefined)continue; x.push(a); y.push(b); }
+  return {x,y};
+}
+function renderPlot(){
+  const div=document.getElementById("plot");
+  if(!visOn){ Plotly.purge(div); div.innerHTML=""; return; }
+  const p=curPreset();
+  const grid=document.getElementById("showGrid").checked;
+  const lab=document.getElementById("showLabel").checked;
+  const mk=document.getElementById("showMarkers").checked;
+  const showUp=document.getElementById("showUp").checked;
+  const showDown=document.getElementById("showDown").checked;
+  const fq=document.getElementById("fourQuad").checked;
+  const mode=mk?"lines+markers":"lines";
+  const traces=[];
+  series.forEach(s=>{
+    if(visible[s.id]===false) return;
+    if(s.dir==="UP"&&!showUp) return;
+    if(s.dir==="DOWN"&&!showDown) return;
+    const col=pairColor(s.from,s.to), st=styleOf(s.dir);
+    if(editMode){ const b=baseline.find(x=>x.id===s.id);
+      if(b){ const p0=pairXY(b);
+        if(p0.x.length) traces.push({x:p0.x,y:p0.y,mode:"lines",name:"Before "+s.id,line:{color:"#BBB",dash:"dot",width:1.5},hoverinfo:"skip",showlegend:false}); } }
+    const pt=pairXY(s); if(!pt.x.length) return;
+    traces.push({x:pt.x,y:pt.y,mode:mode,name:s.id,type:"scatter",
+      line:{color:col,width:st.width,dash:st.dash},marker:{color:col,size:6},
+      hovertemplate:"<b>"+s.id+"</b><br>"+p.x.name+" %{x} "+p.x.unit+"<br>"+p.y.name+" %{y} "+p.y.unit+"<extra></extra>"});
+  });
+  const rm=fq?"normal":"tozero";
+  Plotly.newPlot(div, traces, {
+    title:{text:(document.getElementById("preset").value==="shift"
+              ? document.getElementById("mode").value+"モード 変速線 ("+gearCount+"速) 1D重ね書き"
+              : p.label+" 1D重ね書き"), font:{size:14,color:"#1F3A5F"}},
+    xaxis:{title:lab?p.x.name+" ["+p.x.unit+"]":"",showgrid:grid,gridcolor:"#B0B8C1",rangemode:rm,zeroline:true,zerolinecolor:"#9AA7B4",showline:true,linecolor:"#666"},
+    yaxis:{title:lab?p.y.name+" ["+p.y.unit+"]":"",showgrid:grid,gridcolor:"#B0B8C1",rangemode:rm,zeroline:true,zerolinecolor:"#9AA7B4",showline:true,linecolor:"#666"},
+    margin:{l:60,r:20,t:44,b:52},height:400,showlegend:false,plot_bgcolor:"#FAFBFC"
+  },{displaylogo:false,responsive:true,modeBarButtonsToRemove:["lasso2d","select2d"]});
+}
+
+function toggleEdit(){
+  editMode=!editMode;
+  const sw=document.getElementById("editSw");
+  sw.classList.toggle("on",editMode); sw.classList.toggle("red",!editMode);
+  const shift=document.getElementById("preset").value==="shift";
+  document.getElementById("mapName").disabled=!editMode;
+  document.getElementById("mode").disabled=!editMode||!shift;
+  document.getElementById("gearCount").disabled=!editMode||!shift;
+  document.getElementById("updBtn").disabled=!editMode;
+  rebuildTable(); renderPlot();
+  toast(editMode?"編集モード ON（変更前をグレー点線表示）":"編集モード OFF");
+}
+function toggleVis(){
+  visOn=!visOn;
+  document.getElementById("visSw").classList.toggle("on",visOn);
+  document.getElementById("visSection").style.display=visOn?"":"none";
+  renderPlot();
+}
+
+function clearAll(){ series=[];baseline=[];visible={};rebuildAll();toast("クリアしました"); }
+function onUpdate(){ baseline=clone(series); rebuildTable(); renderPlot(); toast("更新しました","ok"); }
+function copyTable(){
+  const p=curPreset(); let lines=[];
+  series.forEach(s=>{ lines.push(s.id); lines.push(p.xr.name+"\u2192\t"+s.vsp.map(fmt).join("\t")); lines.push(p.yr.name+"\u2192\t"+s.apo.map(fmt).join("\t")); });
+  navigator.clipboard&&navigator.clipboard.writeText(lines.join("\n")); toast("表をコピーしました","ok");
+}
+function downloadCsv(){
+  const p=curPreset();
+  let csv="系列ID,方向,From,To,種別,単位,点数";
+  for(let i=0;i<MAX_POINTS;i++) csv+=",P"+(i+1); csv+="\n";
+  series.forEach(s=>{ [["vsp",p.xr.name,p.xr.unit],["apo",p.yr.name,p.yr.unit]].forEach(t=>{
+    const k=t[0], cnt=s[k].filter(v=>v!==null&&v!==undefined).length;
+    let row=[s.id,s.dir,s.from,s.to,t[1],t[2],cnt];
+    for(let i=0;i<MAX_POINTS;i++) row.push(fmt(s[k][i]??null));
+    csv+=row.join(",")+"\n"; }); });
+  saveFile(csv,"text/csv;charset=utf-8","shift_map.csv");
+}
+function downloadJson(){
+  saveFile(JSON.stringify({preset:document.getElementById("preset").value,mapName:document.getElementById("mapName").value,mode:document.getElementById("mode").value,gearCount:gearCount,series:series},null,2),"application/json","shift_map.json");
+}
+function saveFile(content,type,name){
+  const blob=new Blob(["\ufeff"+content],{type:type});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name; a.click(); URL.revokeObjectURL(a.href);
+  toast(name+" をダウンロードしました","ok");
+}
+function toast(m,t){
+  const c=document.getElementById("toast"),e=document.createElement("div");
+  e.className="tst "+(t||"");e.textContent=m;c.appendChild(e);
+  setTimeout(()=>e.classList.add("show"),10);
+  setTimeout(()=>{e.classList.remove("show");setTimeout(()=>e.remove(),260);},2400);
+}
+function rebuildAll(){ rebuildTable(); rebuildChips(); renderPlot(); }
+
+document.getElementById("gearCount").value=gearCount;
+loadSample();
+</script>
+</body>
+</html>

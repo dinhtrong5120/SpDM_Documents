@@ -1,0 +1,384 @@
+### UU3 SPDM - tu dong tao role/WP precondition
+#
+# Coverage:
+# - PM-01: Admin co Value_Edit
+# - PM-03: Work Package dung WP
+# - PM-04: Work Package khac WP
+# - PM-05: group khong co Value_Edit
+#
+# CANH BAO: file tam thoi thay doi group/WP cua CHINH tai khoan Admin test.
+# Chay dung thu tu va LUON CHAY BUOC RESTORE CUOI, ke ca khi mot assertion fail.
+# Chi dung tai khoan test, khong dung tai khoan Admin dung chung cua moi truong that.
+# File chi can devApiBase, username, password; moi ID/group/WP khac deu tu dong lay.
+
+@apiBase = {{devApiBase}}
+
+### 1. Dang nhap Admin va luu token
+### @name loginRolePermissionAdmin
+# @no-log
+POST {{apiBase}}/user/login/
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username": "{{username}}",
+  "password": "{{password}}"
+}
+
+> {%
+  client.test("Dang nhap Admin thanh cong", function () {
+    client.assert(response.status === 200, "Login khong tra HTTP 200");
+    client.assert(response.body?.groups?.includes("Admin"), "Tai khoan phai thuoc group Admin");
+    client.assert(Boolean(response.body?.access), "Khong co access token");
+  });
+  client.global.set("access_token", response.body.access);
+  client.global.set("allWorkPackagesJson", JSON.stringify(response.body?.work_package ?? []));
+%}
+
+### 2. Luu day du thong tin goc cua Admin de restore
+### @name saveOriginalAdminInfo
+# @no-log
+GET {{apiBase}}/user/info/
+Authorization: Bearer {{access_token}}
+Accept: application/json
+
+> {%
+  const user = response.body?.data;
+  client.test("Doc thong tin Admin", function () {
+    client.assert(response.status === 200, "User info khong tra HTTP 200");
+    client.assert(Boolean(user), "Khong co user info");
+  });
+  if (user) {
+    client.global.set("testUsername", user.username);
+    client.global.set("originalFirstNameJson", JSON.stringify(user.first_name ?? ""));
+    client.global.set("originalLastNameJson", JSON.stringify(user.last_name ?? ""));
+    client.global.set("originalEmailJson", JSON.stringify(user.email ?? ""));
+    client.global.set("originalDepartmentJson", JSON.stringify(user.department ?? ""));
+    client.global.set("originalGroupsJson", JSON.stringify(user.groups ?? []));
+    client.global.set("originalWorkPackageJson", JSON.stringify(user.work_package));
+    client.global.set("originalPositionJson", JSON.stringify(user.position));
+    client.log(`Se restore groups=${JSON.stringify(user.groups)}, WP=${user.work_package}`);
+  }
+%}
+
+### 3. Tu chon project dang unlock
+### @name selectProjectForRolePermission
+# @no-log
+GET {{apiBase}}/project/all-projects/
+Authorization: Bearer {{access_token}}
+Accept: application/json
+
+> {%
+  const project = (response.body?.data ?? []).find((item) => item.is_lock !== true);
+  client.test("Tim thay project dang unlock", function () {
+    client.assert(Boolean(project), "Khong co project dang unlock");
+  });
+  if (project) {
+    client.global.set("projectId", String(project.project_id));
+    client.global.set("projectName", project.project_name);
+    client.global.set("destination", project.destination);
+    client.global.set("drivetrain", project.drivetrain);
+    client.global.set("bodyType", project.grade);
+    client.global.set("lot", project.lot);
+    client.global.set("phaseName", project.phase_name);
+  }
+%}
+
+### 4. Tu chon target co WP cu the va tim mot WP khac
+### @name selectTargetAndWorkPackages
+# @no-log
+POST {{apiBase}}/se-list/v2/list-se-list-parameters-new/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+[
+  [
+    {
+      "projects_key": ["{{projectId}}"],
+      "project": "{{projectName}}",
+      "destination": "{{destination}}",
+      "drivetrain": "{{drivetrain}}",
+      "body_type": "{{bodyType}}",
+      "lot": "{{lot}}",
+      "phase": "{{phaseName}}"
+    }
+  ]
+]
+
+> {%
+  const groups = response.body?.projects?.[0]?.data ?? [];
+  const allWp = JSON.parse(client.global.get("allWorkPackagesJson") || "[]");
+  let target = null;
+  for (const group of groups) {
+    const targetWp = group.wp;
+    const otherWp = allWp.find((wp) => wp && wp !== "ALL" && wp !== targetWp);
+    if (!targetWp || targetWp === "ALL" || !otherWp) continue;
+    for (const row of group.children ?? []) {
+      for (const [variationName, value] of Object.entries(row)) {
+        if (!value || typeof value !== "object" || !("variation_id" in value)) continue;
+        target = {
+          projectId: row.project_id,
+          parameterId: row.se_parameter_id,
+          phaseId: row.phase_id,
+          variationId: value.variation_id,
+          title: row.title_row,
+          variationName,
+          targetWp,
+          otherWp
+        };
+        break;
+      }
+      if (target) break;
+    }
+    if (target) break;
+  }
+  client.test("Tim thay target WP va WP khac", function () {
+    client.assert(Boolean(target), "Khong tim thay target co WP cu the va mot WP khac");
+  });
+  if (target) {
+    client.global.set("targetProjectId", String(target.projectId));
+    client.global.set("targetParameterId", String(target.parameterId));
+    client.global.set("targetPhaseId", String(target.phaseId));
+    client.global.set("targetVariationId", String(target.variationId));
+    client.global.set("targetWpJson", JSON.stringify(target.targetWp));
+    client.global.set("otherWpJson", JSON.stringify(target.otherWp));
+    client.log(`Target=${target.title}/${target.variationName}; WP dung=${target.targetWp}; WP sai=${target.otherWp}`);
+  }
+%}
+
+### 5. Tam doi Admin thanh group Other (khong Value_Edit)
+### @name demoteToReadonlyGroup
+# @no-log
+POST {{apiBase}}/user/admin-change-user-info/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "body": {
+    "users": [
+      {
+        "username": "{{testUsername}}",
+        "first_name": {{originalFirstNameJson}},
+        "last_name": {{originalLastNameJson}},
+        "email": {{originalEmailJson}},
+        "department": {{originalDepartmentJson}},
+        "groups": ["Other"],
+        "work_package": {{originalWorkPackageJson}},
+        "position": [{{originalPositionJson}}]
+      }
+    ]
+  }
+}
+
+> {%
+  client.test("Doi sang group Other thanh cong", function () {
+    client.assert(response.status === 200, response.body?.message ?? "Doi group that bai");
+    client.assert(response.body?.status === "success", response.body?.message ?? "Doi group that bai");
+  });
+%}
+
+### 6. Group khong Value_Edit bi tu choi
+### @name readonlyGroupCannotConfirm
+# @no-log
+POST {{apiBase}}/se-list/v1/confirmation-status/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "project_id": "{{targetProjectId}}",
+  "se_parameter_id": "{{targetParameterId}}",
+  "phase_id": "{{targetPhaseId}}",
+  "variation_id": "{{targetVariationId}}",
+  "action": "confirm_no_change"
+}
+
+> {%
+  client.test("Khong Value_Edit tra 403", function () {
+    client.assert(response.status === 403, `Mong doi 403, nhan ${response.status}`);
+  });
+%}
+
+### 7. Tam doi thanh Work Package group nhung gan sai WP
+### @name setWrongWorkPackage
+# @no-log
+POST {{apiBase}}/user/admin-change-user-info/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "body": {
+    "users": [
+      {
+        "username": "{{testUsername}}",
+        "first_name": {{originalFirstNameJson}},
+        "last_name": {{originalLastNameJson}},
+        "email": {{originalEmailJson}},
+        "department": {{originalDepartmentJson}},
+        "groups": ["Work Package(Performance/Unit/Component)"],
+        "work_package": {{otherWpJson}},
+        "position": [{{originalPositionJson}}]
+      }
+    ]
+  }
+}
+
+> {%
+  client.test("Gan WP sai thanh cong", function () {
+    client.assert(response.status === 200, response.body?.message ?? "Doi WP that bai");
+  });
+%}
+
+### 8. Work Package khac dong target bi tu choi
+### @name wrongWpCannotConfirm
+# @no-log
+POST {{apiBase}}/se-list/v1/confirmation-status/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "project_id": "{{targetProjectId}}",
+  "se_parameter_id": "{{targetParameterId}}",
+  "phase_id": "{{targetPhaseId}}",
+  "variation_id": "{{targetVariationId}}",
+  "action": "confirm_no_change"
+}
+
+> {%
+  client.test("Sai WP tra 403", function () {
+    client.assert(response.status === 403, `Mong doi 403, nhan ${response.status}`);
+  });
+%}
+
+### 9. Gan dung WP cua target
+### @name setCorrectWorkPackage
+# @no-log
+POST {{apiBase}}/user/admin-change-user-info/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "body": {
+    "users": [
+      {
+        "username": "{{testUsername}}",
+        "first_name": {{originalFirstNameJson}},
+        "last_name": {{originalLastNameJson}},
+        "email": {{originalEmailJson}},
+        "department": {{originalDepartmentJson}},
+        "groups": ["Work Package(Performance/Unit/Component)"],
+        "work_package": {{targetWpJson}},
+        "position": [{{originalPositionJson}}]
+      }
+    ]
+  }
+}
+
+> {%
+  client.test("Gan dung WP thanh cong", function () {
+    client.assert(response.status === 200, response.body?.message ?? "Doi WP that bai");
+  });
+%}
+
+### 10. Work Package dung WP duoc confirm
+# Neu policy cua position test khong co Value_Edit, request se 403 va can sua seed policy.
+### @name correctWpCanConfirm
+# @no-log
+POST {{apiBase}}/se-list/v1/confirmation-status/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "project_id": "{{targetProjectId}}",
+  "se_parameter_id": "{{targetParameterId}}",
+  "phase_id": "{{targetPhaseId}}",
+  "variation_id": "{{targetVariationId}}",
+  "action": "confirm_no_change"
+}
+
+> {%
+  client.test("Dung WP duoc confirm", function () {
+    client.assert(response.status === 200, response.body?.message ?? "Confirm that bai");
+    client.assert(response.body?.confirmation_status === "confirmed_no_change", "Sai confirmation status");
+  });
+%}
+
+### 11. Cleanup confirmation ve unconfirmed
+### @name cleanupRolePermissionConfirmation
+# @no-log
+POST {{apiBase}}/se-list/v1/confirmation-status/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "project_id": "{{targetProjectId}}",
+  "se_parameter_id": "{{targetParameterId}}",
+  "phase_id": "{{targetPhaseId}}",
+  "variation_id": "{{targetVariationId}}",
+  "action": "reset_unconfirmed"
+}
+
+> {%
+  client.test("Cleanup confirmation thanh cong", function () {
+    client.assert(response.status === 200, response.body?.message ?? "Cleanup that bai");
+    client.assert(response.body?.confirmation_status === "unconfirmed", "Status cuoi khong phai unconfirmed");
+  });
+%}
+
+### 12. RESTORE BAT BUOC: khoi phuc group/WP Admin ban dau
+# Co the chay lai rieng request nay neu file bi dung giua chung.
+### @name restoreOriginalAdminRole
+# @no-log
+POST {{apiBase}}/user/admin-change-user-info/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "body": {
+    "users": [
+      {
+        "username": "{{testUsername}}",
+        "first_name": {{originalFirstNameJson}},
+        "last_name": {{originalLastNameJson}},
+        "email": {{originalEmailJson}},
+        "department": {{originalDepartmentJson}},
+        "groups": {{originalGroupsJson}},
+        "work_package": {{originalWorkPackageJson}},
+        "position": [{{originalPositionJson}}]
+      }
+    ]
+  }
+}
+
+> {%
+  client.test("Khoi phuc Admin thanh cong", function () {
+    client.assert(response.status === 200, response.body?.message ?? "Restore Admin that bai");
+    client.assert(response.body?.status === "success", response.body?.message ?? "Restore Admin that bai");
+  });
+%}
+
+### 13. Xac minh group/WP da duoc restore
+### @name verifyAdminRestored
+# @no-log
+GET {{apiBase}}/user/info/
+Authorization: Bearer {{access_token}}
+Accept: application/json
+
+> {%
+  const expectedGroups = JSON.parse(client.global.get("originalGroupsJson") || "[]").slice().sort();
+  const actualGroups = (response.body?.data?.groups ?? []).slice().sort();
+  const expectedWp = JSON.parse(client.global.get("originalWorkPackageJson") || "null");
+  client.test("Admin da duoc restore", function () {
+    client.assert(response.status === 200, "User info khong tra HTTP 200");
+    client.assert(JSON.stringify(actualGroups) === JSON.stringify(expectedGroups), `Groups hien tai=${JSON.stringify(actualGroups)}`);
+    client.assert(response.body?.data?.work_package === expectedWp, `WP hien tai=${response.body?.data?.work_package}`);
+  });
+%}

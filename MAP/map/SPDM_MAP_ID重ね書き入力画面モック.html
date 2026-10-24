@@ -1,0 +1,106 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SPDM MAP 画面遷移モック v5</title><style>
+:root{--b:#1677ff;--c:#17bdf5;--line:#dce2e8;--bg:#eef2f6;--txt:#222}*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:"Yu Gothic UI",Meiryo,sans-serif;color:var(--txt)}.app{max-width:1450px;min-height:790px;margin:18px auto;background:#fff;box-shadow:0 5px 24px #0002}.head{display:flex;justify-content:space-between;padding:24px 30px;font-size:20px;font-weight:700}.edit{color:var(--c);font-weight:500}.body{padding:15px 32px}.step{display:none}.step.on{display:block}.center{text-align:center;padding:160px 0}.btn,select,input{font:inherit;border:1px solid #ccd4dd;border-radius:8px;padding:10px 13px;background:#fff}.btn{cursor:pointer}.primary{background:var(--b);color:#fff;border-color:var(--b)}.form{display:grid;grid-template-columns:150px minmax(450px,760px) 100px 180px;gap:16px;align-items:center}.req{color:red}.hint{color:var(--c);margin-bottom:30px}.footer{display:flex;justify-content:flex-end;gap:10px;margin-top:24px;padding-top:18px;border-top:1px solid var(--line)}.cards{display:flex;gap:12px}.card{width:31%;border:1px solid var(--line);border-radius:9px;padding:18px;cursor:pointer}.card:hover,.card.sel{border-color:var(--b);background:#f2f8ff}.panel{border-top:1px solid var(--line);margin-top:24px;padding-top:20px}.config{display:grid;grid-template-columns:180px 360px 180px 220px;gap:12px;align-items:center}.config label{font-weight:700}.suggest-input{position:relative}.suggest-input input{width:100%;padding-right:38px}.suggest-input input::-webkit-calendar-picker-indicator{display:none!important}.clear-input{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:0;background:transparent;padding:4px 7px;font:inherit;cursor:pointer;color:#666}.clear-input:hover{color:#111}.note{margin-top:14px;padding:11px 14px;background:#fff6df;border-left:4px solid #e9a000}.table-tools{display:flex;justify-content:flex-end;margin-top:10px}.grid{overflow:auto;max-height:340px;margin-top:10px;border:1px solid var(--line)}table{border-collapse:collapse;min-width:100%;width:max-content}th,td{border:1px solid var(--line);padding:7px;text-align:center}th{background:#edf3f8;position:sticky;top:0}td:first-child{background:#e8f0f7;text-align:left;font-weight:700;position:sticky;left:0}.cell{width:70px;border:0;padding:5px;text-align:center}.nav{position:fixed;right:16px;bottom:16px;background:#fff;padding:8px;border:1px solid #ccd4dd;border-radius:9px}.badge{display:inline-block;background:#e8f4ff;color:#17669a;padding:5px 10px;border-radius:14px;margin:4px}.field-box{margin:12px 0 16px;padding:14px;background:#f7f9fc;border:1px solid var(--line);border-radius:8px;display:flex;align-items:center;gap:16px}.field-box label{font-weight:700}.field-box select{min-width:120px}.hidden{display:none!important}
+.table-tools .btn+.btn{margin-left:8px}
+</style></head><body><div class="app"><div class="head"><span>BSFC_Map(中水温) Map Update</span><span class="edit">✎ 編集モード　×</span></div><div class="body">
+<section id="s1" class="step on center"><h2>現在、本項目にはMapが存在しません。</h2><h2>閲覧モードを終了し、編集モードでMap編集しますか。</h2><button class="btn primary" onclick="go(2)">Map編集</button></section>
+<section id="s2" class="step"><p class="hint">全ての項目に記入し、次へ進んでください。</p><div class="form"><label><span class="req">＊</span> Map種類</label><select id="maptype"><option>TABLE (1D MAP)</option><option selected>TABLE (1D重ね書き：変速線、N-T Curve、他)</option><option>MAP (2D MAP)</option><option>CUBE (3D MAP)</option></select><label>Ver.</label><select><option>001</option></select><label><span class="req">＊</span> Map名</label><input value="テスト"><span></span><span></span><label>次元数</label><input value="自動設定" disabled></div><div class="footer"><button class="btn" onclick="go(1)">キャンセル</button><button class="btn primary" onclick="go(3)">次へ</button></div></section>
+<section id="s3" class="step"><p class="note">1D重ね書きのテンプレートを選択してください。</p><div class="cards"><div class="card" onclick="pick('shift',this)"><b>変速線</b><p>軸組み合わせ・単位・段数を設定</p></div><div class="card sel" onclick="pick('nt',this)"><b>N-T Curve</b><p>回転数／トルク、四象限対応</p></div><div class="card" onclick="pick('other',this)"><b>その他</b><p>任意軸・任意系列</p></div></div><div id="editor" class="panel" onpaste="pasteTable(event)"></div><div class="footer"><button class="btn" onclick="go(2)">戻る</button><button class="btn">キャンセル</button><button class="btn primary">登録</button></div></section>
+</div></div><div class="nav"><button class="btn" onclick="go(1)">画面1</button><button class="btn" onclick="go(2)">画面2</button><button class="btn" onclick="go(3)">画面3</button></div><script>
+function go(n){document.querySelectorAll('.step').forEach(x=>x.classList.remove('on'));document.getElementById('s'+n).classList.add('on');if(n===3&&!editor.innerHTML)renderNT()}
+function pick(v,e){document.querySelectorAll('.card').forEach(x=>x.classList.remove('sel'));e.classList.add('sel');v==='shift'?renderShift():v==='nt'?renderNT():renderOther()}
+function opts(a){return a.map(x=>`<option>${x}</option>`).join('')}
+const pointCounts=new Map([['shift',10],['nt',10],['other',10]])
+function pointToolbar(type){return `<div class="table-tools"><button type="button" class="btn" onclick="resetTable('${type}')">初期化</button><button type="button" class="btn" onclick="addPoint('${type}')">＋ 列を追加</button></div>`}
+function pointHeaders(count){return Array.from({length:count},(_,i)=>`<th>P${i+1}</th>`).join('')}
+function row(name,axis,key,count=10){return `<tr${key?` data-value-key="${key}"`:''}><td>${name}</td><td>${axis}</td>${'<td><input class="cell"></td>'.repeat(count)}</tr>`}
+function table(x,y,n=4,prefix){let count=pointCounts.get(prefix)??10,h=pointToolbar(prefix)+'<div class="grid"><table><tr><th>系列</th><th>軸</th>'+pointHeaders(count)+'</tr>';for(let i=1;i<=n;i++){let key=prefix?`${prefix}|${i}`:'';h+=row(`第${i}象限`,x,key&&`${key}|x`,count)+row('',y,key&&`${key}|t`,count)}return h+'</table></div>'}
+function pasteTable(event){
+    const start=event.target.closest('input.cell'),text=event.clipboardData?.getData('text/plain')
+    if(!start||text==null)return
+    const matrix=text.replace(/\r\n?/g,'\n').replace(/\n$/,'').split('\n').map(line=>line.split('\t'))
+    const rows=[...start.closest('table').rows].map(row=>[...row.querySelectorAll('input.cell')]).filter(row=>row.length)
+    const startRow=rows.findIndex(row=>row.includes(start)),startColumn=rows[startRow].indexOf(start)
+    matrix.forEach((cells,row)=>cells.forEach((value,column)=>{const input=rows[startRow+row]?.[startColumn+column];if(input){input.value=value;input.dispatchEvent(new Event('input',{bubbles:true}))}}))
+    event.preventDefault()
+}
+const tableValues=new Map()
+function saveTableValues(data){data.querySelectorAll('tr[data-value-key]').forEach(tr=>tr.querySelectorAll('input').forEach((input,i)=>tableValues.set(`${tr.dataset.valueKey}|${i}`,input.value)))}
+function restoreTableValues(data){data.querySelectorAll('tr[data-value-key]').forEach(tr=>tr.querySelectorAll('input').forEach((input,i)=>input.value=tableValues.get(`${tr.dataset.valueKey}|${i}`)??''))}
+function renderDataTable(type){type==='shift'?shiftSeries():type==='nt'?renderNTSeries():renderOtherSeries()}
+function addPoint(type){
+    if(!pointCounts.has(type))return
+    pointCounts.set(type,pointCounts.get(type)+1)
+    renderDataTable(type)
+}
+function resetTable(type){
+    if(!pointCounts.has(type))return
+    const data=document.getElementById(type==='shift'?'data':type==='nt'?'ntData':'otherData')
+    data?.querySelectorAll('input.cell').forEach(input=>input.value='')
+    const prefixes=type==='shift'?['engine|','apo|']:[`${type}|`]
+    for(const key of tableValues.keys())if(prefixes.some(prefix=>key.startsWith(prefix)))tableValues.delete(key)
+    pointCounts.set(type,10)
+    renderDataTable(type)
+}
+function shiftSeries(){
+    let data=document.getElementById('data')
+    saveTableValues(data)
+    let n=Number(document.getElementById('gear')?.value||4),x=document.getElementById('xunit')?.value||'km/h',kind=document.getElementById('pair')?.value||'Vehicle Speed / APO',eng=kind.includes('Engine'),y=eng?'Engine Speed [rpm]':'APO ['+(document.getElementById('yunit')?.value||'deg')+']'
+    let count=pointCounts.get('shift'),h=pointToolbar('shift')+'<div class="grid"><table><tr><th>系列</th><th>軸</th>'+pointHeaders(count)+'</tr>'
+    if(eng){
+        for(let g=1;g<=n;g++){let name=`${g}${g===1?'st':g===2?'nd':g===3?'rd':'th'}`,key=`engine|${name}`;h+=row(name,`Vehicle Speed [${x}]`,`${key}|x`,count)+row('',y,`${key}|t`,count)}
+    }else{
+        for(let g=1;g<n;g++){let name=`UP_${g}-${g+1}`,key=`apo|${name}`;h+=row(name,`Vehicle Speed [${x}]`,`${key}|x`,count)+row('',y,`${key}|t`,count)}
+        for(let g=2;g<=n;g++){let name=`DOWN_${g}-${g-1}`,key=`apo|${name}`;h+=row(name,`Vehicle Speed [${x}]`,`${key}|x`,count)+row('',y,`${key}|t`,count)}
+    }
+    data.innerHTML=h+'</table></div>'
+    restoreTableValues(data)
+}
+function pairChange(){let eng=pair.value.includes('Engine');ywrap.classList.toggle('hidden',eng);yunit.classList.toggle('hidden',eng);fixedrpm.classList.toggle('hidden',!eng);rpm.classList.toggle('hidden',!eng);shiftSeries()}
+function renderShift(){editor.innerHTML=`<h3>変速線テンプレート</h3><div class="config"><label>軸組み合わせ</label><select id="pair" onchange="pairChange()"><option>Vehicle Speed / APO</option><option>Vehicle Speed / Engine Speed</option></select><label>段数</label><select id="gear" onchange="shiftSeries()">${opts(['2','3','4','5','6','7','8','9','10','11','12'])}</select><label>Vehicle Speed単位</label><select id="xunit" onchange="shiftSeries()">${opts(['km/h','mile/h'])}</select><label id="ywrap">APO単位</label><select id="yunit" onchange="shiftSeries()">${opts(['deg','%','x/8','単位なし'])}</select><label id="fixedrpm" class="hidden" for="rpm">Engine Speed単位</label><input class="hidden" id="rpm" value="rpm" readonly></div><div><span class="badge">単位変更時は確認表示</span><span class="badge">数値は自動換算しない</span><span class="badge">系列ごと独立X/T</span></div><div id="data"></div>`;shiftSeries()}
+function renderNTSeries() {
+    const count = Number(document.getElementById('ntSeriesCount').value);
+    const data = document.getElementById('ntData');
+    saveTableValues(data);
+    data.innerHTML = table('回転数 [rpm]', 'トルク [Nm]', count, 'nt');
+    restoreTableValues(data);
+}
+function renderNT() {
+    editor.innerHTML =
+        '<h3>N-T Curveテンプレート</h3>' +
+        '<div class="field-box">' +
+        '<label for="ntSeriesCount"><span class="req">＊</span> 系列数</label>' +
+        '<select id="ntSeriesCount" onchange="renderNTSeries()">' +
+        '<option value="1">1系列</option>' +
+        '<option value="2">2系列</option>' +
+        '<option value="3">3系列</option>' +
+        '<option value="4">4系列</option>' +
+        '</select>' +
+        '<span>登録するN-T Curveの系列数を選択してください。</span>' +
+        '</div>' +
+        '<span class="badge">X軸：回転数 [rpm]</span>' +
+        '<span class="badge">T軸：トルク [Nm]</span>' +
+        '<span class="badge">四象限</span>' +
+        '<div id="ntData"></div>';
+    renderNTSeries();
+}
+function escapeHtml(value){return value.replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]))}
+function axisLabel(name,unit){return unit?`${name}${name?' ':''}[${unit}]`:name}
+function renderOtherSeries(){
+    const count=Number(document.getElementById('otherSeriesCount').value),data=document.getElementById('otherData')
+    saveTableValues(data)
+    const x=axisLabel(document.getElementById('otherXName').value,document.getElementById('otherXUnit').value)
+    const t=axisLabel(document.getElementById('otherTName').value,document.getElementById('otherTUnit').value)
+    data.innerHTML=table(escapeHtml(x),escapeHtml(t),count,'other')
+    restoreTableValues(data)
+}
+function clearOtherAxis(id){
+    const input=document.getElementById(id)
+    input.value=''
+    input.focus()
+    renderOtherSeries()
+}
+function renderOther(){
+    editor.innerHTML=`<h3>その他テンプレート</h3><div class="config"><label for="otherXName">X軸名</label><div class="suggest-input"><input id="otherXName" list="otherXNameSuggestions" value="時間" autocomplete="off" onchange="renderOtherSeries()"><button type="button" class="clear-input" aria-label="X軸名をクリア" onclick="clearOtherAxis('otherXName')">×</button></div><datalist id="otherXNameSuggestions">${opts(['時間','回転数','Vehicle Speed','距離','周波数'])}</datalist><label for="otherXUnit">単位</label><div class="suggest-input"><input id="otherXUnit" list="otherXUnitSuggestions" value="s" autocomplete="off" onchange="renderOtherSeries()"><button type="button" class="clear-input" aria-label="X軸の単位をクリア" onclick="clearOtherAxis('otherXUnit')">×</button></div><datalist id="otherXUnitSuggestions">${opts(['s','rpm','km/h','km','Hz'])}</datalist><label for="otherTName">T軸名</label><div class="suggest-input"><input id="otherTName" list="otherTNameSuggestions" value="温度" autocomplete="off" onchange="renderOtherSeries()"><button type="button" class="clear-input" aria-label="T軸名をクリア" onclick="clearOtherAxis('otherTName')">×</button></div><datalist id="otherTNameSuggestions">${opts(['温度','トルク','APO','圧力','加速度'])}</datalist><label for="otherTUnit">単位</label><div class="suggest-input"><input id="otherTUnit" list="otherTUnitSuggestions" value="℃" autocomplete="off" onchange="renderOtherSeries()"><button type="button" class="clear-input" aria-label="T軸の単位をクリア" onclick="clearOtherAxis('otherTUnit')">×</button></div><datalist id="otherTUnitSuggestions">${opts(['℃','Nm','deg','kPa','m/s²'])}</datalist><label for="otherSeriesCount">系列数</label><select id="otherSeriesCount" onchange="renderOtherSeries()"><option>1</option><option selected>2</option><option>3</option><option>4</option></select></div><div id="otherData"></div>`
+    renderOtherSeries()
+}
+</script></body></html>

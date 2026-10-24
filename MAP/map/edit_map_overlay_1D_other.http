@@ -1,0 +1,437 @@
+### UU3 SPDM - demo OVERLAY_1D template その他
+#
+# Mock tuong ung: その他 (truc va series tu do)
+# - X: 時間 [s]
+# - T: 温度 [℃]
+# - 2 series co so diem doc lap
+#
+# Chay tung request tu tren xuong duoi trong cung mot phien PyCharm.
+# Chon Run with -> dev.
+# Luu y: day la demo CO GHI DU LIEU.
+# Neu chua co bien X/T phu hop, script tao map_variable master de tai su dung.
+# Xoa MAP khong xoa cac map_variable master moi tao.
+
+@healthBase = {{devBaseUrl}}
+@apiBase = {{devApiBase}}
+@scopeName = System_Control
+
+### 1. Kiem tra server
+# @name healthOverlayOther
+# @no-log
+GET {{healthBase}}/healthz
+Accept: application/json
+
+### 2. Dang nhap va tao ten map duy nhat
+# @name loginOverlayOther
+# @no-log
+POST {{apiBase}}/user/login/
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username": "{{username}}",
+  "password": "{{password}}"
+}
+
+> {%
+  client.test("Dang nhap thanh cong", function () {
+    client.assert(response.status === 200, "Login khong tra HTTP 200");
+    client.assert(Boolean(response.body?.access), "Response khong co access token");
+  });
+
+  if (response.body?.access) {
+    const timestamp = new Date().toISOString().replace(/\D/g, "").slice(0, 14);
+    client.global.set("access_token", response.body.access);
+    client.global.set("refresh_token", response.body.refresh);
+    client.global.set("otherMapName", `HTTP_DEMO_OVERLAY_OTHER_${timestamp}_001`);
+  }
+%}
+
+### 3. Lay project dau tien
+# @name selectProjectOverlayOther
+# @no-log
+GET {{apiBase}}/project/all-projects/
+Authorization: Bearer {{access_token}}
+Accept: application/json
+
+> {%
+  const project = response.body?.data?.[0];
+
+  client.test("Tim thay project", function () {
+    client.assert(Boolean(project), "Khong co project tai data[0]");
+  });
+
+  if (project) {
+    client.global.set("projectId", String(project.project_id));
+    client.global.set("projectName", project.project_name);
+    client.global.set("phaseName", project.phase_name);
+    client.global.set("destination", project.destination);
+    client.global.set("drivetrain", project.drivetrain);
+    client.global.set("bodyType", project.grade);
+    client.global.set("powertrain", project.powertrain);
+    client.global.set("lot", project.lot);
+  }
+%}
+
+### 4. Chon mot SE parameter dang N/A hoac rong
+# @name selectEmptyParameterOverlayOther
+# @no-log
+POST {{apiBase}}/se-list/v2/list-se-list-parameters-new/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+[
+  [
+    {
+      "projects_key": ["{{projectId}}"],
+      "project": "{{projectName}}",
+      "destination": "{{destination}}",
+      "drivetrain": "{{drivetrain}}",
+      "body_type": "{{bodyType}}",
+      "powertrain": "{{powertrain}}",
+      "lot": "{{lot}}",
+      "phase": "{{phaseName}}"
+    }
+  ]
+]
+
+> {%
+  client.test("Doc danh sach SE thanh cong", function () {
+    client.assert(response.status === 200, `API SE list tra HTTP ${response.status}`);
+  });
+
+  const groups = response.body?.projects?.[0]?.data ?? [];
+  let selected = null;
+
+  for (const group of groups) {
+    for (const row of group.children ?? []) {
+      for (const value of Object.values(row)) {
+        if (!value || typeof value !== "object" || !("variation_id" in value)) continue;
+        const current = value.z_request_median;
+        const isEmpty = current === null
+          || current === undefined
+          || String(current).trim() === ""
+          || ["N/A", "MAP"].includes(String(current).trim().toUpperCase());
+        if (isEmpty) {
+          selected = {
+            projectId: row.project_id,
+            parameterId: row.se_parameter_id,
+            phaseId: row.phase_id,
+            variationId: value.variation_id
+          };
+          break;
+        }
+      }
+      if (selected) break;
+    }
+    if (selected) break;
+  }
+
+  client.test("Tim thay parameter an toan", function () {
+    client.assert(Boolean(selected), "Khong co SE parameter N/A/rong trong project da chon");
+  });
+
+  if (selected) {
+    client.global.set("targetProjectId", String(selected.projectId));
+    client.global.set("targetParameterId", String(selected.parameterId));
+    client.global.set("targetPhaseId", String(selected.phaseId));
+    client.global.set("targetVariationId", String(selected.variationId));
+  }
+%}
+
+### 5. Chon hoac chuan bi tao bien 時間/s va 温度/℃
+# @name selectVariablesOverlayOther
+# @no-log
+POST {{apiBase}}/se-list/se-map/get-infomation/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+{}
+
+> {%
+  const info = response.body?.data?.OVERLAY_1D;
+  const xItems = info?.["X軸名_new"] ?? [];
+  const tItems = info?.["T軸名_new"] ?? [];
+  const x = xItems.find(item => item.variable_name === "時間" && item.unit === "s");
+  const t = tItems.find(item => item.variable_name === "温度" && item.unit === "℃");
+  const addNew = {};
+
+  client.test("Backend ho tro OVERLAY_1D", function () {
+    client.assert(Boolean(info), "Response khong co OVERLAY_1D");
+    client.assert(info?.max_points_per_series === 20, "max_points_per_series khong bang 20");
+  });
+
+  if (x) {
+    client.global.set("otherXName", `${x.id}_${x.variable_name}_${x.unit}`);
+  } else {
+    client.global.set("otherXName", "");
+    addNew.xname = {variable_name: "時間", unit: "s"};
+  }
+
+  if (t) {
+    client.global.set("otherTName", `${t.id}_${t.variable_name}_${t.unit}`);
+  } else {
+    client.global.set("otherTName", "");
+    addNew.tname = {variable_name: "温度", unit: "℃"};
+  }
+
+  client.global.set("otherAddNewJson", JSON.stringify(addNew));
+  client.log("Other add_new: " + JSON.stringify(addNew));
+%}
+
+### 6. Tao OVERLAY_1D voi truc va series tu do
+# Series 1 co 5 diem; series 2 co 3 diem.
+# @name createMapOverlayOther
+# @no-log
+POST {{apiBase}}/se-list/se-map/map-create/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "chosen_id": 1,
+  "mode": "OVERLAY_1D",
+  "overlay_template": "その他",
+  "df_edited": null,
+  "df_editeds": null,
+  "df_edited_z": null,
+  "map_name": "N/A",
+  "new_map_name": "{{otherMapName}}",
+  "xname": "{{otherXName}}",
+  "tname": "{{otherTName}}",
+  "overlay_series": [
+    {
+      "series_key": "系列_1",
+      "x_values": [0, 10, 20, 30, 40],
+      "t_values": [20, 25, 30, 35, 40]
+    },
+    {
+      "series_key": "系列_2",
+      "x_values": [0, 15, 30],
+      "t_values": [-10, 0, 10]
+    }
+  ],
+  "project_id": "{{targetProjectId}}",
+  "parameter_id": "{{targetParameterId}}",
+  "phase_id": "{{targetPhaseId}}",
+  "variation_id": "{{targetVariationId}}",
+  "study_id": null,
+  "scope_name": "{{scopeName}}",
+  "add_new": {{otherAddNewJson}}
+}
+
+> {%
+  client.test("Tao Other OVERLAY_1D thanh cong", function () {
+    client.assert(response.status === 200, "Create khong tra HTTP 200");
+    client.assert(response.body?.status === "success", response.body?.message ?? "Create that bai");
+  });
+%}
+
+### 7. Doc va doi chieu map vua tao
+# @name readCreatedMapOverlayOther
+# @no-log
+POST {{apiBase}}/se-list/se-map/map-button/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+[
+  {
+    "z_request_median": "{{otherMapName}}",
+    "project_id": "{{targetProjectId}}",
+    "phase_id": "{{targetPhaseId}}",
+    "se_parameter_id": "{{targetParameterId}}",
+    "variation_id": "{{targetVariationId}}",
+    "URL": "",
+    "chosen_id": 1
+  }
+]
+
+> {%
+  const data = response.body?.data;
+  const series = data?.overlay_series ?? [];
+  const byKey = Object.fromEntries(series.map(item => [item.series_key, item]));
+
+  client.test("Doc dung Other OVERLAY_1D", function () {
+    client.assert(response.status === 200, "Read khong tra HTTP 200");
+    client.assert(data?.mode === "OVERLAY_1D", "mode khong dung");
+    client.assert(data?.overlay_template === "その他", "overlay_template khong phai その他");
+    client.assert(series.length === 2, "Phai co 2 series");
+    client.assert(
+      JSON.stringify(byKey["系列_1"]?.x_values) === JSON.stringify([0, 10, 20, 30, 40]),
+      "X cua series 1 khong dung"
+    );
+    client.assert(
+      JSON.stringify(byKey["系列_2"]?.t_values) === JSON.stringify([-10, 0, 10]),
+      "T cua series 2 khong dung"
+    );
+    client.assert(byKey["系列_1"]?.direction === null, "Series tu do phai co direction null");
+  });
+
+  if (data?.xname) client.global.set("otherXName", data.xname);
+  if (data?.tname) client.global.set("otherTName", data.tname);
+%}
+
+### 8. Sua du lieu series tu do
+# @name editMapOverlayOther
+# @no-log
+POST {{apiBase}}/se-list/se-map/map-edit/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "chosen_id": 1,
+  "mode": "OVERLAY_1D",
+  "overlay_template": "その他",
+  "df_edited": null,
+  "df_editeds": null,
+  "df_edited_z": null,
+  "map_name": "{{otherMapName}}",
+  "new_map_name": "{{otherMapName}}",
+  "xname": "{{otherXName}}",
+  "tname": "{{otherTName}}",
+  "overlay_series": [
+    {
+      "series_key": "系列_1",
+      "x_values": [0, 10, 20, 30, 40],
+      "t_values": [22, 27, 32, 37, 42]
+    },
+    {
+      "series_key": "系列_2",
+      "x_values": [0, 12.5, 25, 37.5],
+      "t_values": [-15, -5, 5, 15]
+    }
+  ],
+  "project_id": "{{targetProjectId}}",
+  "parameter_id": "{{targetParameterId}}",
+  "phase_id": "{{targetPhaseId}}",
+  "variation_id": "{{targetVariationId}}",
+  "study_id": null,
+  "scope_name": "{{scopeName}}",
+  "add_new": {}
+}
+
+> {%
+  client.test("Sua Other OVERLAY_1D thanh cong", function () {
+    client.assert(response.status === 200, "Edit khong tra HTTP 200");
+    client.assert(response.body?.status === "success", response.body?.message ?? "Edit that bai");
+  });
+%}
+
+### 9. Doc lai va doi chieu du lieu da sua
+# @name readEditedMapOverlayOther
+# @no-log
+POST {{apiBase}}/se-list/se-map/map-button/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+[
+  {
+    "z_request_median": "{{otherMapName}}",
+    "project_id": "{{targetProjectId}}",
+    "phase_id": "{{targetPhaseId}}",
+    "se_parameter_id": "{{targetParameterId}}",
+    "variation_id": "{{targetVariationId}}",
+    "URL": "",
+    "chosen_id": 1
+  }
+]
+
+> {%
+  const series = response.body?.data?.overlay_series ?? [];
+  const byKey = Object.fromEntries(series.map(item => [item.series_key, item]));
+
+  client.test("Gia tri Other edit duoc luu", function () {
+    client.assert(response.status === 200, "Read edited khong tra HTTP 200");
+    client.assert(response.body?.data?.overlay_template === "その他", "overlay_template khong duoc giu nguyen");
+    client.assert(
+      JSON.stringify(byKey["系列_1"]?.t_values) === JSON.stringify([22, 27, 32, 37, 42]),
+      "T cua series 1 sau edit khong dung"
+    );
+    client.assert(
+      JSON.stringify(byKey["系列_2"]?.x_values) === JSON.stringify([0, 12.5, 25, 37.5]),
+      "X cua series 2 sau edit khong dung"
+    );
+    client.assert(
+      JSON.stringify(byKey["系列_2"]?.t_values) === JSON.stringify([-15, -5, 5, 15]),
+      "T cua series 2 sau edit khong dung"
+    );
+  });
+%}
+
+### 10. Xoa Other OVERLAY_1D demo
+# @name deleteMapOverlayOther
+# @no-log
+POST {{apiBase}}/se-list/se-map/map-delete/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "scope": "all",
+  "project_id": "{{targetProjectId}}",
+  "se_parameter_id": "{{targetParameterId}}",
+  "phase_id": "{{targetPhaseId}}",
+  "variation_id": "{{targetVariationId}}",
+  "z_request_median": "{{otherMapName}}"
+}
+
+> {%
+  client.test("Xoa Other OVERLAY_1D thanh cong", function () {
+    client.assert(response.status === 200, "Delete khong tra HTTP 200");
+    client.assert(response.body?.status === "success", response.body?.message ?? "Delete that bai");
+  });
+%}
+
+### 11. Xac nhan cleanup
+# @name verifyCleanupOverlayOther
+# @no-log
+POST {{apiBase}}/se-list/v2/list-se-list-parameters-new/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+[
+  [
+    {
+      "projects_key": ["{{projectId}}"],
+      "project": "{{projectName}}",
+      "destination": "{{destination}}",
+      "drivetrain": "{{drivetrain}}",
+      "body_type": "{{bodyType}}",
+      "powertrain": "{{powertrain}}",
+      "lot": "{{lot}}",
+      "phase": "{{phaseName}}"
+    }
+  ]
+]
+
+> {%
+  client.test("Doc lai SE sau cleanup thanh cong", function () {
+    client.assert(response.status === 200, `API SE list tra HTTP ${response.status}`);
+  });
+
+  const groups = response.body?.projects?.[0]?.data ?? [];
+  let finalValue;
+  for (const group of groups) {
+    for (const row of group.children ?? []) {
+      if (String(row.se_parameter_id) !== String(client.global.get("targetParameterId"))) continue;
+      for (const value of Object.values(row)) {
+        if (value && typeof value === "object"
+            && String(value.variation_id) === String(client.global.get("targetVariationId"))) {
+          finalValue = value.z_request_median;
+        }
+      }
+    }
+  }
+
+  client.test("Cleanup Other hoan tat", function () {
+    const clean = finalValue === null
+      || ["N/A", "MAP"].includes(String(finalValue).trim().toUpperCase());
+    client.assert(clean, `Gia tri sau cleanup la '${finalValue}'`);
+  });
+%}

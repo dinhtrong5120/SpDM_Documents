@@ -1,0 +1,338 @@
+### UU3 SPDM - luu thay doi SE List va confirmation
+#
+# Coverage:
+# - ED-01/02/04/05: thay doi value, memo, nguoi phu trach va nhieu field
+# - ED-06: payload giong du lieu cu la no-op
+# - ED-07/08/09: dong o bat ky confirmation status thanh confirmed_changed
+# - ED-10: hai dong nhung chi mot dong thay doi
+# - HS-03/05/06: value_save history va changed_fields
+#
+# Chay tung request tu tren xuong duoi.
+# File CO GHI DU LIEU tren mot parameter khong phai Map, sau do khoi phuc value/memo/note cu.
+# Trang thai confirmation cuoi cua target chinh la unconfirmed.
+
+@healthBase = {{devBaseUrl}}
+@apiBase = {{devApiBase}}
+
+### 1. Kiem tra server
+### @name healthConfirmationValue
+# @no-log
+GET {{healthBase}}/healthz
+Accept: application/json
+
+> {%
+  client.test("Server san sang", function () {
+    client.assert(response.status === 200, "Health check khong tra HTTP 200");
+  });
+%}
+
+### 2. Dang nhap
+### @name loginConfirmationValue
+# @no-log
+POST {{apiBase}}/user/login/
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username": "{{username}}",
+  "password": "{{password}}"
+}
+
+> {%
+  client.test("Dang nhap thanh cong", function () {
+    client.assert(response.status === 200, "Login khong tra HTTP 200");
+    client.assert(Boolean(response.body?.access), "Khong co access token");
+  });
+  client.global.set("access_token", response.body.access);
+%}
+
+### 3. Chon project
+### @name selectProjectConfirmationValue
+# @no-log
+GET {{apiBase}}/project/all-projects/
+Authorization: Bearer {{access_token}}
+Accept: application/json
+
+> {%
+  const project = response.body?.data?.[0];
+  client.test("Tim thay project", function () {
+    client.assert(Boolean(project), "Khong co project tai data[0]");
+  });
+  if (project) {
+    client.global.set("projectId", String(project.project_id));
+    client.global.set("projectName", project.project_name);
+    client.global.set("destination", project.destination);
+    client.global.set("drivetrain", project.drivetrain);
+    client.global.set("bodyType", project.grade);
+    client.global.set("lot", project.lot);
+    client.global.set("phaseName", project.phase_name);
+  }
+%}
+
+### 4. Chon hai parameter khong phai Map
+# Target 1 se bi thay doi va khoi phuc; target 2 duoc gui cung payload nhung khong doi.
+### @name selectValueTargets
+# @no-log
+POST {{apiBase}}/se-list/v2/list-se-list-parameters-new/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+[
+  [
+    {
+      "projects_key": ["{{projectId}}"],
+      "project": "{{projectName}}",
+      "destination": "{{destination}}",
+      "drivetrain": "{{drivetrain}}",
+      "body_type": "{{bodyType}}",
+      "lot": "{{lot}}",
+      "phase": "{{phaseName}}"
+    }
+  ]
+]
+
+> {%
+  const groups = response.body?.projects?.[0]?.data ?? [];
+  const candidates = [];
+  for (const group of groups) {
+    for (const row of group.children ?? []) {
+      if (String(row.unit ?? "").toLowerCase() === "map") continue;
+      for (const [variationName, value] of Object.entries(row)) {
+        if (!value || typeof value !== "object" || !("variation_id" in value)) continue;
+        candidates.push({
+          projectId: row.project_id,
+          parameterId: row.se_parameter_id,
+          phaseId: row.phase_id,
+          variationId: value.variation_id,
+          title: row.title_row,
+          variationName,
+          value: value.z_request_median,
+          memo: value.user_memo,
+          note: value.z_note
+        });
+      }
+    }
+  }
+  const first = candidates[0];
+  const second = candidates.find((item) =>
+    String(item.parameterId) !== String(first?.parameterId)
+    || String(item.variationId) !== String(first?.variationId)
+  );
+  client.test("Tim thay hai o SE List khong phai Map", function () {
+    client.assert(Boolean(first), "Khong co target thu nhat");
+    client.assert(Boolean(second), "Khong co target thu hai de test mixed payload");
+  });
+  if (first && second) {
+    client.global.set("targetProjectId", String(first.projectId));
+    client.global.set("targetParameterId", String(first.parameterId));
+    client.global.set("targetPhaseId", String(first.phaseId));
+    client.global.set("targetVariationId", String(first.variationId));
+    client.global.set("secondProjectId", String(second.projectId));
+    client.global.set("secondParameterId", String(second.parameterId));
+    client.global.set("secondPhaseId", String(second.phaseId));
+    client.global.set("secondVariationId", String(second.variationId));
+
+    client.global.set("originalValueJson", JSON.stringify(first.value ?? null));
+    client.global.set("originalMemoJson", JSON.stringify(first.memo ?? null));
+    client.global.set("originalNoteJson", JSON.stringify(first.note ?? null));
+
+    const stamp = new Date().toISOString().replace(/\D/g, "").slice(0, 14);
+    client.global.set("testValue", `${first.value ?? ""}__HTTP_${stamp}`);
+    client.global.set("testMemo", `HTTP confirmation memo ${stamp}`);
+    client.global.set("testNote", `HTTP confirmation owner ${stamp}`);
+    client.log(`Target thay doi: ${first.title}/${first.variationName}`);
+    client.log(`Target no-op: ${second.title}/${second.variationName}`);
+  }
+%}
+
+### 5. Doc lich su truoc khi test
+### @name historyBeforeValueSave
+# @no-log
+GET {{apiBase}}/se-list/v1/parameter-history/?project_id={{targetProjectId}}&se_parameter_id={{targetParameterId}}&phase_id={{targetPhaseId}}&variation_id={{targetVariationId}}
+Authorization: Bearer {{access_token}}
+Accept: application/json
+
+> {%
+  const history = response.body?.confirmation_history ?? [];
+  client.test("Doc history ban dau", function () {
+    client.assert(response.status === 200, "History khong tra HTTP 200");
+  });
+  client.global.set("valueHistoryBefore", String(history.length));
+  client.global.set(
+    "valueHistoryMaxId",
+    String(history.reduce((maxId, item) => Math.max(maxId, Number(item?.id) || 0), 0))
+  );
+%}
+
+### 6. Luu khong gui field thay doi - phai la no-op
+### @name saveUnchangedValue
+# @no-log
+POST {{apiBase}}/se-list/v1/update-se-list-value-new/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+[
+  {
+    "project_id": "{{targetProjectId}}",
+    "se_parameter_id": "{{targetParameterId}}",
+    "phase_id": "{{targetPhaseId}}",
+    "variation_id": "{{targetVariationId}}"
+  }
+]
+
+> {%
+  client.test("Payload khong thay doi la no-op", function () {
+    client.assert(response.status === 200, response.body?.message ?? "Update that bai");
+    client.assert(response.body?.changed_count === 0, "changed_count phai bang 0");
+    client.assert(response.body?.unchanged_count === 1, "unchanged_count phai bang 1");
+    client.assert(response.body?.data?.[0]?.changed === false, "Dong phai changed=false");
+  });
+%}
+
+### 7. Gui hai dong: target 1 thay doi 3 field, target 2 giu nguyen
+### @name saveOneChangedOneUnchanged
+# @no-log
+POST {{apiBase}}/se-list/v1/update-se-list-value-new/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+[
+  {
+    "project_id": "{{targetProjectId}}",
+    "se_parameter_id": "{{targetParameterId}}",
+    "phase_id": "{{targetPhaseId}}",
+    "variation_id": "{{targetVariationId}}",
+    "z_request_median": "{{testValue}}",
+    "user_memo": "{{testMemo}}",
+    "z_note": "{{testNote}}"
+  },
+  {
+    "project_id": "{{secondProjectId}}",
+    "se_parameter_id": "{{secondParameterId}}",
+    "phase_id": "{{secondPhaseId}}",
+    "variation_id": "{{secondVariationId}}"
+  }
+]
+
+> {%
+  const changed = response.body?.data?.find((item) => item.changed === true);
+  const fields = changed?.changed_fields ?? [];
+  client.test("Chi mot dong duoc update", function () {
+    client.assert(response.status === 200, response.body?.message ?? "Update that bai");
+    client.assert(response.body?.changed_count === 1, "changed_count phai bang 1");
+    client.assert(response.body?.unchanged_count === 1, "unchanged_count phai bang 1");
+    client.assert(changed?.confirmation_status === "confirmed_changed", "Status phai la confirmed_changed");
+    client.assert(fields.includes("value"), "Thieu changed field value");
+    client.assert(fields.includes("user_memo"), "Thieu changed field user_memo");
+    client.assert(fields.includes("z_note"), "Thieu changed field z_note");
+  });
+%}
+
+### 8. Gui lai dung du lieu vua luu - phai la no-op
+### @name repeatSameChangedPayload
+# @no-log
+POST {{apiBase}}/se-list/v1/update-se-list-value-new/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+[
+  {
+    "project_id": "{{targetProjectId}}",
+    "se_parameter_id": "{{targetParameterId}}",
+    "phase_id": "{{targetPhaseId}}",
+    "variation_id": "{{targetVariationId}}",
+    "z_request_median": "{{testValue}}",
+    "user_memo": "{{testMemo}}",
+    "z_note": "{{testNote}}"
+  }
+]
+
+> {%
+  client.test("Luu lap lai khong tao thay doi", function () {
+    client.assert(response.status === 200, "Update lap lai khong tra HTTP 200");
+    client.assert(response.body?.changed_count === 0, "Update lap lai phai changed_count=0");
+    client.assert(response.body?.data?.[0]?.changed === false, "Update lap lai phai changed=false");
+  });
+%}
+
+### 9. Kiem tra confirmation history cua value save
+### @name historyAfterValueSave
+# @no-log
+GET {{apiBase}}/se-list/v1/parameter-history/?project_id={{targetProjectId}}&se_parameter_id={{targetParameterId}}&phase_id={{targetPhaseId}}&variation_id={{targetVariationId}}
+Authorization: Bearer {{access_token}}
+Accept: application/json
+
+> {%
+  const history = response.body?.confirmation_history ?? [];
+  const previousMaxId = Number(client.global.get("valueHistoryMaxId") || 0);
+  const latestValueSave = history.find((item) =>
+    Number(item?.id) > previousMaxId &&
+    item?.action === "changed" &&
+    item?.handling_type === "value_save"
+  );
+  let fields = latestValueSave?.changed_fields ?? [];
+  if (typeof fields === "string") {
+    try { fields = JSON.parse(fields); } catch (_) { fields = []; }
+  }
+  client.test("History ghi dung value_save", function () {
+    client.assert(response.status === 200, "History khong tra HTTP 200");
+    client.assert(latestValueSave, "Khong tim thay history changed moi cua value_save");
+    client.assert(latestValueSave?.new_status === "confirmed_changed", "Sai new_status");
+    client.assert(fields.includes("value") && fields.includes("user_memo") && fields.includes("z_note"), "Sai changed_fields");
+  });
+%}
+
+### 10. Khoi phuc value, memo va note ban dau
+# Cac bien *Json da chua JSON hop le, ke ca null va chuoi co dau quote.
+### @name restoreOriginalValue
+# @no-log
+POST {{apiBase}}/se-list/v1/update-se-list-value-new/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+[
+  {
+    "project_id": "{{targetProjectId}}",
+    "se_parameter_id": "{{targetParameterId}}",
+    "phase_id": "{{targetPhaseId}}",
+    "variation_id": "{{targetVariationId}}",
+    "z_request_median": {{originalValueJson}},
+    "user_memo": {{originalMemoJson}},
+    "z_note": {{originalNoteJson}}
+  }
+]
+
+> {%
+  client.test("Khoi phuc du lieu goc thanh cong", function () {
+    client.assert(response.status === 200, response.body?.message ?? "Restore that bai");
+    client.assert(response.body?.changed_count === 1, "Restore phai thay doi mot dong");
+  });
+%}
+
+### 11. Cleanup confirmation ve unconfirmed
+### @name cleanupValueConfirmation
+# @no-log
+POST {{apiBase}}/se-list/v1/confirmation-status/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "project_id": "{{targetProjectId}}",
+  "se_parameter_id": "{{targetParameterId}}",
+  "phase_id": "{{targetPhaseId}}",
+  "variation_id": "{{targetVariationId}}",
+  "action": "reset_unconfirmed"
+}
+
+> {%
+  client.test("Cleanup confirmation thanh cong", function () {
+    client.assert(response.status === 200, response.body?.message ?? "Cleanup that bai");
+    client.assert(response.body?.confirmation_status === "unconfirmed", "Cleanup khong ve unconfirmed");
+  });
+%}

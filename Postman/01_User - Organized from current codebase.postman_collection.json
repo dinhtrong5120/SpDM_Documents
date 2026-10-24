@@ -1,0 +1,1532 @@
+{
+  "info": {
+    "_postman_id": "8e08ead8-37f9-4993-abca-8136ba71d8c1",
+    "name": "01_User - Organized from current codebase",
+    "description": "Organized from the original Postman export. Current methods, routes and payload shapes were checked read-only against SPDM frontend/backend source. Requests were not executed.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "23416820",
+    "_collection_link": "https://go.postman.co/collection/23416820-8e08ead8-37f9-4993-abca-8136ba71d8c1?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "01 - Authentication and Session",
+      "item": [
+        {
+          "name": "Login with JWT",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"Natv@123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/user/login/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "user",
+                "login",
+                ""
+              ]
+            },
+            "description": "Current local JWT login route. Fill Postman variables before sending."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Current User Information",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/user/info/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "user",
+                "info",
+                ""
+              ]
+            },
+            "description": "Current authenticated profile route."
+          },
+          "response": []
+        },
+        {
+          "name": "Logout and Blacklist Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh\": \"{{refreshToken}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/user/logout/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "user",
+                "logout",
+                ""
+              ]
+            },
+            "description": "Current session logout route. Requires a valid refresh token."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "02 - Self-service Profile and Password",
+      "item": [
+        {
+          "name": "Get User Metadata",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/user/meta/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "user",
+                "meta",
+                ""
+              ]
+            },
+            "description": "Current public route used by signup forms.\n\nDữ liệu: Lấy ra thông tin group, position, wp cho người dùng chọn khi signup"
+          },
+          "response": []
+        },
+        {
+          "name": "Change My User Information",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"first_name\": \"Example\",\n  \"last_name\": \"User\",\n  \"department\": \"Example Department\",\n  \"email\": \"{{email}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/user/changeInfo/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "user",
+                "changeInfo",
+                ""
+              ]
+            },
+            "description": "Current frontend payload for updating the authenticated user profile."
+          },
+          "response": []
+        },
+        {
+          "name": "Change My Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"current_password\": \"{{password}}\",\n  \"new_password\": \"{{newPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/user/changePassword/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "user",
+                "changePassword",
+                ""
+              ]
+            },
+            "description": "Changes the authenticated user password. Review variables before sending."
+          },
+          "response": []
+        },
+        {
+          "name": "Request Password Reset by Email - V1",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"data\": {\n    \"username\": [\n      \"{{username}}\"\n    ]\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/user/reset-password-user/v1/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "user",
+                "reset-password-user",
+                "v1",
+                ""
+              ]
+            },
+            "description": "Current public route. Side effect: resets the password and sends an email.\n\nURL này được gọi khi mà người dùng chủ động reset pass"
+          },
+          "response": []
+        },
+        {
+          "name": "Auto Reset Password - V2",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"data\": {\n    \"username\": [\n      \"{{username}}\"\n    ]\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/user/reset-password-user/v2/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "user",
+                "reset-password-user",
+                "v2",
+                ""
+              ]
+            },
+            "description": "Current public route. Side effect: resets the user password.\n\nURL này được gọi khi mà người dùng chủ động reset pass"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "03 - User Administration",
+      "item": [
+        {
+          "name": "List All Active and Inactive Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/user/list-all-users/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "user",
+                "list-all-users",
+                ""
+              ]
+            },
+            "description": "Current route. Comment-only GET body removed."
+          },
+          "response": []
+        },
+        {
+          "name": "Update User Information - Variant A",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"body\": {\n    \"users\": [\n      {\n        \"username\": \"admin\",\n        \"department\": \"DR31\",\n        \"first_name\": \"Duong\",\n        \"last_name\": \"Dat\",\n        \"email\": \"i-duong@mail.nissan.co.jp\",\n        \"groups\": [\n          \"Other\"\n        ],\n        \"work_package\": \"-\",\n        \"position\": [\n          \"M2以上\"\n        ],\n        \"status\": \"Active\"\n      }\n    ]\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/user/admin-change-user-info/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "user",
+                "admin-change-user-info",
+                ""
+              ]
+            },
+            "description": "Current backend expects body.users as an array; original payload normalized to that shape."
+          },
+          "response": []
+        },
+        {
+          "name": "Update User Information - Variant B",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"body\": {\n    \"users\": [\n      {\n        \"username\": \"BIF00391\",\n        \"department\": \"US2\",\n        \"first_name\": \"健二\",\n        \"last_name\": \"小澤\",\n        \"email\": \"kenji-ozawa@mail.nissan.co.jp\",\n        \"groups\": [\n          \"Other\"\n        ],\n        \"work_package\": \"-\",\n        \"position\": [\n          \"M2以上\"\n        ],\n        \"status\": \"Active\"\n      }\n    ]\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/user/admin-change-user-info/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "user",
+                "admin-change-user-info",
+                ""
+              ]
+            },
+            "description": "Distinct original payload retained and wrapped in the current body.users structure."
+          },
+          "response": []
+        },
+        {
+          "name": "Upload Users Form",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "/Users/tiendat/Downloads/Users_Form_v1.xlsx"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/user/users-form-upload/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "user",
+                "users-form-upload",
+                ""
+              ]
+            },
+            "description": "Current multipart upload route. Select the file again in Postman if the local path is unavailable."
+          },
+          "response": []
+        },
+        {
+          "name": "Download Users Form Template",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/user/users-form-download/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "user",
+                "users-form-download",
+                ""
+              ]
+            },
+            "description": "Current admin route returning an Excel file."
+          },
+          "response": []
+        },
+        {
+          "name": "Add or Update Users and Download Result",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"data\": [\n    {\n      \"username\": \"KNT19857\",\n      \"department\": \"DR31\",\n      \"first_name\": \"Van A\",\n      \"last_name\": \"Nguyen\",\n      \"in_charge\": \"ADAS\",\n      \"email\": \"a-nguyen@mail.nissan.co.jp\",\n      \"account_type\": \"SE-Creator\",\n      \"admin\": \"Yes\",\n      \"key\": \"4db1\"\n    },\n    {\n      \"username\": \"KNT19858\",\n      \"department\": \"DR31\",\n      \"first_name\": \"Van B\",\n      \"last_name\": \"Nguyen\",\n      \"in_charge\": \"ADAS\",\n      \"email\": \"B-nguyen@mail.nissan.co.jp\",\n      \"account_type\": \"SE-Responder\",\n      \"admin\": \"No\",\n      \"key\": \"e056\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/user/add-new-users/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "user",
+                "add-new-users",
+                ""
+              ]
+            },
+            "description": "Current admin route. Original commented alternatives removed; active payload kept as valid JSON."
+          },
+          "response": [
+            {
+              "name": "Add new users",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"data\": [\n        {\n            \"username\": \"testuser\",\n            \"department\": \"DR3\",\n            \"first_name\": \"test\",\n            \"last_name\": \"usertest\",\n            \"email\": \"KNT20162@local.nmcorp.nissan.biz\",\n            \"groups\": [\n                \"Admin\"\n            ],\n            \"work_package\": \"-\",\n            \"position\": [\n                \"M2以上\"\n            ],\n            \"status\": \"Active\"\n        },\n        {\n            \"username\": \"testuser_1\",\n            \"department\": \"DR3\",\n            \"first_name\": \"test\",\n            \"last_name\": \"usertest\",\n            \"email\": \"KNT20162@local.nmcorp.nissan.biz\",\n            \"groups\": [\n                \"MBSE\",\n                \"Other\",\n                \"Product planning, Cost function\",\n                \"Project Owner\"\n            ],\n            \"work_package\": \"-\",\n            \"position\": [\n                \"M3(主担)\"\n            ],\n            \"status\": \"Active\"\n        },\n        {\n            \"username\": \"testuser_2\",\n            \"department\": \"DR3\",\n            \"first_name\": \"test\",\n            \"last_name\": \"usertest\",\n            \"email\": \"KNT20162@local.nmcorp.nissan.biz\",\n            \"groups\": [\n                \"Work Package(Performance/Unit/Component)\",\n                \"System, Performance Owner\",\n                \"Simulation(CAE)\",\n                \"Project Owner\",\n                \"Product planning, Cost function\"\n            ],\n            \"work_package\": \"-\",\n            \"position\": [\n                \"担当層\"\n            ],\n            \"status\": \"Active\"\n        }\n    ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/user/add-new-users/",
+                  "protocol": "http",
+                  "host": [
+                    "127",
+                    "0",
+                    "0",
+                    "1"
+                  ],
+                  "port": "8000",
+                  "path": [
+                    "{{SUB_PATH}}",
+                    "api",
+                    "user",
+                    "add-new-users",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "Reset User Password and Download Credentials",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"data\": {\n    \"usernames\": [\n      \"{{username}}\"\n    ]\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/user/reset-password-user/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "user",
+                "reset-password-user",
+                ""
+              ]
+            },
+            "description": "Current admin route. Side effect: resets passwords and returns an Excel credentials file."
+          },
+          "response": []
+        },
+        {
+          "name": "Approve Pending User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"approve\": [\n    {\n      \"user_id\": 1,\n      \"username\": \"knt21617\",\n      \"email\": \"\",\n      \"groups\": \"\",\n      \"wp\": \"\",\n      \"position\": \"\",\n      \"first_name\": \"Example\",\n      \"last_name\": \"User\",\n      \"comment\": \"Approved from Postman\"\n    }\n  ],\n  \"reject\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/user/shounin/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "user",
+                "shounin",
+                ""
+              ]
+            },
+            "description": "Current approval route. Side effects: activates user, changes password and sends email.\n\nURL này được gọi khi sign up, đăng ký người dùng mới\n\nTạm thời phần email đang để sẵn, nhưng về sau sẽ phải lấy từ cognito"
+          },
+          "response": [
+            {
+              "name": "Approve",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"approve\": \n    [\n\n        {\n            \"username\": \"KNT21617_04\", \n            \"department\": \"DR31\", \n            \"first_name\": \"Kiều Đình\", \n            \"last_name\": \"Trọng\",\n            \"email\": \"KNT21617@local.nmcorp.nissan.bz\", \n            \"groups\": [\"Project Owner\"], \n            \"work_package\": \"-\",\n            \"position\": \"M2以上\", \n            \"status\": \"Deactive\",\n            \"comment\": \"No comment\",\n            \"user_id\": 2655\n        }\n    ],\n    \"reject\": \n    [\n        \n    ]\n}\n",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/user/shounin/",
+                  "protocol": "http",
+                  "host": [
+                    "127",
+                    "0",
+                    "0",
+                    "1"
+                  ],
+                  "port": "8000",
+                  "path": [
+                    "{{SUB_PATH}}",
+                    "api",
+                    "user",
+                    "shounin",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            },
+            {
+              "name": "Reject",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"approve\": \n    [\n\n        \n    ],\n    \"reject\": \n    [\n        {\n            \"username\": \"KNT21617_05\", \n            \"department\": \"DR31\", \n            \"first_name\": \"Kiều Đình\", \n            \"last_name\": \"Trọng\",\n            \"email\": \"KNT21617@local.nmcorp.nissan.bz\", \n            \"groups\": [\"Project Owner\"], \n            \"work_package\": \"-\",\n            \"position\": \"M2以上\", \n            \"status\": \"Deactive\",\n            \"comment\": \"No comment\",\n            \"user_id\": 2657\n        }\n    ]\n}\n",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/user/shounin/",
+                  "protocol": "http",
+                  "host": [
+                    "127",
+                    "0",
+                    "0",
+                    "1"
+                  ],
+                  "port": "8000",
+                  "path": [
+                    "{{SUB_PATH}}",
+                    "api",
+                    "user",
+                    "shounin",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            },
+            {
+              "name": "Shounin",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"approve\": [\n        {\n            \"user_id\": 1,\n            \"username\": \"knt21617\",\n            \"email\": \"\",\n            \"groups\": \"\",\n            \"wp\": \"\",\n            \"position\": \"\"\n        }\n    ],\n    \"reject\": [\n        {\n            \"user_id\": 1,\n            \"username\": \"knt21617\",\n            \"email\": \"\",\n            \"groups\": \"\",\n            \"wp\": \"\",\n            \"position\": \"\"\n        }\n    ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/user/shounin/",
+                  "protocol": "http",
+                  "host": [
+                    "127",
+                    "0",
+                    "0",
+                    "1"
+                  ],
+                  "port": "8000",
+                  "path": [
+                    "{{SUB_PATH}}",
+                    "api",
+                    "user",
+                    "shounin",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "Reject Pending User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"approve\": [],\n  \"reject\": [\n    {\n      \"user_id\": 1,\n      \"username\": \"knt21617\",\n      \"email\": \"\",\n      \"groups\": \"\",\n      \"wp\": \"\",\n      \"position\": \"\",\n      \"first_name\": \"Example\",\n      \"last_name\": \"User\",\n      \"comment\": \"Rejected from Postman\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/user/shounin/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "user",
+                "shounin",
+                ""
+              ]
+            },
+            "description": "Current rejection route. Side effects: deletes user records and sends email."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "04 - Public Registration",
+      "item": [
+        {
+          "name": "Register User Request - Variant A",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"data\": [\n    {\n      \"username\": \"KNT21617_05\",\n      \"department\": \"DR31\",\n      \"first_name\": \"Kiều Đình\",\n      \"last_name\": \"Trọng\",\n      \"email\": \"KNT21617@local.nmcorp.nissan.bz\",\n      \"groups\": [\n        \"Project Owner\"\n      ],\n      \"work_package\": \"-\",\n      \"position\": \"M2以上\",\n      \"status\": \"Deactive\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/user/add-new-users/v1/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "user",
+                "add-new-users",
+                "v1",
+                ""
+              ]
+            },
+            "description": "Current public signup route; payload retained from the original collection.\n\nURL này được gọi khi sign up, đăng ký người dùng mới\n\nTạm thời phần email đang để sẵn, nhưng về sau sẽ phải lấy từ cognito"
+          },
+          "response": []
+        },
+        {
+          "name": "Register User Request - Variant B",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"data\": [\n    {\n      \"username\": \"KNT21617_05\",\n      \"department\": \"DR31\",\n      \"first_name\": \"Kiều Đình\",\n      \"last_name\": \"Trọng\",\n      \"email\": \"KNT21617@local.nmcorp.nissan.bz\",\n      \"groups\": [\n        \"Project Owner\"\n      ],\n      \"work_package\": \"-\",\n      \"position\": \"M2以上\",\n      \"status\": \"Deactive\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/user/add-new-users/v1/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "user",
+                "add-new-users",
+                "v1",
+                ""
+              ]
+            },
+            "description": "Distinct original signup payload retained as a separate variant.\n\ntoken = request.headers.get(\"x-amzn-oidc-data\")"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "05 - Cognito Authentication",
+      "item": [
+        {
+          "name": "Cognito Login",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"KNT21617\",\n  \"password\": \"Trong01@\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/user/cognito/login",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "user",
+                "cognito",
+                "login"
+              ]
+            },
+            "description": "Current Cognito route. Calls AWS Cognito when sent."
+          },
+          "response": []
+        },
+        {
+          "name": "Cognito Respond to MFA Challenge",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"session\": \"{{cognitoSession}}\",\n  \"username\": \"KNT21617\",\n  \"otp_code\": \"147647\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/user/cognito/challenge",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "user",
+                "cognito",
+                "challenge"
+              ]
+            },
+            "description": "Current Cognito MFA route. Requires a valid session and six-digit OTP."
+          },
+          "response": []
+        },
+        {
+          "name": "Cognito Sign Up",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{cognitoUsername}}\",\n  \"password\": \"{{cognitoPassword}}\",\n  \"email\": \"{{email}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/user/cognito/signup",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "user",
+                "cognito",
+                "signup"
+              ]
+            },
+            "description": "Current Cognito signup route. Creates an external Cognito user when sent."
+          },
+          "response": []
+        },
+        {
+          "name": "Cognito Confirm Sign Up",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{cognitoUsername}}\",\n  \"confirmation_code\": \"{{confirmationCode}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/user/cognito/confirm-signup",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "user",
+                "cognito",
+                "confirm-signup"
+              ]
+            },
+            "description": "Current Cognito confirmation route."
+          },
+          "response": []
+        },
+        {
+          "name": "Cognito Resend Confirmation Code",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{cognitoUsername}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/user/cognito/resend-confirmation",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "user",
+                "cognito",
+                "resend-confirmation"
+              ]
+            },
+            "description": "Current Cognito route. Sends a confirmation code when executed."
+          },
+          "response": []
+        },
+        {
+          "name": "Cognito Request Forgot-password OTP",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{cognitoUsername}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/user/cognito/forgot-password",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "user",
+                "cognito",
+                "forgot-password"
+              ]
+            },
+            "description": "Current Cognito/SES route. Sends an OTP email when executed."
+          },
+          "response": []
+        },
+        {
+          "name": "Cognito Confirm Password Reset",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{cognitoUsername}}\",\n  \"otp\": \"{{otpCode}}\",\n  \"new_password\": \"{{newPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/user/cognito/confirm-forgot-password",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "user",
+                "cognito",
+                "confirm-forgot-password"
+              ]
+            },
+            "description": "Current Cognito route. Changes the password after OTP verification."
+          },
+          "response": []
+        },
+        {
+          "name": "Cognito Refresh Access Token",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh_token\": \"{{cognitoRefreshToken}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/user/cognito/refresh",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "user",
+                "cognito",
+                "refresh"
+              ]
+            },
+            "description": "Current Cognito token refresh route."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "80 - Diagnostics",
+      "item": [
+        {
+          "name": "Authenticated Test Endpoint",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/user/test/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "user",
+                "test",
+                ""
+              ]
+            },
+            "description": "Current diagnostic endpoint; backend intentionally waits before responding."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "90 - Legacy / Not in current routes",
+      "item": [
+        {
+          "name": "Legacy Data Sample (login route; review payload before use)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"activities\": [\n        {\n            \"key\": \"1\",\n            \"action\": \"New project (P33A-JPN-2WD) has been created\",\n            \"user\": \"By: Duong, Tien Dat (KNT19856)\",\n            \"time\": \"12 hours ago\"\n        },\n        {\n            \"key\": \"2\",\n            \"action\": \"New SE-List template  has been created\",\n            \"user\": \"By: Duong, Tien Dat (KNT19856)\",\n            \"time\": \"14 hours ago\"\n        }\n    ]\n}\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/user/login/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "user",
+                "login",
+                ""
+              ]
+            },
+            "description": "Original request had an incorrect base path and a non-login sample body. The route is corrected; payload remains for historical reference."
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "username",
+      "value": ""
+    },
+    {
+      "key": "password",
+      "value": ""
+    },
+    {
+      "key": "newPassword",
+      "value": ""
+    },
+    {
+      "key": "refreshToken",
+      "value": ""
+    },
+    {
+      "key": "email",
+      "value": ""
+    },
+    {
+      "key": "cognitoUsername",
+      "value": ""
+    },
+    {
+      "key": "cognitoPassword",
+      "value": ""
+    },
+    {
+      "key": "cognitoSession",
+      "value": ""
+    },
+    {
+      "key": "cognitoRefreshToken",
+      "value": ""
+    },
+    {
+      "key": "otpCode",
+      "value": ""
+    },
+    {
+      "key": "confirmationCode",
+      "value": ""
+    }
+  ]
+}

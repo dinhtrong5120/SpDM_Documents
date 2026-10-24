@@ -1,0 +1,1120 @@
+{
+  "info": {
+    "_postman_id": "87d65c83-a5b5-4dfd-ae9a-c7c85cc5e7c0",
+    "name": "02 Project API (Integration)",
+    "description": "13 integration cases aligned with current FE calls. Run through project_api_tests/run_integration_collection.py against a dedicated database whose name ends with _postman_test. db-download is intentionally excluded.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "23416820",
+    "_collection_link": "https://go.postman.co/collection/23416820-87d65c83-a5b5-4dfd-ae9a-c7c85cc5e7c0?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Project Overview",
+      "item": [
+        {
+          "name": "List All Projects",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status là 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response có status=success\", function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.be.an(\"object\");",
+                  "    pm.expect(response.status).to.eql(\"success\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/project/all-projects/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "project",
+                "all-projects",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Activities",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status là 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response có status=success\", function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.be.an(\"object\");",
+                  "    pm.expect(response.status).to.eql(\"success\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/project/list-activities/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "project",
+                "list-activities",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Functions Authorization",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status là 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response có status=success\", function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.be.an(\"object\");",
+                  "    pm.expect(response.status).to.eql(\"success\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/project/functions-authorization/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "project",
+                "functions-authorization",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Bookmarks",
+      "item": [
+        {
+          "name": "Add Bookmark",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status là 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response có status=success\", function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.be.an(\"object\");",
+                  "    pm.expect(response.status).to.eql(\"success\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"projects_key\": 9900001,\n  \"powertrain\": \"PMT_ARCH\",\n  \"project\": \"PMT_SOURCE\",\n  \"destination\": \"PMT_DEST\",\n  \"drivetrain\": \"PMT_DRIVE\",\n  \"grade\": \"PMT_BODY\",\n  \"lot\": \"PMT_LOT\",\n  \"phase\": \"PMT_PHASE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/project/add-bookmark/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "project",
+                "add-bookmark",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Bookmark",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status là 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response có status=success\", function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.be.an(\"object\");",
+                  "    pm.expect(response.status).to.eql(\"success\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"projects_key\": 9900001,\n  \"powertrain\": \"PMT_ARCH\",\n  \"project\": \"PMT_SOURCE\",\n  \"destination\": \"PMT_DEST\",\n  \"drivetrain\": \"PMT_DRIVE\",\n  \"grade\": \"PMT_BODY\",\n  \"lot\": \"PMT_LOT\",\n  \"phase\": \"PMT_PHASE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/project/delete-bookmark/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "project",
+                "delete-bookmark",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Project Creation and Variations",
+      "item": [
+        {
+          "name": "Get Project Creation Master Data",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status là 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response có status=success\", function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.be.an(\"object\");",
+                  "    pm.expect(response.status).to.eql(\"success\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/project/create-new-project/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "project",
+                "create-new-project",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create New Project",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status là 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response có status=success\", function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.be.an(\"object\");",
+                  "    pm.expect(response.status).to.eql(\"success\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"project_code\": \"PMT_CREATED\",\n  \"lot\": \"PMT_LOT\",\n  \"architecture_name\": \"PMT_ARCH\",\n  \"destination\": \"PMT_DEST\",\n  \"drivetrain\": \"PMT_DRIVE\",\n  \"phase\": \"PMT_PHASE\",\n  \"variation\": [\n    \"PMT_CREATED_VAR\"\n  ],\n  \"se\": {\n    \"PMT_CREATED_VAR\": [\n      {\n        \"se_parameter_id\": 9900001,\n        \"value\": \"PMT_CREATED_SE_VALUE\",\n        \"user_memo\": \"PMT_CREATED_SE_MEMO\",\n        \"z_note\": \"PMT_CREATED_SE_PIC\"\n      }\n    ]\n  },\n  \"r\": {\n    \"PMT_CREATED_VAR\": [\n      {\n        \"r_parameter_id\": 9900001,\n        \"target\": \"PMT_CREATED_R_TARGET\",\n        \"auto_judge_id\": \"未定\",\n        \"note\": \"PMT_CREATED_R_NOTE\",\n        \"design\": \"PMT_CREATED_R_DESIGN\"\n      }\n    ]\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/project/create-new-project/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "project",
+                "create-new-project",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Variation",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status là 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response có status=success\", function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.be.an(\"object\");",
+                  "    pm.expect(response.status).to.eql(\"success\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"project_id\": 9900001,\n  \"setup_id\": 9900001,\n  \"phase_id\": 9900001,\n  \"variation_id\": [\n    9900001\n  ],\n  \"variations\": [\n    {\n      \"variation\": \"PMT_ADDED_VAR\",\n      \"base\": {\n        \"project_id\": 9900001,\n        \"phase_id\": 9900001,\n        \"variation_id\": 9900001\n      }\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/project/add-variation/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "project",
+                "add-variation",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Project Parameters - SE List",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status là 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response có status=success\", function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.be.an(\"object\");",
+                  "    pm.expect(response.status).to.eql(\"success\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"selist\",\n  \"project_code\": \"PMT_SOURCE\",\n  \"architecture\": \"PMT_ARCH\",\n  \"destination\": \"PMT_DEST\",\n  \"drivetrain\": \"PMT_DRIVE\",\n  \"lot\": \"PMT_LOT\",\n  \"phase\": \"PMT_PHASE\",\n  \"variation\": \"PMT_BASE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/project/get-project-params/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "project",
+                "get-project-params",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Project Parameters - R List",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status là 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response có status=success\", function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.be.an(\"object\");",
+                  "    pm.expect(response.status).to.eql(\"success\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"rlist\",\n  \"project_code\": \"PMT_SOURCE\",\n  \"architecture\": \"PMT_ARCH\",\n  \"destination\": \"PMT_DEST\",\n  \"drivetrain\": \"PMT_DRIVE\",\n  \"lot\": \"PMT_LOT\",\n  \"phase\": \"PMT_PHASE\",\n  \"variation\": \"PMT_BASE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/project/get-project-params/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "project",
+                "get-project-params",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Status and Access Control",
+      "item": [
+        {
+          "name": "Update Project Status",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status là 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response có status=success\", function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.be.an(\"object\");",
+                  "    pm.expect(response.status).to.eql(\"success\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"project_id\": 9900001,\n  \"lot_id\": 9900001,\n  \"architecture_id\": 9900001,\n  \"destination_id\": 9900001,\n  \"drivetrain_id\": 9900001,\n  \"body_type_id\": 1,\n  \"phase_id\": 9900001,\n  \"status\": \"suspended\",\n  \"note\": \"PMT_STATUS_NOTE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/project/get-project-status/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "project",
+                "get-project-status",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Lock Project",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status là 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response có status=success\", function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.be.an(\"object\");",
+                  "    pm.expect(response.status).to.eql(\"success\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"project_id\": 9900001,\n  \"phase_id\": 9900001\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/project/lock-project/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "project",
+                "lock-project",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Unlock Project",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status là 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response có status=success\", function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.be.an(\"object\");",
+                  "    pm.expect(response.status).to.eql(\"success\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"project_id\": 9900001,\n  \"phase_id\": 9900001\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/project/unlock-project/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "project",
+                "unlock-project",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "project-parameter-existence Copy",
+      "protocolProfileBehavior": {
+        "disableUrlEncoding": false
+      },
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n        \"parameter_type\": \"se\",\n        \"projects\": [\n            {\n                \"project_id\": 4,\n                \"project_code\": \"[Kei]\",\n                \"lot_id\": 11,\n                \"lot\": \"Pre-Pro\",\n                \"architecture_id\": 2,\n                \"architecture_name\": \"BEV\",\n                \"destination_id\": 1,\n                \"setup_id\": 6,\n                \"destination\": \"JPN\",\n                \"drivetrain_id\": 2,\n                \"drivetrain\": \"4WD\",\n                \"phase_id\": 2,\n                \"phase\": \"PTシステムレビュー#0\",\n                \"body_type_id\": 2,\n                \"status\": \"\",\n                \"family\": \"\",\n                \"variation_id\": [8, 9, 10, 17]\n            },\n            {\n                \"project_id\": null,\n                \"project_code\": \"TEST_01\",\n                \"lot_id\": 4,\n                \"lot\": \"UC-Lot\",\n                \"architecture_id\": 3,\n                \"architecture_name\": \"HEV\",\n                \"destination_id\": 2,\n                \"setup_id\": 2,\n                \"destination\": \"US\",\n                \"drivetrain_id\": 2,\n                \"drivetrain\": \"4WD\",\n                \"phase_id\": 28,\n                \"phase\": \"PTシステムレビューs1\",\n                \"body_type_id\": 5,\n                \"status\": \"\",\n                \"family\": \"\",\n                \"variation_id\": [62, 64, 65],\n                \"variation\": [\"SV\", \"PLT\", \"4X-PRO\"]\n            }\n        ]\n    }",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/project/v1/project-parameter-existence/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "{{SUB_PATH}}",
+            "api",
+            "project",
+            "v1",
+            "project-parameter-existence",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "01 - Project Reading",
+      "item": [
+        {
+          "name": "List Bookmarks",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/project/list-bookmark/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "project",
+                "list-bookmark",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "02 - Project Creation",
+      "item": [
+        {
+          "name": "Get Project Creation Master Data - V1",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/project/v1/create-new-project/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "project",
+                "v1",
+                "create-new-project",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create New Project - V1",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/project/v1/create-new-project/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "project",
+                "v1",
+                "create-new-project",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"project_code\": \"PMT_CREATED\",\n  \"lot\": \"PMT_LOT\",\n  \"architecture_name\": \"PMT_ARCH\",\n  \"destination\": \"PMT_DEST\",\n  \"drivetrain\": \"PMT_DRIVE\",\n  \"phase\": \"PMT_PHASE\",\n  \"variation\": [\n    \"PMT_CREATED_VAR\"\n  ],\n  \"se\": {\n    \"PMT_CREATED_VAR\": [\n      {\n        \"se_parameter_id\": 9900001,\n        \"value\": \"PMT_CREATED_SE_VALUE\",\n        \"user_memo\": \"PMT_CREATED_SE_MEMO\",\n        \"z_note\": \"PMT_CREATED_SE_PIC\"\n      }\n    ]\n  },\n  \"r\": {\n    \"PMT_CREATED_VAR\": [\n      {\n        \"r_parameter_id\": 9900001,\n        \"target\": \"PMT_CREATED_R_TARGET\",\n        \"auto_judge_id\": \"未定\",\n        \"note\": \"PMT_CREATED_R_NOTE\",\n        \"design\": \"PMT_CREATED_R_DESIGN\"\n      }\n    ]\n  },\n  \"family\": \"{{family}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "V1 includes the family field. Replace sample names and parameter IDs with data from your environment before sending."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "03 - Project Parameters",
+      "item": [
+        {
+          "name": "Get Project Parameters - V1",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/project/v1/get-project-params/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "project",
+                "v1",
+                "get-project-params",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"parameter_type\": \"se\",\n  \"projects\": [\n    {\n      \"project_id\": \"{{project_id}}\",\n      \"project_code\": \"{{project_code}}\",\n      \"lot_id\": \"{{lot_id}}\",\n      \"lot\": \"{{lot}}\",\n      \"architecture_id\": \"{{architecture_id}}\",\n      \"architecture_name\": \"{{architecture_name}}\",\n      \"destination_id\": \"{{destination_id}}\",\n      \"setup_id\": \"{{setup_id}}\",\n      \"destination\": \"{{destination}}\",\n      \"drivetrain_id\": \"{{drivetrain_id}}\",\n      \"drivetrain\": \"{{drivetrain}}\",\n      \"phase_id\": \"{{phase_id}}\",\n      \"phase\": \"{{phase}}\",\n      \"body_type_id\": \"{{body_type_id}}\",\n      \"status\": \"\",\n      \"family\": \"\",\n      \"variation_id\": [\n        \"{{variation_id}}\"\n      ],\n      \"list_parameter_ids\": [\n        \"{{se_parameter_id}}\"\n      ]\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Project Parameters - V2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/project/v2/get-project-params/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "project",
+                "v2",
+                "get-project-params",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"selist\",\n  \"project_code\": \"{{project_code}}\",\n  \"architecture\": \"{{architecture_name}}\",\n  \"destination\": \"{{destination}}\",\n  \"drivetrain\": \"{{drivetrain}}\",\n  \"lot\": \"{{lot}}\",\n  \"phase\": \"{{phase}}\",\n  \"variation\": \"{{variation}}\",\n  \"list_parameter_ids\": [\n    \"{{se_parameter_id}}\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Project Parameter Existence - V2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/project/v2/project-parameter-existence/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "project",
+                "v2",
+                "project-parameter-existence",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"parameter_type\": \"se\",\n  \"projects\": [\n    {\n      \"project_id\": \"{{project_id}}\",\n      \"project_code\": \"{{project_code}}\",\n      \"lot_id\": \"{{lot_id}}\",\n      \"lot\": \"{{lot}}\",\n      \"architecture_id\": \"{{architecture_id}}\",\n      \"architecture_name\": \"{{architecture_name}}\",\n      \"destination_id\": \"{{destination_id}}\",\n      \"setup_id\": \"{{setup_id}}\",\n      \"destination\": \"{{destination}}\",\n      \"drivetrain_id\": \"{{drivetrain_id}}\",\n      \"drivetrain\": \"{{drivetrain}}\",\n      \"phase_id\": \"{{phase_id}}\",\n      \"phase\": \"{{phase}}\",\n      \"body_type_id\": \"{{body_type_id}}\",\n      \"status\": \"\",\n      \"family\": \"\",\n      \"variation_id\": [\n        \"{{variation_id}}\"\n      ]\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "04 - Project Utilities",
+      "item": [
+        {
+          "name": "Download Database Backup",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/project/db-download/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "project",
+                "db-download",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"host\": \"{{db_host}}\",\n  \"user\": \"{{db_user}}\",\n  \"pass\": \"{{db_password}}\",\n  \"name\": \"{{db_name}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Creates/downloads a database backup; invoke only in an intended environment."
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "fixtureChecksum",
+      "value": "22ee4132199d8bffbe0da8231a7b16d57529542a45fb666af6f5cc998e5a929b"
+    }
+  ]
+}

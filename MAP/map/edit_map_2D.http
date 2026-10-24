@@ -1,0 +1,427 @@
+### UU3 SPDM - demo vong doi Map 2D
+#
+# Trong backend hien tai, Map 2D duoc bieu dien boi mode = "MAP":
+# - 1 bien truc X
+# - 1 bien truc Y
+# - 1 bien MAP chua ma tran gia tri Y x X
+#
+# Chay tung request tu tren xuong duoi trong cung mot phien PyCharm.
+# Chon Run with -> dev. Environment dev can co:
+#   devBaseUrl, devApiBase, username, password
+#
+# Luong: login -> chon parameter rong -> tao -> doc -> sua -> doc -> xoa -> cleanup.
+# Luu y: day la demo CO GHI DU LIEU tren moi truong dang chon.
+
+@healthBase = {{devBaseUrl}}
+@apiBase = {{devApiBase}}
+@scopeName = System_Control
+
+### 1. Kiem tra server
+# @name health2D
+# @no-log
+GET {{healthBase}}/healthz
+Accept: application/json
+
+#> {%
+#  client.test("Server san sang", function () {
+#    client.assert(response.status === 200, "Health check khong tra HTTP 200");
+#  });
+#%}
+
+### 2. Dang nhap va tao ten Map 2D duy nhat
+# @name login2D
+# @no-log
+POST {{apiBase}}/user/login/
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username": "{{username}}",
+  "password": "{{password}}"
+}
+
+> {%
+  client.test("Dang nhap thanh cong", function () {
+    client.assert(response.status === 200, "Login khong tra HTTP 200");
+    client.assert(Boolean(response.body?.access), "Response login khong co access token");
+  });
+
+  if (response.body?.access) {
+    const timestamp = new Date().toISOString().replace(/\D/g, "").slice(0, 14);
+    const demoMapName = `HTTP_DEMO_2D_${timestamp}_001`;
+
+    client.global.set("access_token", response.body.access);
+    client.global.set("refresh_token", response.body.refresh);
+    client.global.set("demoMapName", demoMapName);
+    client.log("Map demo cua lan chay nay: " + demoMapName);
+  }
+%}
+
+### 3. Lay project dau tien va luu metadata
+# Neu muon dung project khac, sua [0] trong response handler.
+# @name selectProject2D
+# @no-log
+GET {{apiBase}}/project/all-projects/
+Authorization: Bearer {{access_token}}
+Accept: application/json
+
+> {%
+  const project = response.body?.data?.[0];
+
+  client.test("Tim thay project", function () {
+    client.assert(Boolean(project), "Khong co project tai data[0]");
+  });
+
+  if (project) {
+    client.global.set("projectId", String(project.project_id));
+    client.global.set("projectName", project.project_name);
+    client.global.set("phaseName", project.phase_name);
+    client.global.set("destination", project.destination);
+    client.global.set("drivetrain", project.drivetrain);
+    client.global.set("bodyType", project.grade);
+    client.global.set("powertrain", project.powertrain);
+    client.global.set("lot", project.lot);
+    client.log(`Da chon project ${project.project_name}, phase ${project.phase_name}`);
+  }
+%}
+
+### 4. Chon mot SE parameter dang N/A hoac rong
+# @name selectEmptyParameter2D
+# @no-log
+POST {{apiBase}}/se-list/v2/list-se-list-parameters-new/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+[
+  [
+    {
+      "projects_key": ["{{projectId}}"],
+      "project": "{{projectName}}",
+      "destination": "{{destination}}",
+      "drivetrain": "{{drivetrain}}",
+      "body_type": "{{bodyType}}",
+      "powertrain": "{{powertrain}}",
+      "lot": "{{lot}}",
+      "phase": "{{phaseName}}"
+    }
+  ]
+]
+
+> {%
+  client.test("Doc danh sach SE thanh cong", function () {
+    client.assert(response.status === 200, `API SE list tra HTTP ${response.status}`);
+  });
+
+  const groups = response.body?.projects?.[0]?.data ?? [];
+  let selected = null;
+
+  for (const group of groups) {
+    for (const row of group.children ?? []) {
+      for (const [variationName, value] of Object.entries(row)) {
+        if (!value || typeof value !== "object" || !("variation_id" in value)) continue;
+
+        const currentValue = value.z_request_median;
+        const isEmpty = currentValue === null
+          || currentValue === undefined
+          || String(currentValue).trim() === ""
+          || ["N/A", "MAP"].includes(String(currentValue).trim().toUpperCase());
+
+        if (isEmpty) {
+          selected = {
+            projectId: row.project_id,
+            parameterId: row.se_parameter_id,
+            phaseId: row.phase_id,
+            variationId: value.variation_id,
+            variationName,
+            title: row.title_row
+          };
+          break;
+        }
+      }
+      if (selected) break;
+    }
+    if (selected) break;
+  }
+
+  client.test("Tim thay parameter an toan cho demo", function () {
+    client.assert(
+      Boolean(selected),
+      "Khong co SE parameter N/A/rong. Hay chon project khac; khong nen ghi de du lieu dang co."
+    );
+  });
+
+  if (selected) {
+    client.global.set("targetProjectId", String(selected.projectId));
+    client.global.set("targetParameterId", String(selected.parameterId));
+    client.global.set("targetPhaseId", String(selected.phaseId));
+    client.global.set("targetVariationId", String(selected.variationId));
+    client.global.set("targetVariationName", selected.variationName);
+    client.log(
+      `Da chon parameter ${selected.parameterId} (${selected.title}), variation ${selected.variationName}`
+    );
+  }
+%}
+
+### 5. Chon bien X, Y va MAP dau tien
+# @name selectMapVariables2D
+# @no-log
+POST {{apiBase}}/se-list/se-map/get-infomation/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+{}
+
+> {%
+  const mapInfo = response.body?.data?.MAP;
+  const xVariable = mapInfo?.["X軸名"]?.[0];
+  const yVariable = mapInfo?.["Y軸名"]?.[0];
+  const mapVariable = mapInfo?.["MAP変数名"]?.[0];
+
+  client.test("Tim thay bien X, Y va MAP", function () {
+    client.assert(Boolean(xVariable), "Khong co map_variable axis X");
+    client.assert(Boolean(yVariable), "Khong co map_variable axis Y");
+    client.assert(Boolean(mapVariable), "Khong co map_variable axis MAP");
+  });
+
+  if (xVariable && yVariable && mapVariable) {
+    client.global.set("xVariableName", xVariable);
+    client.global.set("yVariableName", yVariable);
+    client.global.set("mapVariableName", mapVariable);
+    client.log("Bien X: " + xVariable);
+    client.log("Bien Y: " + yVariable);
+    client.log("Bien MAP: " + mapVariable);
+  }
+%}
+
+### 6. Tao Map 2D
+# Dong dau: truc X [1000, 2000, 3000].
+# Cot dau: truc Y [10, 20]. Phan con lai la ma tran 2 x 3.
+# @name createMap2D
+# @no-log
+POST {{apiBase}}/se-list/se-map/map-create/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "chosen_id": 1,
+  "mode": "MAP",
+  "df_edited": [
+    {"0": "↓Y \\ X→", "1": 1000, "2": 2000, "3": 3000},
+    {"0": 10, "1": 101, "2": 102, "3": 103},
+    {"0": 20, "1": 201, "2": 202, "3": 203}
+  ],
+  "df_editeds": null,
+  "df_edited_z": null,
+  "map_name": "N/A",
+  "new_map_name": "{{demoMapName}}",
+  "xname": "{{xVariableName}}",
+  "yname": "{{yVariableName}}",
+  "zname": null,
+  "cube_variable_name": null,
+  "map_variable_name": "{{mapVariableName}}",
+  "tablenames": null,
+  "project_id": "{{targetProjectId}}",
+  "parameter_id": "{{targetParameterId}}",
+  "phase_id": "{{targetPhaseId}}",
+  "variation_id": "{{targetVariationId}}",
+  "study_id": null,
+  "scope_name": "{{scopeName}}",
+  "add_new": {},
+  "username": "{{username}}",
+  "create_new_map_flg": true
+}
+
+> {%
+  client.test("Tao Map 2D thanh cong", function () {
+    client.assert(response.status === 200, "Create map khong tra HTTP 200");
+    client.assert(response.body?.status === "success", response.body?.message ?? "Create map that bai");
+  });
+%}
+
+### 7. Doc Map 2D vua tao
+# @name readCreatedMap2D
+# @no-log
+POST {{apiBase}}/se-list/se-map/map-button/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+[
+  {
+    "z_request_median": "{{demoMapName}}",
+    "project_id": "{{targetProjectId}}",
+    "phase_id": "{{targetPhaseId}}",
+    "se_parameter_id": "{{targetParameterId}}",
+    "variation_id": "{{targetVariationId}}",
+    "URL": "",
+    "chosen_id": 1
+  }
+]
+
+> {%
+  client.test("Doc duoc Map 2D", function () {
+    client.assert(response.status === 200, "Read map khong tra HTTP 200");
+    client.assert(response.body?.status === "success", response.body?.message ?? "Read map that bai");
+  });
+%}
+
+### 8. Sua ma tran Map 2D
+# Ma tran duoc doi tu [[101,102,103],[201,202,203]]
+# thanh [[111,112,113],[211,212,213]].
+# @name editMap2D
+# @no-log
+POST {{apiBase}}/se-list/se-map/map-edit/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "chosen_id": 1,
+  "mode": "MAP",
+  "df_edited": [
+    {"0": "↓Y \\ X→", "1": 1000, "2": 2000, "3": 3000},
+    {"0": 10, "1": 111, "2": 112, "3": 113},
+    {"0": 20, "1": 211, "2": 212, "3": 213}
+  ],
+  "df_editeds": null,
+  "df_edited_z": null,
+  "map_name": "{{demoMapName}}",
+  "new_map_name": "{{demoMapName}}",
+  "xname": "{{xVariableName}}",
+  "yname": "{{yVariableName}}",
+  "zname": null,
+  "cube_variable_name": null,
+  "map_variable_name": "{{mapVariableName}}",
+  "tablenames": null,
+  "project_id": "{{targetProjectId}}",
+  "parameter_id": "{{targetParameterId}}",
+  "phase_id": "{{targetPhaseId}}",
+  "variation_id": "{{targetVariationId}}",
+  "study_id": null,
+  "scope_name": "{{scopeName}}",
+  "add_new": {},
+  "username": "{{username}}",
+  "create_new_map_flg": false
+}
+
+> {%
+  client.test("Sua Map 2D thanh cong", function () {
+    client.assert(response.status === 200, "Edit map khong tra HTTP 200");
+    client.assert(response.body?.status === "success", response.body?.message ?? "Edit map that bai");
+  });
+%}
+
+### 9. Doc lai Map 2D sau khi sua
+# @name readEditedMap2D
+# @no-log
+POST {{apiBase}}/se-list/se-map/map-button/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+[
+  {
+    "z_request_median": "{{demoMapName}}",
+    "project_id": "{{targetProjectId}}",
+    "phase_id": "{{targetPhaseId}}",
+    "se_parameter_id": "{{targetParameterId}}",
+    "variation_id": "{{targetVariationId}}",
+    "URL": "",
+    "chosen_id": 1
+  }
+]
+
+> {%
+  client.test("Doc lai Map 2D thanh cong", function () {
+    client.assert(response.status === 200, "Read edited map khong tra HTTP 200");
+    client.assert(response.body?.status === "success", response.body?.message ?? "Read edited map that bai");
+  });
+%}
+
+### 10. Xoa toan bo Map 2D demo
+# @name deleteMap2D
+# @no-log
+POST {{apiBase}}/se-list/se-map/map-delete/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "scope": "all",
+  "project_id": "{{targetProjectId}}",
+  "se_parameter_id": "{{targetParameterId}}",
+  "phase_id": "{{targetPhaseId}}",
+  "variation_id": "{{targetVariationId}}",
+  "z_request_median": "{{demoMapName}}"
+}
+
+> {%
+  client.test("Xoa Map 2D thanh cong", function () {
+    client.assert(response.status === 200, "Delete map khong tra HTTP 200");
+    client.assert(response.body?.status === "success", response.body?.message ?? "Delete map that bai");
+  });
+%}
+
+### 11. Xac nhan parameter da tro ve null
+# @name verifyCleanup2D
+# @no-log
+POST {{apiBase}}/se-list/v2/list-se-list-parameters-new/
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+Accept: application/json
+
+[
+  [
+    {
+      "projects_key": ["{{projectId}}"],
+      "project": "{{projectName}}",
+      "destination": "{{destination}}",
+      "drivetrain": "{{drivetrain}}",
+      "body_type": "{{bodyType}}",
+      "powertrain": "{{powertrain}}",
+      "lot": "{{lot}}",
+      "phase": "{{phaseName}}"
+    }
+  ]
+]
+
+> {%
+  client.test("Doc lai SE sau cleanup thanh cong", function () {
+    client.assert(response.status === 200, `API SE list tra HTTP ${response.status}`);
+  });
+
+  const groups = response.body?.projects?.[0]?.data ?? [];
+  let finalValue;
+
+  for (const group of groups) {
+    for (const row of group.children ?? []) {
+      if (String(row.se_parameter_id) !== String(client.global.get("targetParameterId"))) continue;
+
+      for (const value of Object.values(row)) {
+        if (
+          value
+          && typeof value === "object"
+          && String(value.variation_id) === String(client.global.get("targetVariationId"))
+        ) {
+          finalValue = value.z_request_median;
+          break;
+        }
+      }
+    }
+  }
+
+  client.test("Cleanup hoan tat", function () {
+    const normalized = finalValue === null || finalValue === undefined
+      ? ""
+      : String(finalValue).trim().toUpperCase();
+    client.assert(
+      normalized === "" || normalized === "N/A" || normalized === "MAP",
+      `Gia tri sau khi xoa la '${finalValue}', mong doi null, N/A hoac Map`
+    );
+  });
+
+  client.log("Da xoa map " + client.global.get("demoMapName") + "; parameter tro ve " + finalValue);
+%}

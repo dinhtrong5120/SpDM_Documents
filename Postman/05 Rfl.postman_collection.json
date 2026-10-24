@@ -1,0 +1,1555 @@
+{
+  "info": {
+    "_postman_id": "97d6e611-04bd-416a-b640-39b3fcf28efb",
+    "name": "05 Rfl",
+    "description": "Postman Collection cho module RFL (Requirement, Function, Logic) của SPDM Backend, đã được chuẩn hóa và tổ chức lại theo chức năng (Read -> Create -> Update -> Delete), bổ sung đầy đủ các endpoint hiện hành từ codebase và làm sạch JSON payload.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "23416820",
+    "_collection_link": "https://go.postman.co/collection/23416820-97d6e611-04bd-416a-b640-39b3fcf28efb?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "01 - RFL TLM & Meta",
+      "item": [
+        {
+          "name": "Get Project RFL Meta",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pj_code\": \"[J32V]\",\n  \"destination\": \"JPN\",\n  \"drivetrain\": \"4WD\",\n  \"architecture\": \"HEV\",\n  \"body_type\": \"Sedan\",\n  \"lot\": \"Pre-Pro\",\n  \"phase\": \"中間確認会#1\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rfl/meta",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rfl",
+                "meta"
+              ]
+            },
+            "description": "Lấy danh sách Phase, Hierarchy và Work Packages (R_WP) của project theo mã dự án và thông tin xe."
+          },
+          "response": []
+        },
+        {
+          "name": "Get RFL Parameters Approval Rate",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"project_code\": [\n    \"[J32V]\"\n  ],\n  \"destination\": [\n    \"JPN\"\n  ],\n  \"drivetrain\": [\n    \"4WD\"\n  ],\n  \"lot\": [\n    \"Pre-Pro\"\n  ],\n  \"phase\": [\n    \"中間確認会#1\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rfl/approval_rate",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rfl",
+                "approval_rate"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get RFL Variations",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"project_code\": [\n    \"[J32V]\"\n  ],\n  \"destination\": [\n    \"JPN\"\n  ],\n  \"drivetrain\": [\n    \"4WD\"\n  ],\n  \"lot\": [\n    \"Pre-Pro\"\n  ],\n  \"phase\": [\n    \"中間確認会#1\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rfl/variation",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rfl",
+                "variation"
+              ]
+            },
+            "description": "Tra cứu danh sách variation áp dụng cho RFL theo các tiêu chí dự án."
+          },
+          "response": []
+        },
+        {
+          "name": "Get RFL TLM v1",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"destination\": [\n    \"JPN\"\n  ],\n  \"drivetrain\": [\n    \"2WD\"\n  ],\n  \"hierarchy\": [\n    \"車両\"\n  ],\n  \"lot\": [\n    \"Pre-Pro\"\n  ],\n  \"phase\": [\n    \"中間確認会#1\"\n  ],\n  \"project_code\": [\n    \"[J32V]\"\n  ],\n  \"wp\": [\n    \"燃費電費\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rfl/tlm",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rfl",
+                "tlm"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get RFL TLM v2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"destination\": [\n    \"JPN\"\n  ],\n  \"drivetrain\": [\n    \"2WD\"\n  ],\n  \"hierarchy\": [\n    \"車両\"\n  ],\n  \"lot\": [\n    \"Pre-Pro\"\n  ],\n  \"phase\": [\n    \"中間確認会#1\"\n  ],\n  \"project_code\": [\n    \"[J32V]\"\n  ],\n  \"wp\": [\n    \"燃費電費\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rfl/v2/tlm",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rfl",
+                "v2",
+                "tlm"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Bulk Update RFL Items",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"project_info_id\": 14,\n      \"rfl_id\": 17,\n      \"phase_id\": 15,\n      \"requirement\": \"Target requirement\",\n      \"function\": \"Main function\",\n      \"logic\": \"Control logic\",\n      \"note\": \"Update note\",\n      \"sender_comment\": \"Agreed\",\n      \"receiver_comment\": \"Reviewed and approved\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rfl/update",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rfl",
+                "update"
+              ]
+            },
+            "description": "Cập nhật hàng loạt (bulk update) các trường nghiệp vụ của item RFL (yêu cầu, chức năng, logic, comment, phán đoán)."
+          },
+          "response": []
+        },
+        {
+          "name": "RFL Shounin Approval",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"s_r_pj_id\": 14,\n    \"s_rfl_id\": 17,\n    \"s_phase_id\": 15,\n    \"s_sender_judge\": \"承認OK\",\n    \"s_sender_comment\": \"Đã phê duyệt RFL\",\n    \"s_sender_name\": \"Yamada\"\n  }\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rfl/shounin",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rfl",
+                "shounin"
+              ]
+            },
+            "description": "Thực hiện hành động phê duyệt (shounin) hoặc đánh giá cho các item trong RFL."
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints quản lý TLM (Top-Level Management), metadata dự án, variation và cập nhật RFL."
+    },
+    {
+      "name": "02 - RFL TO (Trade-Off)",
+      "item": [
+        {
+          "name": "Get RFL TO v1",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"project_code\": [\n    \"[J32V]\"\n  ],\n  \"destination\": [\n    \"JPN\"\n  ],\n  \"drivetrain\": [\n    \"2WD\"\n  ],\n  \"lot\": [\n    \"Pre-Pro\"\n  ],\n  \"phase\": [\n    \"中間確認会#1\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rfl/to",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rfl",
+                "to"
+              ]
+            },
+            "description": "Tra cứu RFL Trade-Off (TO) v1 theo dự án, đích đến, hệ dẫn động, lot và phase."
+          },
+          "response": []
+        },
+        {
+          "name": "Get RFL TO v2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"destination\": [\n    \"JPN\"\n  ],\n  \"drivetrain\": [\n    \"2WD\"\n  ],\n  \"hierarchy\": [\n    \"車両\",\n    \"システム\",\n    \"ユニット\"\n  ],\n  \"lot\": [\n    \"Pre-Pro\"\n  ],\n  \"phase\": [\n    \"中間確認会#1\"\n  ],\n  \"project_code\": [\n    \"[J32V]\"\n  ],\n  \"wp\": [\n    \"燃費電費\",\n    \"動力\",\n    \"熱性能\",\n    \"運転性\",\n    \"高周波\",\n    \"低周波\",\n    \"エバポ\",\n    \"4WD\",\n    \"排気\",\n    \"OBD\",\n    \"高電圧\",\n    \"EMC\",\n    \"eNV\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rfl/v2/to",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rfl",
+                "v2",
+                "to"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get RFL TO Summary",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"project_code\": [\n    \"[J32V]\"\n  ],\n  \"destination\": [\n    \"JPN\"\n  ],\n  \"drivetrain\": [\n    \"2WD\"\n  ],\n  \"lot\": [\n    \"Pre-Pro\"\n  ],\n  \"phase\": [\n    \"中間確認会#1\"\n  ],\n  \"variations\": [\n    \"提案仕様\"\n  ],\n  \"selected_variation_id\": 30\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rfl/summary_to",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rfl",
+                "summary_to"
+              ]
+            },
+            "description": "Lấy bảng tóm tắt Trade-Off (Summary TO) của RFL theo variation đã chọn."
+          },
+          "response": []
+        },
+        {
+          "name": "Get RFL Statement",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"project_id\": [\n    14\n  ],\n  \"phase_id\": [\n    15\n  ],\n  \"category\": [\n    \"燃費電費\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rfl/statement",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rfl",
+                "statement"
+              ]
+            },
+            "description": "Lấy thông tin Statement của RFL theo project, phase và category."
+          },
+          "response": []
+        },
+        {
+          "name": "Update RFL Statement",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"project_id\": [\n    14\n  ],\n  \"phase_id\": [\n    15\n  ],\n  \"category\": [\n    \"燃費電費\"\n  ],\n  \"statement\": [\n    \"・性能間TOは無し\\n・諸元情報との不一致について確認中\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rfl/statement",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rfl",
+                "statement"
+              ]
+            },
+            "description": "Cập nhật nội dung Statement của RFL cho từng category."
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints tra cứu và quản lý Trade-Off (TO), bảng Summary TO và Statement RFL."
+    },
+    {
+      "name": "03 - RFL TO Description & Shounin Revision",
+      "item": [
+        {
+          "name": "Get RFL TO Description",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rfl/rfl-to-description",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rfl",
+                "rfl-to-description"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get RFL TO Shounin Revisions",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rfl/rfl-to-shounin?project_id=14&phase_id=3",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rfl",
+                "rfl-to-shounin"
+              ],
+              "query": [
+                {
+                  "key": "project_id",
+                  "value": "14"
+                },
+                {
+                  "key": "phase_id",
+                  "value": "3"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Save RFL TO Description",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"s_r_pj_id\": 14,\n  \"s_phase_id\": 15,\n  \"s_l_id\": 3001,\n  \"s_hierarchy_id\": 2,\n  \"s_r_wp_id\": 5,\n  \"s_description\": \"Nội dung mô tả 123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rfl/rfl-to-description",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rfl",
+                "rfl-to-description"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Save RFL TO Shounin (Approval/Statement Revision)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"s_r_pj_id\": 14,\n  \"s_phase_id\": 15,\n  \"statement\": \"・性能間TOは無し\\n・諸元情報との不一致について確認中\\n・Test\",\n  \"shounin\": [\n    {\n      \"s_related_se_parameter_id\": 597,\n      \"s_l_id\": 8008,\n      \"rfl_to_temp_data_id\": \"\",\n      \"要求（After）：燃費電費\": \"= 10.382 -\",\n      \"要求（After）：動力\": \"= 10.382 -\",\n      \"要求（After）：熱性能\": \"= 10.382 -\",\n      \"要求（After）：運転性\": \"= 10.382 -\",\n      \"要求（After）：高周波\": \"= 10.382 -\",\n      \"要求（After）：低周波\": \"= 10.382 -\",\n      \"要求（After）：エバポ\": \"= 10.382 -\",\n      \"要求（After）：4WD\": \"= 10.382 -\",\n      \"要求（After）：排気\": \"= 10.382 -\",\n      \"要求（After）：OBD\": \"= 10.382 -\",\n      \"要求（After）：高電圧\": \"= 10.382 -\",\n      \"要求（After）：EMC\": \"= 10.382 -\",\n      \"要求（After）：eNV\": \"= 10.382 -\",\n      \"After（提案/override）\": \"OK\",\n      \"解決方法\": \"仕様変更\",\n      \"提案\": \"569.4 Nm\",\n      \"責任者\": \"担当A\",\n      \"一本化理由\": \"下位受渡しと各性能の合意範囲に収まるため\",\n      \"承認\": \"承認OK\",\n      \"ステートメント\": \"提案仕様=9.0で全性能要求を満たす。\"\n    }\n  ],\n  \"unshounin\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rfl/rfl-to-shounin",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rfl",
+                "rfl-to-shounin"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "RFL TO V2_Shounin",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"s_r_pj_id\": \"14\",\n  \"s_phase_id\": \"3\",\n  \"statement\": \"test comment check\\nproject passed\",\n  \"updated_day\": \"2026/04/23\",\n  \"shounin\": [\n    {\n      \"s_related_se_parameter_id\": 606,\n      \"s_l_id\": \"8017\",\n      \"rfl_to_temp_data_id\": \"\",\n      \"要求（After）：動力\": \"\",\n      \"要求（After）：排気\": \"≧ 55 ℃\",\n      \"要求（After）：燃費電費\": \"\",\n      \"要求（After）：熱性能\": \"\",\n      \"要求（After）：運転性\": \"\",\n      \"要求（After）：高周波\": \"\",\n      \"要求（After）：低周波\": \"\",\n      \"要求（After）：エバポ\": \"\",\n      \"要求（After）：4WD\": \"\",\n      \"要求（After）：OBD\": \"\",\n      \"要求（After）：高電圧\": \"\",\n      \"要求（After）：EMC\": \"\",\n      \"要求（After）：eNV\": \"\",\n      \"After（提案/override）\": \"OK\",\n      \"解決方法\": \"要求変更\",\n      \"提案\": \"-\",\n      \"責任者\": \"-\",\n      \"一本化理由\": \"-\",\n      \"承認\": \"承認OK\",\n      \"ステートメント\": \"-\"\n    }\n  ],\n  \"unshounin\": []\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rfl/rfl-to-shounin",
+                  "protocol": "http",
+                  "host": [
+                    "127",
+                    "0",
+                    "0",
+                    "1"
+                  ],
+                  "port": "8000",
+                  "path": [
+                    "{{SUB_PATH}}",
+                    "api",
+                    "rfl",
+                    "rfl-to-shounin"
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "Delete RFL TO Shounin Revision",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rfl/rfl-to-shounin?project_id=14&phase_id=3&rfl_to_data_save_revision_id=1&revision=Rev1",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rfl",
+                "rfl-to-shounin"
+              ],
+              "query": [
+                {
+                  "key": "project_id",
+                  "value": "14"
+                },
+                {
+                  "key": "phase_id",
+                  "value": "3"
+                },
+                {
+                  "key": "rfl_to_data_save_revision_id",
+                  "value": "1"
+                },
+                {
+                  "key": "revision",
+                  "value": "Rev1",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints quản lý mô tả (Description), phê duyệt (Shounin) và các bản sửa đổi (Revision) của Trade-Off."
+    },
+    {
+      "name": "04 - RFL Creation, Map & Workflow",
+      "item": [
+        {
+          "name": "Create New RFL Records (RFL Add New)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"hierarchy_id\": 1,\n  \"r_wp_id\": 142,\n  \"システム\": [],\n  \"ユニット\": [],\n  \"車両\": [\n    {\n      \"architacture\": \"HEV\",\n      \"body_type\": \"Sedan\",\n      \"destination\": \"JPN\",\n      \"drivetrain\": \"2WD\",\n      \"performance\": null,\n      \"phase_id\": \"15\",\n      \"project_id\": \"14\",\n      \"r_parameter_id\": null,\n      \"s_allocation\": 222,\n      \"s_l_wp\": \"2L1\",\n      \"s_f_item\": \"モードトータル車両走行仕事量(力行) Σ(A0+A1*vsp+A2*vsp^2)\",\n      \"s_f_unit_id\": 68,\n      \"s_f_unit\": \"℃\",\n      \"s_func\": \"\",\n      \"s_l_item\": \"Test Weight_FE_Homologation\",\n      \"s_l_scene\": \"\",\n      \"s_l_unit_id\": 81,\n      \"s_l_unit\": \"￥\",\n      \"s_log_condition\": \"\",\n      \"s_logic\": \"\",\n      \"s_note\": \"\",\n      \"s_r_item\": \"カタログ燃費値  WLTC  WLTC 3Phase\",\n      \"s_r_scene\": \"\",\n      \"s_r_unit\": \"#/km1\",\n      \"s_r_unit_id\": null,\n      \"s_receiver_comment\": \"\",\n      \"s_receiver_date\": \"\",\n      \"s_receiver_judge\": \"\",\n      \"s_receiver_name\": \"\",\n      \"s_req\": \"\",\n      \"s_req_condition\": \"\",\n      \"s_sender_comment\": \"\",\n      \"s_sender_date\": \"\",\n      \"s_sender_judge\": \"\",\n      \"s_sender_name\": \"\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rfl/rfl-add-new",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rfl",
+                "rfl-add-new"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "RFL Create (Thêm mới unit)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"hierarchy_id\": 1,\n  \"r_wp_id\": 142,\n  \"システム\": [],\n  \"ユニット\": [],\n  \"車両\": [\n    {\n      \"architacture\": \"HEV\",\n      \"body_type\": \"test bodytype\",\n      \"destination\": \"JPN\",\n      \"drivetrain\": \"2WD\",\n      \"performance\": null,\n      \"phase_id\": \"15\",\n      \"project_id\": \"14\",\n      \"r_parameter_id\": null,\n      \"s_allocation\": 222,\n      \"s_l_wp\": \"2L1\",\n      \"s_f_item\": \"モードトータル車両走行仕事量(力行) Σ(A0+A1*vsp+A2*vsp^2)\",\n      \"s_f_unit_id\": 68,\n      \"s_f_unit\": \"℃\",\n      \"s_func\": \"\",\n      \"s_l_item\": \"Test Weight_FE_Homologation\",\n      \"s_l_scene\": \"\",\n      \"s_l_unit_id\": 81,\n      \"s_l_unit\": \"￥\",\n      \"s_log_condition\": \"\",\n      \"s_logic\": \"\",\n      \"s_note\": \"\",\n      \"s_r_item\": \"カタログ燃費値  WLTC  WLTC 3Phase\",\n      \"s_r_scene\": \"\",\n      \"s_r_unit\": \"#/km1\",\n      \"s_r_unit_id\": null,\n      \"s_receiver_comment\": \"\",\n      \"s_receiver_date\": \"\",\n      \"s_receiver_judge\": \"\",\n      \"s_receiver_name\": \"\",\n      \"s_req\": \"\",\n      \"s_req_condition\": \"\",\n      \"s_sender_comment\": \"\",\n      \"s_sender_date\": \"\",\n      \"s_sender_judge\": \"\",\n      \"s_sender_name\": \"\"\n    },\n    {\n      \"architacture\": \"HEV\",\n      \"body_type\": \"test bodytype\",\n      \"destination\": \"JPN\",\n      \"drivetrain\": \"2WD\",\n      \"performance\": null,\n      \"phase_id\": \"15\",\n      \"project_id\": \"14\",\n      \"r_parameter_id\": null,\n      \"s_allocation\": 223,\n      \"s_l_wp\": \"2S1\",\n      \"s_f_item\": \"モードトータル補機消費電力量\",\n      \"s_f_unit_id\": 68,\n      \"s_f_unit\": \"℃\",\n      \"s_func\": \"\",\n      \"s_l_item\": \"Aerodynamics_Cd (G/S Open & G/S 無し)\",\n      \"s_l_scene\": \"\",\n      \"s_l_unit_id\": 81,\n      \"s_l_unit\": \"￥\",\n      \"s_log_condition\": \"\",\n      \"s_logic\": \"\",\n      \"s_note\": \"\",\n      \"s_r_item\": \"実用燃費  低外気温  WLTC 3Phase(-7℃、ヒーターON)\",\n      \"s_r_scene\": \"\",\n      \"s_r_unit\": \"%1\",\n      \"s_r_unit_id\": null,\n      \"s_receiver_comment\": \"\",\n      \"s_receiver_date\": \"\",\n      \"s_receiver_judge\": \"\",\n      \"s_receiver_name\": \"\",\n      \"s_req\": \"\",\n      \"s_req_condition\": \"\",\n      \"s_sender_comment\": \"\",\n      \"s_sender_date\": \"\",\n      \"s_sender_judge\": \"\",\n      \"s_sender_name\": \"\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rfl/rfl-add-new",
+                  "protocol": "http",
+                  "host": [
+                    "127",
+                    "0",
+                    "0",
+                    "1"
+                  ],
+                  "port": "8000",
+                  "path": [
+                    "{{SUB_PATH}}",
+                    "api",
+                    "rfl",
+                    "rfl-add-new"
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "Send RFL Mail Submission",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"project_code\": [\n    \"J32V\"\n  ],\n  \"destination\": [\n    \"JPN\"\n  ],\n  \"drivetrain\": [\n    \"4WD\"\n  ],\n  \"lot\": [\n    \"Pre-Pro\"\n  ],\n  \"phase\": [\n    \"中間確認会#1\"\n  ],\n  \"hierarchy\": [\n    \"システム\"\n  ],\n  \"wp\": [\n    \"4WD\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rfl/mail-submission",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rfl",
+                "mail-submission"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update RFL Map (Representative Mode / Map Name)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"s_r_pj_id\": 14,\n  \"s_rfl_id\": 17,\n  \"s_phase_id\": 15,\n  \"s_rep_value\": \"95.6\",\n  \"s_rep_unit_id\": \"10\",\n  \"s_mode\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rfl/rfl-map",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rfl",
+                "rfl-map"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Chuyển sang chế độ đại diện",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"s_r_pj_id\": 14,\n  \"s_rfl_id\": 17,\n  \"s_phase_id\": 15,\n  \"s_rep_value\": \"95.6\",\n  \"s_rep_unit_id\": \"10\",\n  \"s_mode\": 1\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rfl/rfl-map",
+                  "protocol": "http",
+                  "host": [
+                    "127",
+                    "0",
+                    "0",
+                    "1"
+                  ],
+                  "port": "8000",
+                  "path": [
+                    "{{SUB_PATH}}",
+                    "api",
+                    "rfl",
+                    "rfl-map"
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": ""
+            },
+            {
+              "name": "Chuyển sang chế độ xem map name",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"s_r_pj_id\": 14,\n  \"s_rfl_id\": 17,\n  \"s_phase_id\": 15,\n  \"s_rep_value\": \"95.6\",\n  \"s_rep_unit_id\": \"10\",\n  \"s_mode\": 0\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rfl/rfl-map",
+                  "protocol": "http",
+                  "host": [
+                    "127",
+                    "0",
+                    "0",
+                    "1"
+                  ],
+                  "port": "8000",
+                  "path": [
+                    "{{SUB_PATH}}",
+                    "api",
+                    "rfl",
+                    "rfl-map"
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            }
+          ]
+        }
+      ],
+      "description": "Endpoints tạo mới dữ liệu RFL (add-new), gửi mail trình duyệt và cấu hình hiển thị RFL Map."
+    },
+    {
+      "name": "05 - F-Parameter Master & Cross-Domain",
+      "item": [
+        {
+          "name": "Get Master F-Parameters",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rfl/f-parameter",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rfl",
+                "f-parameter"
+              ]
+            },
+            "description": "Lấy danh mục Master F-Parameter (danh sách tham số F, unit dictionary và danh mục phân loại)."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Master F-Parameters (Add & Update)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"add\": [\n    {\n      \"unit_id\": 12,\n      \"unit\": \"Nm\",\n      \"パラメータ名\": \"Motor_Torque_Peak\"\n    }\n  ],\n  \"update\": [\n    {\n      \"id\": 1,\n      \"design_item\": \"Battery_Capacity_Ah\",\n      \"unit_id\": 15\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rfl/f-parameter",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rfl",
+                "f-parameter"
+              ]
+            },
+            "description": "Thêm mới và cập nhật danh mục Master F-Parameters trong hệ thống RFL."
+          },
+          "response": []
+        },
+        {
+          "name": "SE-Parameter Master Add & Update",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"add\": [\n    {\n      \"wp\": \"HV BATT\",\n      \"Category\": \"Category_1\",\n      \"パラメータ名\": \"Parameter_Name_1\",\n      \"単位\": \"Nm\"\n    },\n    {\n      \"wp\": \"DCDC\",\n      \"Category\": \"Category_2\",\n      \"パラメータ名\": \"Parameter_Name_2\",\n      \"単位\": \"kg\"\n    }\n  ],\n  \"update\": [\n    {\n      \"id\": 1,\n      \"wp\": \"4WD Sys\",\n      \"Category\": \"Category_3\",\n      \"パラメータ名\": \"Parameter_Name_3\",\n      \"単位\": \"Nm/\"\n    },\n    {\n      \"id\": 2,\n      \"wp\": \"4WD Sys\",\n      \"Category\": \"Category_4\",\n      \"パラメータ名\": \"Parameter_Name_4\",\n      \"単位\": \"Map\"\n    }\n  ],\n  \"list_id_order\": [\n    1,\n    2,\n    3,\n    4,\n    5,\n    6,\n    462,\n    463,\n    464,\n    7,\n    8,\n    9,\n    461,\n    704,\n    705,\n    10,\n    11,\n    12,\n    13,\n    388,\n    389,\n    514,\n    515,\n    14,\n    15,\n    16,\n    457,\n    17,\n    18,\n    19,\n    20,\n    21,\n    22,\n    23,\n    459,\n    24,\n    25,\n    26,\n    27,\n    28,\n    29,\n    30,\n    31,\n    460,\n    32,\n    33,\n    34,\n    35,\n    36,\n    455,\n    456,\n    458,\n    697,\n    698,\n    699,\n    700,\n    701,\n    702,\n    703,\n    731,\n    732,\n    733,\n    734,\n    735,\n    736,\n    737,\n    738,\n    739,\n    740,\n    741,\n    742,\n    743,\n    744,\n    745,\n    746,\n    759,\n    972,\n    37,\n    38,\n    39,\n    40,\n    41,\n    42,\n    43,\n    44,\n    45,\n    46,\n    47,\n    48,\n    49,\n    50,\n    390,\n    51,\n    52,\n    53,\n    54,\n    55,\n    56,\n    57,\n    58,\n    59,\n    60,\n    61,\n    62,\n    63,\n    64,\n    65,\n    66,\n    67,\n    68,\n    69,\n    70,\n    71,\n    72,\n    73,\n    74,\n    75,\n    76,\n    77,\n    78,\n    329,\n    330,\n    331,\n    332,\n    333,\n    334,\n    335,\n    392,\n    489,\n    490,\n    491,\n    492,\n    493,\n    494,\n    495,\n    496,\n    501,\n    533,\n    783,\n    537,\n    553,\n    565,\n    782,\n    784,\n    785,\n    786,\n    787,\n    79,\n    80,\n    393,\n    394,\n    81,\n    82,\n    83,\n    84,\n    85,\n    485,\n    486,\n    487,\n    488,\n    781,\n    86,\n    87,\n    88,\n    89,\n    90,\n    91,\n    364,\n    92,\n    362,\n    93,\n    94,\n    95,\n    96,\n    97,\n    98,\n    99,\n    100,\n    101,\n    102,\n    103,\n    104,\n    105,\n    106,\n    107,\n    108,\n    109,\n    110,\n    111,\n    112,\n    113,\n    114,\n    115,\n    116,\n    117,\n    118,\n    119,\n    120,\n    121,\n    122,\n    123,\n    124,\n    125,\n    126,\n    127,\n    128,\n    129,\n    130,\n    131,\n    132,\n    133,\n    134,\n    135,\n    136,\n    137,\n    138,\n    139,\n    140,\n    141,\n    142,\n    143,\n    144,\n    145,\n    146,\n    568,\n    147,\n    148,\n    149,\n    150,\n    151,\n    152,\n    153,\n    154,\n    155,\n    156,\n    157,\n    158,\n    159,\n    160,\n    569,\n    161,\n    162,\n    340,\n    163,\n    164,\n    165,\n    166,\n    167,\n    168,\n    169,\n    170,\n    171,\n    172,\n    567,\n    839,\n    173,\n    174,\n    175,\n    176,\n    177,\n    178,\n    179,\n    180,\n    181,\n    182,\n    183,\n    184,\n    185,\n    186,\n    187,\n    188,\n    189,\n    190,\n    191,\n    192,\n    193,\n    194,\n    195,\n    196,\n    197,\n    198,\n    199,\n    200,\n    201,\n    202,\n    203,\n    361,\n    204,\n    205,\n    206,\n    207,\n    208,\n    209,\n    210,\n    211,\n    212,\n    336,\n    337,\n    338,\n    339,\n    341,\n    342,\n    343,\n    344,\n    345,\n    346,\n    347,\n    348,\n    349,\n    350,\n    351,\n    352,\n    353,\n    354,\n    355,\n    356,\n    357,\n    358,\n    359,\n    360,\n    363,\n    365,\n    395,\n    396,\n    416,\n    417,\n    418,\n    419,\n    420,\n    421,\n    422,\n    423,\n    424,\n    425,\n    426,\n    427,\n    428,\n    429,\n    430,\n    431,\n    432,\n    433,\n    434,\n    435,\n    436,\n    437,\n    438,\n    439,\n    440,\n    441,\n    442,\n    443,\n    444,\n    445,\n    446,\n    447,\n    448,\n    449,\n    450,\n    451,\n    452,\n    453,\n    454,\n    484,\n    566,\n    570,\n    571,\n    760,\n    840,\n    761,\n    841,\n    776,\n    213,\n    214,\n    215,\n    216,\n    366,\n    217,\n    218,\n    219,\n    220,\n    222,\n    223,\n    224,\n    225,\n    227,\n    230,\n    221,\n    226,\n    228,\n    229,\n    505,\n    506,\n    507,\n    508,\n    509,\n    510,\n    511,\n    512,\n    231,\n    232,\n    233,\n    234,\n    235,\n    236,\n    237,\n    238,\n    239,\n    240,\n    241,\n    242,\n    243,\n    244,\n    245,\n    246,\n    247,\n    248,\n    249,\n    250,\n    251,\n    252,\n    253,\n    254,\n    255,\n    256,\n    399,\n    257,\n    398,\n    258,\n    397,\n    367,\n    259,\n    400,\n    260,\n    261,\n    465,\n    466,\n    467,\n    262,\n    263,\n    264,\n    265,\n    266,\n    267,\n    268,\n    269,\n    270,\n    372,\n    271,\n    272,\n    273,\n    274,\n    275,\n    276,\n    277,\n    278,\n    279,\n    280,\n    281,\n    282,\n    283,\n    284,\n    285,\n    286,\n    287,\n    288,\n    289,\n    290,\n    291,\n    292,\n    403,\n    293,\n    294,\n    295,\n    296,\n    297,\n    298,\n    299,\n    300,\n    410,\n    301,\n    302,\n    303,\n    304,\n    305,\n    306,\n    307,\n    308,\n    309,\n    405,\n    310,\n    368,\n    369,\n    370,\n    371,\n    373,\n    374,\n    375,\n    376,\n    377,\n    378,\n    379,\n    380,\n    381,\n    382,\n    383,\n    384,\n    401,\n    402,\n    404,\n    406,\n    412,\n    413,\n    414,\n    415,\n    311,\n    385,\n    714,\n    312,\n    313,\n    314,\n    316,\n    407,\n    408,\n    315,\n    502,\n    503,\n    504,\n    317,\n    411,\n    318,\n    319,\n    320,\n    321,\n    322,\n    323,\n    324,\n    325,\n    326,\n    327,\n    328,\n    386,\n    387,\n    391,\n    409,\n    468,\n    469,\n    470,\n    471,\n    472,\n    473,\n    474,\n    475,\n    476,\n    477,\n    478,\n    479,\n    480,\n    481,\n    482,\n    483,\n    497,\n    498,\n    518,\n    519,\n    520,\n    521,\n    522,\n    523,\n    524,\n    525,\n    526,\n    527,\n    528,\n    529,\n    534,\n    535,\n    536,\n    538,\n    539,\n    540,\n    541,\n    542,\n    543,\n    544,\n    545,\n    546,\n    547,\n    548,\n    549,\n    550,\n    551,\n    552,\n    562,\n    563,\n    564,\n    750,\n    818,\n    751,\n    819,\n    752,\n    820,\n    753,\n    788,\n    789,\n    790,\n    791,\n    792,\n    793,\n    794,\n    795,\n    796,\n    797,\n    798,\n    799,\n    800,\n    801,\n    802,\n    803,\n    804,\n    805,\n    806,\n    807,\n    808,\n    809,\n    810,\n    811,\n    812,\n    813,\n    814,\n    815,\n    816,\n    817,\n    1005,\n    513,\n    516,\n    517,\n    717,\n    572,\n    573,\n    574,\n    575,\n    576,\n    577,\n    578,\n    579,\n    580,\n    581,\n    582,\n    583,\n    584,\n    585,\n    586,\n    587,\n    588,\n    589,\n    590,\n    591,\n    592,\n    593,\n    594,\n    595,\n    596,\n    597,\n    598,\n    599,\n    600,\n    601,\n    602,\n    603,\n    604,\n    605,\n    606,\n    607,\n    608,\n    609,\n    610,\n    611,\n    612,\n    613,\n    614,\n    615,\n    616,\n    617,\n    618,\n    754,\n    755,\n    762,\n    763,\n    842,\n    843,\n    844,\n    845,\n    846,\n    847,\n    848,\n    849,\n    850,\n    851,\n    852,\n    853,\n    619,\n    620,\n    621,\n    622,\n    623,\n    624,\n    625,\n    626,\n    627,\n    628,\n    629,\n    630,\n    631,\n    632,\n    764,\n    765,\n    766,\n    767,\n    633,\n    634,\n    635,\n    636,\n    637,\n    638,\n    639,\n    640,\n    641,\n    642,\n    643,\n    644,\n    645,\n    646,\n    647,\n    648,\n    649,\n    650,\n    651,\n    652,\n    653,\n    722,\n    723,\n    724,\n    747,\n    748,\n    749,\n    756,\n    857,\n    768,\n    769,\n    770,\n    771,\n    777,\n    778,\n    854,\n    855,\n    856,\n    654,\n    655,\n    656,\n    657,\n    658,\n    661,\n    662,\n    663,\n    664,\n    667,\n    668,\n    669,\n    670,\n    671,\n    672,\n    673,\n    674,\n    727,\n    728,\n    729,\n    730,\n    757,\n    758,\n    772,\n    773,\n    774,\n    775,\n    779,\n    780,\n    675,\n    676,\n    677,\n    678,\n    679,\n    680,\n    681,\n    682,\n    683,\n    684,\n    685,\n    686,\n    687,\n    688,\n    689,\n    690,\n    691,\n    692,\n    693,\n    694,\n    695,\n    696,\n    706,\n    707,\n    708,\n    709,\n    710,\n    711,\n    713,\n    973,\n    712,\n    715,\n    716,\n    718,\n    719,\n    720,\n    721,\n    993,\n    994,\n    995,\n    996,\n    997,\n    998,\n    999,\n    1000,\n    1001,\n    1002,\n    1003,\n    1004,\n    821,\n    822,\n    823,\n    824,\n    825,\n    826,\n    827,\n    828,\n    829,\n    830,\n    831,\n    832,\n    833,\n    834,\n    835,\n    836,\n    837,\n    838,\n    858,\n    859,\n    934,\n    935,\n    936,\n    937,\n    860,\n    861,\n    862,\n    863,\n    864,\n    865,\n    866,\n    867,\n    868,\n    869,\n    870,\n    871,\n    872,\n    873,\n    874,\n    875,\n    876,\n    877,\n    878,\n    879,\n    880,\n    881,\n    882,\n    883,\n    884,\n    885,\n    886,\n    887,\n    888,\n    889,\n    890,\n    891,\n    892,\n    893,\n    894,\n    895,\n    896,\n    897,\n    898,\n    899,\n    900,\n    901,\n    902,\n    903,\n    904,\n    905,\n    906,\n    907,\n    908,\n    909,\n    910,\n    911,\n    912,\n    913,\n    914,\n    915,\n    916,\n    917,\n    918,\n    919,\n    920,\n    921,\n    922,\n    923,\n    924,\n    925,\n    926,\n    927,\n    928,\n    929,\n    930,\n    931,\n    932,\n    933,\n    938,\n    939,\n    940,\n    941,\n    942,\n    943,\n    944,\n    945,\n    946,\n    947,\n    948,\n    949,\n    950,\n    951,\n    952,\n    953,\n    954,\n    955,\n    956,\n    957,\n    958,\n    959,\n    960,\n    961,\n    962,\n    963,\n    964,\n    965,\n    966,\n    967,\n    968,\n    969,\n    970,\n    971,\n    974,\n    975,\n    976,\n    977,\n    978,\n    979,\n    980,\n    981,\n    982,\n    983,\n    984,\n    985,\n    986,\n    987,\n    988,\n    989,\n    990,\n    991,\n    992\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/se-list/se-parameter/edit/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "se-list",
+                "se-parameter",
+                "edit",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Không có trùng lặp",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"add\": [\n    {\n      \"wp_id\": 12,\n      \"wp\": \"HV BATT\",\n      \"Category\": \"Category_1\",\n      \"パラメータ名\": \"Parameter_Name_1\",\n      \"単位\": \"Nm\"\n    },\n    {\n      \"wp_id\": 9,\n      \"wp\": \"DCDC\",\n      \"Category\": \"Category_2\",\n      \"パラメータ名\": \"Parameter_Name_2\",\n      \"単位\": \"kg\"\n    }\n  ],\n  \"update\": [\n    {\n      \"id\": 1,\n      \"wp_id\": 8,\n      \"wp\": \"4WD Sys\",\n      \"Category\": \"Category_3\",\n      \"パラメータ名\": \"Parameter_Name_3\",\n      \"単位\": \"Nm/\"\n    },\n    {\n      \"id\": 2,\n      \"wp_id\": 8,\n      \"wp\": \"4WD Sys\",\n      \"Category\": \"Category_4\",\n      \"パラメータ名\": \"Parameter_Name_4\",\n      \"単位\": \"Map\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/se-list/se-parameter/edit/",
+                  "protocol": "http",
+                  "host": [
+                    "127",
+                    "0",
+                    "0",
+                    "1"
+                  ],
+                  "port": "8000",
+                  "path": [
+                    "{{SUB_PATH}}",
+                    "api",
+                    "se-list",
+                    "se-parameter",
+                    "edit",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            },
+            {
+              "name": "Có trùng lặp với record có sẵn trong db",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"add\": [\n    {\n      \"wp_id\": 12,\n      \"wp\": \"HV BATT\",\n      \"Category\": \"Category_1\",\n      \"パラメータ名\": \"Parameter_Name_1\",\n      \"単位\": \"Nm\"\n    },\n    {\n      \"wp_id\": 8,\n      \"wp\": \"DCDC\",\n      \"Category\": \"Category_2\",\n      \"パラメータ名\": \"Parameter_Name_2\",\n      \"単位\": \"kg\"\n    },\n    {\n      \"wp_id\": 8,\n      \"wp\": \"4WD Sys\",\n      \"Category\": \"4WD Sys\",\n      \"パラメータ名\": \"Disconnect Sys指示⇒トルク発生の応答性\",\n      \"単位\": \"Nm/\"\n    }\n  ],\n  \"update\": [\n    {\n      \"id\": 1,\n      \"wp_id\": 8,\n      \"wp\": \"4WD Sys\",\n      \"Category\": \"Category_3\",\n      \"パラメータ名\": \"Parameter_Name_3\",\n      \"単位\": \"Nm/\"\n    },\n    {\n      \"id\": 2,\n      \"wp_id\": 8,\n      \"wp\": \"4WD Sys\",\n      \"Category\": \"Category_4\",\n      \"パラメータ名\": \"Parameter_Name_4\",\n      \"単位\": \"Map\"\n    },\n    {\n      \"id\": 1001,\n      \"wp_id\": 8,\n      \"wp\": \"4WD Sys\",\n      \"Category\": \"4WD Sys\",\n      \"パラメータ名\": \"Gate Off作動Map\",\n      \"単位\": \"Map\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/se-list/se-parameter/edit/",
+                  "protocol": "http",
+                  "host": [
+                    "127",
+                    "0",
+                    "0",
+                    "1"
+                  ],
+                  "port": "8000",
+                  "path": [
+                    "{{SUB_PATH}}",
+                    "api",
+                    "se-list",
+                    "se-parameter",
+                    "edit",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            },
+            {
+              "name": "Có trùng lặp giữa add và update",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"add\": [\n    {\n      \"wp\": \"4WD Sys\",\n      \"wp_id\": 8,\n      \"Category\": \"Category_3\",\n      \"パラメータ名\": \"Parameter_Name_3\",\n      \"単位\": \"Nm/\"\n    },\n    {\n      \"wp\": \"DCDC\",\n      \"wp_id\": 9,\n      \"Category\": \"Category_2\",\n      \"パラメータ名\": \"Parameter_Name_2\",\n      \"単位\": \"kg\"\n    }\n  ],\n  \"update\": [\n    {\n      \"id\": 1,\n      \"wp\": \"4WD Sys\",\n      \"wp_id\": 8,\n      \"Category\": \"Category_3\",\n      \"パラメータ名\": \"Parameter_Name_3\",\n      \"単位\": \"Nm/\"\n    },\n    {\n      \"id\": 2,\n      \"wp\": \"4WD Sys\",\n      \"wp_id\": 8,\n      \"Category\": \"Category_4\",\n      \"パラメータ名\": \"Parameter_Name_4\",\n      \"単位\": \"Map\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/se-list/se-parameter/edit/",
+                  "protocol": "http",
+                  "host": [
+                    "127",
+                    "0",
+                    "0",
+                    "1"
+                  ],
+                  "port": "8000",
+                  "path": [
+                    "{{SUB_PATH}}",
+                    "api",
+                    "se-list",
+                    "se-parameter",
+                    "edit",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": ""
+            },
+            {
+              "name": "Trùng lặp add với update và có trùng lặp với record trong db",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"add\": [\n    {\n      \"wp_id\": 12,\n      \"wp\": \"HV BATT\",\n      \"Category\": \"Category_1\",\n      \"パラメータ名\": \"Parameter_Name_1\",\n      \"単位\": \"Nm\"\n    },\n    {\n      \"wp_id\": 9,\n      \"wp\": \"DCDC\",\n      \"Category\": \"Category_2\",\n      \"パラメータ名\": \"Parameter_Name_2\",\n      \"単位\": \"kg\"\n    },\n    {\n      \"wp_id\": 8,\n      \"wp\": \"4WD Sys\",\n      \"Category\": \"4WD Sys\",\n      \"パラメータ名\": \"Disconnect Sys指示⇒トルク発生の応答性\",\n      \"単位\": \"Nm/\"\n    }\n  ],\n  \"update\": [\n    {\n      \"id\": 1,\n      \"wp_id\": 12,\n      \"wp\": \"HV BATT\",\n      \"Category\": \"Category_1\",\n      \"パラメータ名\": \"Parameter_Name_1\",\n      \"単位\": \"Nm\"\n    },\n    {\n      \"id\": 2,\n      \"wp_id\": 9,\n      \"wp\": \"DCDC\",\n      \"Category\": \"Category_2\",\n      \"パラメータ名\": \"Parameter_Name_2\",\n      \"単位\": \"kg\"\n    },\n    {\n      \"id\": 1001,\n      \"wp_id\": 8,\n      \"wp\": \"4WD Sys\",\n      \"Category\": \"4WD Sys\",\n      \"パラメータ名\": \"Gate Off作動Map\",\n      \"単位\": \"Map\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/se-list/se-parameter/edit/",
+                  "protocol": "http",
+                  "host": [
+                    "127",
+                    "0",
+                    "0",
+                    "1"
+                  ],
+                  "port": "8000",
+                  "path": [
+                    "{{SUB_PATH}}",
+                    "api",
+                    "se-list",
+                    "se-parameter",
+                    "edit",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "Export RFL Scenario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"hr\": [\n    \"システム\"\n  ],\n  \"wp\": [\n    \"4WD\"\n  ],\n  \"project\": [\n    \"[J32V]\"\n  ],\n  \"phase\": [\n    \"中間確認会#1\"\n  ],\n  \"hierarchy\": [\n    \"システム\"\n  ],\n  \"architecture_name\": [\n    \"HEV\"\n  ],\n  \"Lot\": [\n    \"Pre-Pro\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/scenario/rfl-export/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "scenario",
+                "rfl-export",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints quản lý tham số F-Parameter, SE-Parameter và tích hợp xuất file RFL từ Scenario."
+    },
+    {
+      "name": "90 - Legacy / Not in current routes",
+      "item": [
+        {
+          "name": "RFL Download Database (Legacy / Not in routes)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"destination\": [\n    \"JPN\"\n  ],\n  \"drivetrain\": [\n    \"2WD\"\n  ],\n  \"hierarchy\": [\n    \"車両\"\n  ],\n  \"lot\": [\n    \"Pre-Pro\"\n  ],\n  \"phase\": [\n    \"中間確認会#1\"\n  ],\n  \"project_code\": [\n    \"[J32V]\"\n  ],\n  \"wp\": [\n    \"燃費電費\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/{{SUB_PATH}}/api/rfl/download-database",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "{{SUB_PATH}}",
+                "api",
+                "rfl",
+                "download-database"
+              ]
+            },
+            "description": "Endpoint /api/rfl/download-database không còn tồn tại trong URL routing hiện tại của backend SPDM."
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints cũ không còn tồn tại trong URL routing hiện tại của SPDM Backend."
+    }
+  ],
+  "variable": [
+    {
+      "key": "SUB_PATH",
+      "value": "",
+      "description": "Sub path prefix configured in Django settings (e.g., '' hoặc 'spdm/')"
+    }
+  ]
+}
