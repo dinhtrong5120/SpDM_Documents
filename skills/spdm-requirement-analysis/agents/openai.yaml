@@ -1,0 +1,4 @@
+interface:
+  display_name: "SPDM Requirement Analysis"
+  short_description: "Phân tích yêu cầu SPDM thành tài liệu rõ ràng"
+  default_prompt: "Use $spdm-requirement-analysis to analyze this SPDM requirement and produce a reviewable Vietnamese Markdown specification."
