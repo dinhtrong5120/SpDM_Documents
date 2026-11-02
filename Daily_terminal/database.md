@@ -29,3 +29,8 @@ rm /tmp/db_stg.sql
 ```
 mysqldump --default-character-set=utf8mb4 -u root -p'Sql123456' spdm > "/Users/TrongKieu/Downloads/database/db_local/db_local_$(TZ=Asia/Ho_Chi_Minh date +%Y%m%d_%H%M%S).sql"
 ```
+# Kết nối db rds
+```angular2html
+mysql -h uu3-spdm-database.cizy4ci6ujh1.us-east-1.rds.amazonaws.com -u admin -p'MasterDB$sqZ**';
+USE demo_spdm;
+```
