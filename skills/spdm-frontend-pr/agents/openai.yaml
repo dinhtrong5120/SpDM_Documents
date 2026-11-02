@@ -1,3 +1,4 @@
 interface:
   display_name: "SPDM Frontend PR"
-  short_description: "Draft Japanese, English, Vietnamese Frontend PRs"
+  short_description: "Tạo mô tả PR Frontend SPDM 3 ngôn ngữ (Nhật - Anh - Việt)"
+  default_prompt: "Use $spdm-frontend-pr to prepare an evidence-based trilingual Frontend pull request description."

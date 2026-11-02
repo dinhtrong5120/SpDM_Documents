@@ -1,6 +1,6 @@
 ---
 name: spdm-frontend-pr
-description: Prepare SPDM Frontend pull request descriptions from a source-to-target Git diff, with complete Japanese, English, and Vietnamese versions and UI-focused verification evidence. Use for Frontend PR preparation or filling .github/PULL_REQUEST_TEMPLATE.md; not for implementing UI changes or Backend-only PRs.
+description: Chuẩn bị mô tả Pull Request 3 ngôn ngữ (Nhật - Anh - Việt) cho repository SPDM Frontend từ git diff giữa source và target branch, kèm bằng chứng kiểm chứng UI và tích hợp API. Prepare SPDM Frontend pull request descriptions from a source-to-target Git diff, with complete Japanese, English, and Vietnamese versions and UI-focused verification evidence. Use for Frontend PR preparation or filling .github/PULL_REQUEST_TEMPLATE.md; not for implementing UI changes or Backend-only PRs.
 ---
 
 # SPDM Frontend Trilingual Pull Request

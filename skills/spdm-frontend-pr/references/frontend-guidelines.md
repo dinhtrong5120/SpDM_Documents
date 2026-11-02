@@ -21,7 +21,7 @@ Use repository scripts and existing test infrastructure. Choose checks based on 
 | Shared component or state | Representative callers, state reset/persistence, cache invalidation where affected |
 | Localization or formatting | Changed labels, relevant locales, date/number formats, overflow |
 | Interactive controls | Relevant keyboard interaction, focus, accessible names, and validation feedback |
-| Build/configuration | Relevant lint, typecheck, build, or targeted automated tests supported by the repository |
+| Build/configuration | Relevant lint, typecheck, build, or targeted automated tests supported by the repository (e.g. `npm run lint`, `npm run format:check`, `npm run build`) |
 
 Do not claim responsive or cross-browser coverage without testing the stated viewport/browser. For screenshots, identify the screen and relevant state and use real artifact paths or supported links. Include before/after evidence only when both exist; otherwise describe available evidence and its limits. Avoid capturing credentials or personal data.
 
