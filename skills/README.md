@@ -5,6 +5,7 @@ Thư mục này chứa bản sao Markdown của các skill cá nhân trong `~/.c
 | Skill | Mục đích |
 | --- | --- |
 | `spdm-bilingual-pr` | Mô tả PR đa ngôn ngữ |
+| `spdm-frontend-pr` | Mô tả PR Frontend Nhật–Anh–Việt, kiểm chứng UI và tích hợp API |
 | `spdm-db` | Tiện ích bảo trì dữ liệu SPDM |
 | `spdm-dba` | Thay đổi schema MySQL |
 | `spdm-flowchart` | Flowchart API draw.io |
@@ -16,3 +17,5 @@ Thư mục này chứa bản sao Markdown của các skill cá nhân trong `~/.c
 | `spdm-yagni` | Quy tắc triển khai tối giản |
 
 Lưu ý: chỉ xuất file `.md` theo yêu cầu. `spdm-flowchart/SKILL.md` có nhắc đến `scripts/validate_drawio.py`; script đó không nằm trong bản xuất này.
+
+`spdm-frontend-pr` bổ sung metadata `agents/openai.yaml`; các hướng dẫn và mẫu PR nằm trong `SKILL.md` và `references/*.md`.
