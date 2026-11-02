@@ -1,6 +1,6 @@
 # SPDM skills
 
-Thư mục này chứa bản sao Markdown của 9 skill cá nhân trong `~/.codex/skills/spdm-*` (xuất ngày 2026-10-24). Mỗi skill có `SKILL.md` và giữ nguyên các file `references/*.md` được liên kết từ đó. Nội dung các file được sao chép nguyên bản để dùng làm mẫu cho AI khác.
+Thư mục này chứa bản sao Markdown của các skill cá nhân trong `~/.codex/skills/spdm-*`. Mỗi skill có `SKILL.md` và giữ nguyên các file `references/*.md` được liên kết từ đó. Nội dung các file được sao chép nguyên bản để dùng làm mẫu cho AI khác.
 
 | Skill | Mục đích |
 | --- | --- |
@@ -11,6 +11,7 @@ Thư mục này chứa bản sao Markdown của 9 skill cá nhân trong `~/.code
 | `spdm-postman` | Bộ Postman integration test |
 | `spdm-postman-v1` | Chỉnh sửa Postman collection JSON |
 | `spdm-report-to-sql` | Tạo SQL từ báo cáo bảo trì |
+| `spdm-requirement-analysis` | Phân tích yêu cầu chức năng SPDM |
 | `spdm-swagger` | Tài liệu Swagger |
 | `spdm-yagni` | Quy tắc triển khai tối giản |
 
