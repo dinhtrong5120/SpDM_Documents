@@ -34,3 +34,15 @@ mysqldump --default-character-set=utf8mb4 -u root -p'Sql123456' spdm > "/Users/T
 mysql -h uu3-spdm-database.cizy4ci6ujh1.us-east-1.rds.amazonaws.com -u admin -p'MasterDB$sqZ**';
 USE demo_spdm;
 ```
+
+# Import db vào local
+```angular2html
+mysql -u root -p'Sql123456' \
+  -e "DROP DATABASE IF EXISTS spdm; CREATE DATABASE spdm;" \
+&& \
+mysql --default-character-set=utf8mb4 \
+  -h localhost \
+  -u root \
+  -p'Sql123456' \
+  spdm < /Users/TrongKieu/Downloads/database/db_demo/db_local_20261031_102336.sql
+```
