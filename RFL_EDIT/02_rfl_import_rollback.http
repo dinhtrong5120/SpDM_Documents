@@ -1,0 +1,197 @@
+### RFL - kiểm tra rollback khi lưu dữ liệu từ Excel
+# Chạy file 01 trước và giữ cùng phiên JetBrains HTTP Client.
+# File này mô phỏng JSON sau khi frontend đọc .xlsx, không upload file nhị phân.
+# CHỈ dùng fixture ba dòng của file 01. Bước 4 cố tình xóa các dòng fixture.
+# Bước 6 dự kiến FAIL trên phiên bản hiện tại vì PATCH đã commit trước khi POST lỗi.
+# Bước 7 khôi phục ba dòng mẫu theo thứ tự ban đầu (RFL ID có thể khác).
+
+
+### 1. Tải lại đúng ba dòng fixture và chuẩn bị payload
+### @name prepareRflImportRollback
+# @no-log
+< {%
+  const base = request.environment.get("devApiBase")?.replace(/\/$/, "");
+  if (!base || base !== client.global.get("rfl_base")) {
+    throw new Error("Chọn cùng môi trường dev và chạy file 01 trước.");
+  }
+  for (const key of ["rfl_bad_order", "rfl_delete_seed", "rfl_bad_import", "rfl_import_before", "rfl_restore_seed"]) {
+    client.global.clear(key);
+  }
+%}
+POST {{devApiBase}}/rfl/v2/tlm
+Authorization: Bearer {{rfl_token}}
+Content-Type: application/json
+Accept: application/json
+
+{{rfl_query}}
+
+> {%
+  client.test("Chỉ chọn dữ liệu fixture từ file 01", () => {
+    client.assert(response.status === 200);
+    const scope = JSON.parse(client.global.get("rfl_scope"));
+    const hierarchy = JSON.parse(client.global.get("rfl_query")).hierarchy[0];
+    const seed = JSON.parse(client.global.get("rfl_seed"));
+    const rows = response.body?.data?.[hierarchy] ?? [];
+    const sample = seed[hierarchy];
+    client.assert(rows.length === sample.length && rows.length === 3);
+    client.assert(rows.every(row => row.s_r_pj_id === scope.project_id &&
+      row.s_phase_id === scope.phase_id && row.s_r_wp_id === scope.r_wp_id &&
+      row.s_hierarchy_id === scope.hierarchy_id && Number.isInteger(row.s_rfl_id) &&
+      sample.some(item => item.s_l_scene === row.s_l_scene && item.s_r_item === row.s_r_item)),
+      "Scope không còn đúng fixture. Dừng để tránh xóa dòng khác.");
+
+    // Requirement riêng đảm bảo POST kiểm thử thực sự phải tạo dòng trước khi lỗi thứ tự.
+    const probe = { ...sample[0], s_r_item: sample[0].s_r_item + "-ScopeProbe" };
+    client.global.set("rfl_bad_order", JSON.stringify({
+      ...seed, [hierarchy]: [probe],
+      list_order: [{ ...probe, rfl_id: 2147483647, list_order: 0 }]
+    }));
+    const badRow = { ...sample[0], s_r_item: sample[0].s_r_item + "/InvalidFourthPart" };
+    client.global.set("rfl_bad_import", JSON.stringify({
+      ...seed, [hierarchy]: [badRow],
+      list_order: [{ ...badRow, rfl_id: null, list_order: 0 }]
+    }));
+    client.global.set("rfl_import_before", JSON.stringify(rows));
+    client.global.set("rfl_delete_seed", JSON.stringify({
+      update: [], list_order: [],
+      delete: rows.map(row => ({
+        project_id: scope.project_id, phase_id: scope.phase_id, s_rfl_id: row.s_rfl_id
+      }))
+    }));
+  });
+%}
+
+### 2. POST riêng lẻ: chèn ID ngoài scope vào list_order
+### @name rejectRflCreateOutOfScope
+# @no-log
+POST {{devApiBase}}/rfl/rfl-add-new
+Authorization: Bearer {{rfl_token}}
+Content-Type: application/json
+Accept: application/json
+
+{{rfl_bad_order}}
+
+> {%
+  client.test("Tạo mới báo lỗi ID sai scope", () => {
+    client.assert(response.status === 500);
+    client.assert(response.body?.message?.includes("outside the selected scope: [2147483647]"),
+      response.body?.message ?? "Thiếu thông báo kiểm tra scope.");
+  });
+%}
+
+### 3. Tải lại: không có dòng mới, fixture vẫn giữ đúng thứ tự
+### @name verifyRflCreateRollback
+# @no-log
+POST {{devApiBase}}/rfl/v2/tlm
+Authorization: Bearer {{rfl_token}}
+Content-Type: application/json
+Accept: application/json
+
+{{rfl_query}}
+
+> {%
+  client.test("POST lỗi thứ tự đã rollback dòng tạo mới", () => {
+    client.assert(response.status === 200);
+    const hierarchy = JSON.parse(client.global.get("rfl_query")).hierarchy[0];
+    const before = JSON.parse(client.global.get("rfl_import_before"));
+    const rows = response.body?.data?.[hierarchy] ?? [];
+    client.assert(JSON.stringify(rows.map(row => row.s_rfl_id)) ===
+      JSON.stringify(before.map(row => row.s_rfl_id)), "Có dòng dư hoặc thứ tự đã đổi.");
+  });
+%}
+
+### 4. Mô phỏng frontend: xóa ba dòng cũ trước khi lưu file thay thế
+### @name deleteRflBeforeImport
+# @no-log
+PATCH {{devApiBase}}/rfl/update
+Authorization: Bearer {{rfl_token}}
+Content-Type: application/json
+Accept: application/json
+
+{{rfl_delete_seed}}
+
+> {%
+  client.test("PATCH xóa fixture thành công", () => {
+    client.assert(response.status === 200 && response.body?.status === "success", response.body?.message);
+  });
+%}
+
+### 5. Mô phỏng frontend: lưu file có Requirement bốn phần
+### @name rejectInvalidRflReplacement
+# @no-log
+POST {{devApiBase}}/rfl/rfl-add-new
+Authorization: Bearer {{rfl_token}}
+Content-Type: application/json
+Accept: application/json
+
+{{rfl_bad_import}}
+
+> {%
+  client.test("File sai định dạng Requirement bị từ chối", () => {
+    client.assert(response.status === 400, response.body?.message);
+    client.assert(response.body?.message?.includes("設計項目大/設計項目小/Requirement"));
+  });
+%}
+
+### 6. Tải lại: tái hiện lỗi mất dữ liệu qua hai request (assertion dự kiến FAIL)
+### @name verifyRflReplacementRetainsOldRows
+# @no-log
+POST {{devApiBase}}/rfl/v2/tlm
+Authorization: Bearer {{rfl_token}}
+Content-Type: application/json
+Accept: application/json
+
+{{rfl_query}}
+
+> {%
+  if (response.status === 200 &&
+      Object.values(response.body?.data ?? {}).every(rows => rows.length === 0)) {
+    client.global.set("rfl_restore_seed", client.global.get("rfl_seed"));
+  }
+  client.test("Thay dữ liệu thất bại phải giữ lại các dòng cũ", () => {
+    client.assert(response.status === 200);
+    const hierarchy = JSON.parse(client.global.get("rfl_query")).hierarchy[0];
+    const before = JSON.parse(client.global.get("rfl_import_before"));
+    const rows = response.body?.data?.[hierarchy] ?? [];
+    client.assert(JSON.stringify(rows.map(row => row.s_rfl_id)) ===
+      JSON.stringify(before.map(row => row.s_rfl_id)),
+      `Lỗi đã biết: trước import có ${before.length} dòng, sau khi POST lỗi còn ${rows.length} dòng.`);
+  });
+%}
+
+### 7. Khôi phục fixture gốc (chỉ chạy nếu bước 6 xác nhận scope trống)
+### @name restoreRflImportFixture
+# @no-log
+POST {{devApiBase}}/rfl/rfl-add-new
+Authorization: Bearer {{rfl_token}}
+Content-Type: application/json
+Accept: application/json
+
+{{rfl_restore_seed}}
+
+> {%
+  client.test("Khôi phục thành công ba dòng fixture", () => {
+    client.assert(response.status === 200 && response.body?.status === "success", response.body?.message);
+  });
+%}
+
+### 8. Tải lại và kiểm tra thứ tự sau khôi phục
+### @name verifyRestoredRflFixture
+# @no-log
+POST {{devApiBase}}/rfl/v2/tlm
+Authorization: Bearer {{rfl_token}}
+Content-Type: application/json
+Accept: application/json
+
+{{rfl_query}}
+
+> {%
+  client.test("Fixture trở lại thứ tự Z → A → M", () => {
+    client.assert(response.status === 200);
+    const hierarchy = JSON.parse(client.global.get("rfl_query")).hierarchy[0];
+    const expected = JSON.parse(client.global.get("rfl_seed"))[hierarchy];
+    const rows = response.body?.data?.[hierarchy] ?? [];
+    const values = items => items.map(row => [row.s_r_item, row.s_f_item, row.s_l_item, row.s_l_scene]);
+    client.assert(JSON.stringify(values(rows)) === JSON.stringify(values(expected)));
+  });
+%}

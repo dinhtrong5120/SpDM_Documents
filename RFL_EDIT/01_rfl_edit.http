@@ -1,0 +1,290 @@
+### RFL - tạo fixture, kiểm tra thứ tự và sửa dòng làm đổi ID
+# JetBrains HTTP Client. Chạy từng request từ trên xuống, dừng nếu assertion fail.
+# Chỉ chạy trên backend localhost kết nối DB test có thể reset.
+# Dùng devApiBase, username, password như các file SE_Confirm_REQ-0003.
+# Mặc định: TEST_01 (1035) / PTシステムレビュー_TEST (38) / 4WD / 車両.
+# Chọn Run with: dev trong JetBrains HTTP Client.
+# Scope project + phase + WP + hierarchy phải trống. Không dùng P62C thật.
+# File 02 dùng lại fixture và biến phiên làm việc của file này.
+
+@projectCode = TEST_01
+@destination = US
+@drivetrain = 4WD
+@architecture = HEV
+@bodyType = Hatch
+@lot = UC-Lot
+@phase = PTシステムレビュー_TEST
+@wp = 4WD
+@hierarchy = 車両
+@unit = kg
+
+### 1. Đăng nhập
+### @name loginRflEdit
+# @no-log
+< {%
+  const base = request.environment.get("devApiBase");
+  if (!/^https?:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?(?:\/|$)/.test(base ?? "")) {
+    throw new Error("devApiBase phải trỏ vào backend localhost với DB test.");
+  }
+  client.global.clear("rfl_base");
+  client.global.clear("rfl_query");
+  client.global.clear("rfl_scope");
+  client.global.clear("rfl_seed");
+  client.global.clear("rfl_rows");
+  client.global.clear("rfl_update_ok");
+  client.global.clear("rfl_update_rejected");
+  client.global.clear("rfl_token");
+%}
+POST {{devApiBase}}/user/login/
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username": "{{username}}",
+  "password": "{{password}}"
+}
+
+> {%
+  client.test("Đăng nhập", () => {
+    client.assert(response.status === 200 && Boolean(response.body?.access));
+    client.global.set("rfl_base", request.environment.get("devApiBase").replace(/\/$/, ""));
+    client.global.set("rfl_token", response.body.access);
+  });
+%}
+
+### 2. Xác định đúng project, phase và hierarchy
+### @name selectRflScope
+# @no-log
+POST {{devApiBase}}/rfl/meta
+Authorization: Bearer {{rfl_token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "pj_code": "{{projectCode}}",
+  "destination": "{{destination}}",
+  "drivetrain": "{{drivetrain}}",
+  "architecture": "{{architecture}}",
+  "body_type": "{{bodyType}}",
+  "lot": "{{lot}}",
+  "phase": "{{phase}}"
+}
+
+> {%
+  client.test("Scope test tồn tại và xác định duy nhất", () => {
+    client.assert(response.status === 200);
+    const matches = (response.body?.data ?? []).filter(row =>
+      row.phase === client.variables.file.get("phase") && row.lot === client.variables.file.get("lot")
+    );
+    const hierarchy = response.body?.dict_hierarchy?.find(
+      row => row.hierarchy === client.variables.file.get("hierarchy")
+    );
+    client.assert(matches.length === 1, "Kiểm tra lại project/lot/phase trong rfl/meta.");
+    client.assert([1, 2, 3].includes(hierarchy?.hierarchy_id), "Chọn một hierarchy cụ thể.");
+    const scope = {
+      project_id: matches[0].project_id, phase_id: matches[0].phase_id,
+      hierarchy_id: hierarchy.hierarchy_id
+    };
+    const filters = Object.fromEntries(Object.entries({
+      project_code: "projectCode", destination: "destination", drivetrain: "drivetrain",
+      lot: "lot", phase: "phase", wp: "wp", hierarchy: "hierarchy"
+    }).map(([key, variable]) => [key, [client.variables.file.get(variable)]]));
+    client.global.set("rfl_scope", JSON.stringify(scope));
+    client.global.set("rfl_query", JSON.stringify(filters));
+  });
+%}
+
+### 3. Xác nhận scope trống và chuẩn bị ba dòng fixture như payload sau import
+### @name prepareRflSeed
+# @no-log
+POST {{devApiBase}}/rfl/v2/tlm
+Authorization: Bearer {{rfl_token}}
+Content-Type: application/json
+Accept: application/json
+
+{{rfl_query}}
+
+> {%
+  client.test("Scope trống, đủ master WP và Unit", () => {
+    client.assert(response.status === 200);
+    const scope = JSON.parse(client.global.get("rfl_scope"));
+    const query = JSON.parse(client.global.get("rfl_query"));
+    const hierarchy = query.hierarchy[0];
+    const wp = query.wp[0];
+    const unit = client.variables.file.get("unit");
+    const wpId = response.body?.wp_dict?.[wp];
+    const unitId = response.body?.units_dict?.[unit];
+    client.assert(Number.isInteger(wpId) && Number.isInteger(unitId), "Kiểm tra WP/Unit trong TLM.");
+    client.assert(Object.values(response.body?.data ?? {}).every(rows => rows.length === 0),
+      "Scope đã có RFL. Chọn scope test trống để tránh ghi vào dữ liệu sẵn có.");
+    scope.r_wp_id = wpId;
+
+    const tag = "HTTP-RFL-" + Date.now();
+    const base = {
+      ...scope, destination: query.destination[0], drivetrain: query.drivetrain[0],
+      architacture: client.variables.file.get("architecture"), body_type: client.variables.file.get("bodyType"),
+      r_parameter_id: null, performance: null,
+      s_r_item: tag + "/Requirement/Order", s_r_unit: unit, s_r_unit_id: unitId,
+      s_r_scene: tag + "-R", s_req_condition: null, s_req: null,
+      s_f_item: tag + "-F", s_f_unit: unit, s_f_unit_id: unitId, s_func: null,
+      s_l_item: tag + "-L", s_l_unit: unit, s_l_unit_id: unitId, s_l_wp: wp, s_allocation: wpId,
+      s_log_condition: null, s_logic: null, s_note: null,
+      s_sender_judge: null, s_sender_name: null, s_sender_date: null, s_sender_comment: null,
+      s_receiver_judge: null, s_receiver_name: null, s_receiver_date: null, s_receiver_comment: null
+    };
+    const rows = [
+      { ...base, s_l_scene: tag + "-Z" },
+      { ...base, s_l_scene: tag + "-A" },
+      { ...base, s_l_scene: tag + "-M", s_f_item: tag + "-F2" }
+    ];
+    client.global.set("rfl_scope", JSON.stringify(scope));
+    client.global.set("rfl_seed", JSON.stringify({
+      hierarchy_id: scope.hierarchy_id, r_wp_id: wpId, [hierarchy]: rows, meta: scope,
+      list_order: rows.map((row, index) => ({ ...row, rfl_id: null, list_order: index }))
+    }));
+  });
+%}
+
+### 4. Tạo RFL: hai dòng trùng tên R/F/L, khác Logic Use case
+### @name createRflSeed
+# @no-log
+POST {{devApiBase}}/rfl/rfl-add-new
+Authorization: Bearer {{rfl_token}}
+Content-Type: application/json
+Accept: application/json
+
+{{rfl_seed}}
+
+> {%
+  client.test("Tạo fixture thành công", () => {
+    client.assert(response.status === 200 && response.body?.status === "success",
+      response.body?.message ?? "Tạo fixture thất bại.");
+  });
+%}
+
+### 5. Tải lại: kiểm tra thứ tự Z → A → M và chuẩn bị PATCH
+### @name readRflOrderBeforeEdit
+# @no-log
+POST {{devApiBase}}/rfl/v2/tlm
+Authorization: Bearer {{rfl_token}}
+Content-Type: application/json
+Accept: application/json
+
+{{rfl_query}}
+
+> {%
+  client.test("Import giữ đúng thứ tự và tạo ba ID riêng biệt", () => {
+    client.assert(response.status === 200);
+    const hierarchy = JSON.parse(client.global.get("rfl_query")).hierarchy[0];
+    const seed = JSON.parse(client.global.get("rfl_seed"));
+    const rows = response.body?.data?.[hierarchy] ?? [];
+    const ids = rows.map(row => row.s_rfl_id);
+    client.assert(JSON.stringify(rows.map(row => row.s_l_scene)) ===
+      JSON.stringify(seed[hierarchy].map(row => row.s_l_scene)), "Thứ tự khác file mẫu.");
+    client.assert(ids.every(Number.isInteger) && new Set(ids).size === 3);
+    const scope = JSON.parse(client.global.get("rfl_scope"));
+    const [target, neighbor, donor] = rows;
+    const item = {
+      ...target, s_f_item: donor.s_f_item, r_parameter_id: target.s_r_id,
+      s_r_unit_id: response.body.units_dict[target.s_r_unit],
+      s_f_unit_id: response.body.units_dict[target.s_f_unit],
+      s_l_unit_id: response.body.units_dict[target.s_l_unit],
+      s_allocation: response.body.wp_dict[target.s_l_wp],
+      s_sender_judge: target.s_sender_judge || null,
+      s_receiver_judge: target.s_receiver_judge || null,
+      s_sender_date: target.s_sender_date || null,
+      s_receiver_date: target.s_receiver_date || null
+    };
+    const listOrder = [neighbor, target, donor].map((row, index) => ({
+      rfl_id: row.s_rfl_id, hierarchy_id: scope.hierarchy_id, list_order: index
+    }));
+    const payload = { update: [item], delete: [], list_order: listOrder, meta: scope };
+    client.global.set("rfl_rows", JSON.stringify(rows));
+    client.global.set("rfl_update_ok", JSON.stringify(payload));
+    client.global.set("rfl_update_rejected", JSON.stringify({
+      ...payload, list_order: [...listOrder, {
+        rfl_id: 2147483647, hierarchy_id: scope.hierarchy_id, list_order: 3
+      }]
+    }));
+  });
+%}
+
+### 6. PATCH: thêm ID giả ngoài scope, yêu cầu rollback cả việc đổi ID
+### @name rejectRflEditOutOfScope
+# @no-log
+PATCH {{devApiBase}}/rfl/update
+Authorization: Bearer {{rfl_token}}
+Content-Type: application/json
+Accept: application/json
+
+{{rfl_update_rejected}}
+
+> {%
+  client.test("Chỉ ID ngoài scope bị báo lỗi", () => {
+    client.assert(response.status === 500);
+    client.assert(response.body?.message?.includes("outside the selected scope: [2147483647]"),
+      response.body?.message ?? "Thiếu thông báo kiểm tra scope.");
+  });
+%}
+
+### 7. Tải lại: ID, Function và thứ tự phải còn nguyên
+### @name verifyRflEditRollback
+# @no-log
+POST {{devApiBase}}/rfl/v2/tlm
+Authorization: Bearer {{rfl_token}}
+Content-Type: application/json
+Accept: application/json
+
+{{rfl_query}}
+
+> {%
+  client.test("PATCH thất bại đã rollback", () => {
+    client.assert(response.status === 200);
+    const hierarchy = JSON.parse(client.global.get("rfl_query")).hierarchy[0];
+    const rows = response.body?.data?.[hierarchy] ?? [];
+    const snapshot = data => data.map(row => [row.s_rfl_id, row.s_f_item, row.s_l_scene]);
+    client.assert(JSON.stringify(snapshot(rows)) ===
+      JSON.stringify(snapshot(JSON.parse(client.global.get("rfl_rows")))));
+  });
+%}
+
+### 8. PATCH hợp lệ: đổi Function của Z, gửi ID cũ ở vị trí thứ hai
+### @name saveRflEditWithOldId
+# @no-log
+PATCH {{devApiBase}}/rfl/update
+Authorization: Bearer {{rfl_token}}
+Content-Type: application/json
+Accept: application/json
+
+{{rfl_update_ok}}
+
+> {%
+  client.test("Lưu được dù list_order gửi ID cũ của dòng sửa", () => {
+    client.assert(response.status === 200, response.body?.message);
+    client.assert(response.body?.status === "success");
+  });
+%}
+
+### 9. Tải lại: A → Z → M, dòng Z có ID mới và Function F2
+### @name verifyRflEditOrder
+# @no-log
+POST {{devApiBase}}/rfl/v2/tlm
+Authorization: Bearer {{rfl_token}}
+Content-Type: application/json
+Accept: application/json
+
+{{rfl_query}}
+
+> {%
+  client.test("ID mới nằm đúng vị trí, hai dòng còn lại giữ ID", () => {
+    client.assert(response.status === 200);
+    const hierarchy = JSON.parse(client.global.get("rfl_query")).hierarchy[0];
+    const rows = response.body?.data?.[hierarchy] ?? [];
+    const [old, neighbor, donor] = JSON.parse(client.global.get("rfl_rows"));
+    client.assert(rows.length === 3);
+    client.assert(rows[0].s_rfl_id === neighbor.s_rfl_id && rows[2].s_rfl_id === donor.s_rfl_id);
+    client.assert(rows[1].s_l_scene === old.s_l_scene && rows[1].s_f_item === donor.s_f_item);
+    client.assert(Number.isInteger(rows[1].s_rfl_id) &&
+      ![old.s_rfl_id, neighbor.s_rfl_id, donor.s_rfl_id].includes(rows[1].s_rfl_id));
+  });
+%}

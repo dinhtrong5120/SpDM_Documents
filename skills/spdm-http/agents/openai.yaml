@@ -1,0 +1,3 @@
+interface:
+  display_name: "SPDM-HTTP"
+  short_description: "Viết và kiểm thử file HTTP Client cho SPDM"

@@ -9,6 +9,7 @@ Thư mục này chứa bản sao Markdown của các skill cá nhân trong `~/.c
 | `spdm-db` | Tiện ích bảo trì dữ liệu SPDM |
 | `spdm-dba` | Thay đổi schema MySQL |
 | `spdm-flowchart` | Flowchart API draw.io |
+| `spdm-http` | Viết, kiểm thử và gỡ lỗi file .http của JetBrains cho SPDM |
 | `spdm-postman` | Bộ Postman integration test |
 | `spdm-postman-v1` | Chỉnh sửa Postman collection JSON |
 | `spdm-report-to-sql` | Tạo SQL từ báo cáo bảo trì |
@@ -16,6 +17,6 @@ Thư mục này chứa bản sao Markdown của các skill cá nhân trong `~/.c
 | `spdm-swagger` | Tài liệu Swagger |
 | `spdm-yagni` | Quy tắc triển khai tối giản |
 
-Lưu ý: chỉ xuất file `.md` theo yêu cầu. `spdm-flowchart/SKILL.md` có nhắc đến `scripts/validate_drawio.py`; script đó không nằm trong bản xuất này.
+Lưu ý: bản sao chủ yếu gồm file `.md`. `spdm-flowchart/SKILL.md` có nhắc đến `scripts/validate_drawio.py`; script đó không nằm trong bản xuất này.
 
-`spdm-frontend-pr` bổ sung metadata `agents/openai.yaml`; các hướng dẫn và mẫu PR nằm trong `SKILL.md` và `references/*.md`.
+`spdm-frontend-pr` và `spdm-http` có thêm metadata `agents/openai.yaml`. Hướng dẫn nằm trong `SKILL.md` và `references/*.md`.
