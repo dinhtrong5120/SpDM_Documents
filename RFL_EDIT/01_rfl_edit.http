@@ -6,6 +6,7 @@
 # Chọn Run with: dev trong JetBrains HTTP Client.
 # Scope project + phase + WP + hierarchy phải trống. Không dùng P62C thật.
 # File 02 dùng lại fixture và biến phiên làm việc của file này.
+# Bước 10–11 kiểm tra Logic mới không tự kế thừa liên kết SE (DB NULL, TLM trả rỗng).
 
 @projectCode = TEST_01
 @destination = US
@@ -34,6 +35,8 @@
   client.global.clear("rfl_update_ok");
   client.global.clear("rfl_update_rejected");
   client.global.clear("rfl_token");
+  client.global.clear("rfl_logic_before");
+  client.global.clear("rfl_logic_update");
 %}
 POST {{devApiBase}}/user/login/
 Content-Type: application/json
@@ -221,7 +224,7 @@ Accept: application/json
 
 > {%
   client.test("Chỉ ID ngoài scope bị báo lỗi", () => {
-    client.assert(response.status === 500);
+    client.assert(response.status === 400);
     client.assert(response.body?.message?.includes("outside the selected scope: [2147483647]"),
       response.body?.message ?? "Thiếu thông báo kiểm tra scope.");
   });
@@ -286,5 +289,71 @@ Accept: application/json
     client.assert(rows[1].s_l_scene === old.s_l_scene && rows[1].s_f_item === donor.s_f_item);
     client.assert(Number.isInteger(rows[1].s_rfl_id) &&
       ![old.s_rfl_id, neighbor.s_rfl_id, donor.s_rfl_id].includes(rows[1].s_rfl_id));
+    const target = rows[1];
+    client.global.set("rfl_logic_before", JSON.stringify(rows));
+    client.global.set("rfl_logic_update", JSON.stringify({
+      update: [{
+        ...target, s_l_item: target.s_l_item + "-Renamed-" + Date.now(),
+        r_parameter_id: target.s_r_id,
+        s_r_unit_id: response.body.units_dict[target.s_r_unit],
+        s_f_unit_id: response.body.units_dict[target.s_f_unit],
+        s_l_unit_id: response.body.units_dict[target.s_l_unit],
+        s_allocation: response.body.wp_dict[target.s_l_wp],
+        s_sender_judge: target.s_sender_judge || null,
+        s_receiver_judge: target.s_receiver_judge || null,
+        s_sender_date: target.s_sender_date || null,
+        s_receiver_date: target.s_receiver_date || null
+      }],
+      delete: [], meta: JSON.parse(client.global.get("rfl_scope")),
+      list_order: rows.map((row, index) => ({
+        rfl_id: row.s_rfl_id, hierarchy_id: row.s_hierarchy_id, list_order: index
+      }))
+    }));
+  });
+%}
+
+### 10. Đổi tên Logic để tạo bản ghi mới, không kế thừa liên kết SE
+### @name renameRflLogicWithoutSeLink
+# @no-log
+PATCH {{devApiBase}}/rfl/update
+Authorization: Bearer {{rfl_token}}
+Content-Type: application/json
+Accept: application/json
+
+{{rfl_logic_update}}
+
+> {%
+  client.test("Tạo Logic mới thành công", () => {
+    client.assert(response.status === 200 && response.body?.status === "success", response.body?.message);
+  });
+%}
+
+### 11. Logic mới có liên kết SE rỗng, hai dòng dùng bản ghi cũ giữ nguyên
+### @name verifyRenamedRflLogicHasNoSeLink
+# @no-log
+POST {{devApiBase}}/rfl/v2/tlm
+Authorization: Bearer {{rfl_token}}
+Content-Type: application/json
+Accept: application/json
+
+{{rfl_query}}
+
+> {%
+  client.test("Logic mới không có SE, bản ghi cũ không đổi", () => {
+    client.assert(response.status === 200);
+    const hierarchy = JSON.parse(client.global.get("rfl_query")).hierarchy[0];
+    const rows = response.body?.data?.[hierarchy] ?? [];
+    const before = JSON.parse(client.global.get("rfl_logic_before"));
+    const item = JSON.parse(client.global.get("rfl_logic_update")).update[0];
+    client.assert(rows.length === 3 && rows[1].s_l_item === item.s_l_item);
+    client.assert(Number.isInteger(rows[1].s_l_id) && rows[1].s_l_id !== before[1].s_l_id);
+    client.assert(rows[1].s_related_se_parameter_id == null || rows[1].s_related_se_parameter_id === "",
+      "Logic mới phải có related_se_parameter_id = NULL, TLM chuẩn hóa thành rỗng.");
+    for (const index of [0, 2]) {
+      client.assert(rows[index].s_rfl_id === before[index].s_rfl_id &&
+        rows[index].s_l_id === before[index].s_l_id && rows[index].s_l_item === before[index].s_l_item &&
+        rows[index].s_related_se_parameter_id === before[index].s_related_se_parameter_id,
+        "Dòng dùng Logic cũ đã bị thay đổi.");
+    }
   });
 %}

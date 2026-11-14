@@ -46,7 +46,10 @@ Accept: application/json
       ...seed, [hierarchy]: [probe],
       list_order: [{ ...probe, rfl_id: 2147483647, list_order: 0 }]
     }));
-    const badRow = { ...sample[0], s_r_item: sample[0].s_r_item + "/InvalidFourthPart" };
+    const badRow = {
+      ...sample[0],
+      s_r_item: [sample[0].s_r_item, "SecondLine", "ThirdLine", "InvalidFourthPart"].join("\n")
+    };
     client.global.set("rfl_bad_import", JSON.stringify({
       ...seed, [hierarchy]: [badRow],
       list_order: [{ ...badRow, rfl_id: null, list_order: 0 }]
@@ -73,7 +76,7 @@ Accept: application/json
 
 > {%
   client.test("Tạo mới báo lỗi ID sai scope", () => {
-    client.assert(response.status === 500);
+    client.assert(response.status === 400);
     client.assert(response.body?.message?.includes("outside the selected scope: [2147483647]"),
       response.body?.message ?? "Thiếu thông báo kiểm tra scope.");
   });
@@ -95,8 +98,9 @@ Accept: application/json
     const hierarchy = JSON.parse(client.global.get("rfl_query")).hierarchy[0];
     const before = JSON.parse(client.global.get("rfl_import_before"));
     const rows = response.body?.data?.[hierarchy] ?? [];
-    client.assert(JSON.stringify(rows.map(row => row.s_rfl_id)) ===
-      JSON.stringify(before.map(row => row.s_rfl_id)), "Có dòng dư hoặc thứ tự đã đổi.");
+    const snapshot = items => items.map(row => [row.s_rfl_id, row.s_l_id, row.s_related_se_parameter_id]);
+    client.assert(JSON.stringify(snapshot(rows)) === JSON.stringify(snapshot(before)),
+      "Có dòng dư, thứ tự hoặc liên kết Logic/SE đã đổi sau rollback.");
   });
 %}
 
@@ -116,7 +120,7 @@ Accept: application/json
   });
 %}
 
-### 5. Mô phỏng frontend: lưu file có Requirement bốn phần
+### 5. Mô phỏng frontend: lưu file có Requirement bốn dòng
 ### @name rejectInvalidRflReplacement
 # @no-log
 POST {{devApiBase}}/rfl/rfl-add-new
@@ -129,7 +133,7 @@ Accept: application/json
 > {%
   client.test("File sai định dạng Requirement bị từ chối", () => {
     client.assert(response.status === 400, response.body?.message);
-    client.assert(response.body?.message?.includes("設計項目大/設計項目小/Requirement"));
+    client.assert(response.body?.message?.includes("最大3行"));
   });
 %}
 
