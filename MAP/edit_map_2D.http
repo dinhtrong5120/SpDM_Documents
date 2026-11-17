@@ -78,6 +78,7 @@ Accept: application/json
     client.global.set("phaseName", project.phase_name);
     client.global.set("destination", project.destination);
     client.global.set("drivetrain", project.drivetrain);
+    client.global.set("bodyType", project.grade);
     client.global.set("powertrain", project.powertrain);
     client.global.set("lot", project.lot);
     client.log(`Da chon project ${project.project_name}, phase ${project.phase_name}`);
@@ -99,6 +100,7 @@ Accept: application/json
       "project": "{{projectName}}",
       "destination": "{{destination}}",
       "drivetrain": "{{drivetrain}}",
+      "body_type": "{{bodyType}}",
       "powertrain": "{{powertrain}}",
       "lot": "{{lot}}",
       "phase": "{{phaseName}}"
@@ -107,6 +109,10 @@ Accept: application/json
 ]
 
 > {%
+  client.assert(
+    response.status === 200 && response.body?.status === "success",
+    `Doc SE List that bai: HTTP ${response.status}; ${response.body?.message ?? "Response khong hop le"}`
+  );
   const groups = response.body?.projects?.[0]?.data ?? [];
   let selected = null;
 
@@ -374,6 +380,7 @@ Accept: application/json
       "project": "{{projectName}}",
       "destination": "{{destination}}",
       "drivetrain": "{{drivetrain}}",
+      "body_type": "{{bodyType}}",
       "powertrain": "{{powertrain}}",
       "lot": "{{lot}}",
       "phase": "{{phaseName}}"
@@ -382,6 +389,10 @@ Accept: application/json
 ]
 
 > {%
+  client.assert(
+    response.status === 200 && response.body?.status === "success",
+    `Doc SE List that bai: HTTP ${response.status}; ${response.body?.message ?? "Response khong hop le"}`
+  );
   const groups = response.body?.projects?.[0]?.data ?? [];
   let finalValue;
 

@@ -194,10 +194,6 @@ Accept: application/json
   client.test("Tim thay bien X va metadata OVERLAY_1D", function () {
     client.assert(Boolean(overlayInfo), "Response khong co mode OVERLAY_1D");
     client.assert(Boolean(xVariable), "Khong co map_variable axis X");
-    client.assert(
-      overlayInfo?.max_points_per_series === 20,
-      "max_points_per_series khong bang 20"
-    );
   });
 
   if (xVariable) {

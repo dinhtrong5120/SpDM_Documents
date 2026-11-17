@@ -1,4 +1,6 @@
-# Kiểm tra lỗi ruff trong vùng vừa sửa xong
+<details>
+<summary><strong>Kiểm tra lỗi ruff trong vùng vừa sửa xong</strong></summary>
+
 ```bash
 python3 - <<'PY'
 import json
@@ -76,7 +78,11 @@ raise SystemExit(1 if found else 0)
 PY
 ```
 
-# Kiểm tra format code
+</details>
+
+<details>
+<summary><strong>Kiểm tra format code</strong></summary>
+
 ```bash
 python3 - <<'PY'
 import re
@@ -148,14 +154,18 @@ raise SystemExit(1 if failed_ranges else 0)
 PY
 ```
 
-# Check ruff cho 1 commit 
+</details>
+
+<details>
+<summary><strong>Check ruff cho 1 commit</strong></summary>
+
 ```bash
 python3 - <<'PY'
 import json
 import re
 import subprocess
 
-COMMIT = "b621005ee5d367a48a07455157383fd7e25623e4"
+COMMIT = "aff1a244fffd2ba17853f3f1a3931fdfc681176d"
 
 parent = subprocess.check_output([
     "git", "rev-parse", f"{COMMIT}^",
@@ -233,13 +243,17 @@ raise SystemExit(1 if found else 0)
 PY
 ```
 
-# Check Format cho 1 commit
+</details>
+
+<details>
+<summary><strong>Check Format cho 1 commit</strong></summary>
+
 ```bash
 python3 - <<'PY'
 import re
 import subprocess
 
-COMMIT = "b621005ee5d367a48a07455157383fd7e25623e4"
+COMMIT = "aff1a244fffd2ba17853f3f1a3931fdfc681176d"
 
 parent = subprocess.check_output([
     "git", "rev-parse", f"{COMMIT}^",
@@ -308,3 +322,5 @@ print("=" * 60)
 raise SystemExit(1 if failed_ranges else 0)
 PY
 ```
+
+</details>

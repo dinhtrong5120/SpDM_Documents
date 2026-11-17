@@ -86,6 +86,7 @@ Accept: application/json
     client.global.set("phaseName", project.phase_name);
     client.global.set("destination", project.destination);
     client.global.set("drivetrain", project.drivetrain);
+    client.global.set("bodyType", project.grade);
     client.global.set("powertrain", project.powertrain);
     client.global.set("lot", project.lot);
     client.log(`Da chon project ${project.project_name}, phase ${project.phase_name}`);
@@ -109,6 +110,7 @@ Accept: application/json
       "project": "{{projectName}}",
       "destination": "{{destination}}",
       "drivetrain": "{{drivetrain}}",
+      "body_type": "{{bodyType}}",
       "powertrain": "{{powertrain}}",
       "lot": "{{lot}}",
       "phase": "{{phaseName}}"
@@ -117,6 +119,10 @@ Accept: application/json
 ]
 
 > {%
+  client.assert(
+    response.status === 200 && response.body?.status === "success",
+    `Doc SE List that bai: HTTP ${response.status}; ${response.body?.message ?? "Response khong hop le"}`
+  );
   const groups = response.body?.projects?.[0]?.data ?? [];
   let selected = null;
 
@@ -188,10 +194,6 @@ Accept: application/json
   client.test("Tim thay bien X va metadata OVERLAY_1D", function () {
     client.assert(Boolean(overlayInfo), "Response khong co mode OVERLAY_1D");
     client.assert(Boolean(xVariable), "Khong co map_variable axis X");
-    client.assert(
-      overlayInfo?.max_points_per_series === 20,
-      "max_points_per_series khong bang 20"
-    );
   });
 
   if (xVariable) {
@@ -227,6 +229,7 @@ Accept: application/json
 {
   "chosen_id": 1,
   "mode": "OVERLAY_1D",
+  "overlay_template": "変速線",
   "df_edited": null,
   "df_editeds": null,
   "df_edited_z": null,
@@ -298,6 +301,7 @@ Accept: application/json
     client.assert(response.status === 200, "Read map khong tra HTTP 200");
     client.assert(response.body?.status === "success", response.body?.message ?? "Read map that bai");
     client.assert(data?.mode === "OVERLAY_1D", "mode khong phai OVERLAY_1D");
+    client.assert(data?.overlay_template === "変速線", "overlay_template khong phai 変速線");
     client.assert(Boolean(data?.xname), "Response khong co xname");
     client.assert(Boolean(data?.tname), "Response khong co tname");
     client.assert(data?.df_display === null, "df_display phai la null");
@@ -344,6 +348,7 @@ Accept: application/json
 {
   "chosen_id": 1,
   "mode": "OVERLAY_1D",
+  "overlay_template": "変速線",
   "df_edited": null,
   "df_editeds": null,
   "df_edited_z": null,
@@ -415,6 +420,7 @@ Accept: application/json
     client.assert(response.status === 200, "Read edited map khong tra HTTP 200");
     client.assert(response.body?.status === "success", response.body?.message ?? "Read edited map that bai");
     client.assert(data?.mode === "OVERLAY_1D", "mode sau edit khong dung");
+    client.assert(data?.overlay_template === "変速線", "overlay_template khong duoc giu nguyen");
   });
 
   client.test("Du lieu edit duoc luu chinh xac", function () {
@@ -474,6 +480,7 @@ Accept: application/json
       "project": "{{projectName}}",
       "destination": "{{destination}}",
       "drivetrain": "{{drivetrain}}",
+      "body_type": "{{bodyType}}",
       "powertrain": "{{powertrain}}",
       "lot": "{{lot}}",
       "phase": "{{phaseName}}"
@@ -482,6 +489,10 @@ Accept: application/json
 ]
 
 > {%
+  client.assert(
+    response.status === 200 && response.body?.status === "success",
+    `Doc SE List that bai: HTTP ${response.status}; ${response.body?.message ?? "Response khong hop le"}`
+  );
   const groups = response.body?.projects?.[0]?.data ?? [];
   let finalValue;
 

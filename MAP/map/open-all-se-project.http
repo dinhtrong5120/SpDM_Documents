@@ -81,6 +81,7 @@ Accept: application/json
       "project": "{{$.projects..project_name}}",
       "destination": "{{$.projects..destination}}",
       "drivetrain": "{{$.projects..drivetrain}}",
+      "body_type": "{{$.projects..grade}}",
       "powertrain": "{{$.projects..powertrain}}",
       "lot": "{{$.projects..lot}}",
       "phase": "{{$.projects..phase_name}}"
@@ -89,6 +90,10 @@ Accept: application/json
 ]
 
 > {%
+  client.assert(
+    response.status === 200 && response.body?.status === "success",
+    `Doc SE List that bai: HTTP ${response.status}; ${response.body?.message ?? "Response khong hop le"}`
+  );
   const current = request.variables.get("projects")[request.iteration()];
 
   client.log(
